@@ -1,12 +1,23 @@
-import Database from "../../config/Database.js";
+import Database from "../../config/Database.class.js";
+import User from "../../models/User.class.js";
 
-function getAdmin(req, res) {
-  res.render('admin/admin.dashboard.ejs');
+async function getAdmin(req, res) {
+  try {
+    res.render('admin/admin.dashboard.ejs');
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-function postAdmin(req, res) {
-  console.log(req.body);
-  res.redirect('/admin');
+async function postAdmin(req, res) {
+  try {
+    const user = new User({ mail: req.body.mail });
+    await user.initialize();
+    console.log(user);
+    res.send('hello');
+  } catch(err) {
+    console.error(err);
+  }
 }
 
 async function postSendImage(req, res) {
@@ -16,42 +27,28 @@ async function postSendImage(req, res) {
     formData.append(key, req.body[key]);
   }
 
-  const blob = new Blob([req.file], { type: req.file.mimetype });
-  console.log(blob);
-  formData.append('image', blob, req.file.filename);
-
-  console.log(req.file);
-  console.log(formData);
+  const file = req.files.image;
+  const blob = new Blob([file.data], { type: file.mimetype });
+  formData.append('image', blob, file.name);
 
   const response = await fetch('http://localhost:3001', {
     headers: {
-      Accept: 'application/json; charset=utf-8',
+      Accept: 'application/json',
     },
     method: 'POST',
     body: formData
   });
   const data = await response.json();
-  console.log(data);
-  res.json(data);
-}
 
-async function getNumberPlateInfo(req, res) {
-  console.log(req.body);
-
-  const licenseNumber = req.body.area + req.body.number;
-
+  const licenseNumber = data.area + '-' + data.number;
   const db = Database.getInstance();
-  const sql = `INSERT INTO "vehicle_log" ("license_number") `
-    + `VALUES ('${licenseNumber})`;
-  await db.query(sql);
-  // console.log('Successfully insert into database');
+  await db.query(`INSERT INTO "vehicle_log" ("license_number") VALUES ('${licenseNumber}')`);
 
-  res.redirect('/admin');
+  res.json(data);
 }
 
 export {
   getAdmin,
   postAdmin,
   postSendImage,
-  getNumberPlateInfo,
 };

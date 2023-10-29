@@ -1,7 +1,7 @@
-import Database from '../src/config/Database.js';
+import DatabaseClass from '../src/config/Database.class.js';
 
 describe('Database', () => {
   it('Should be defined', function() {
-    expect(Database).toBeDefined();
+    expect(DatabaseClass).toBeDefined();
   });
 });
