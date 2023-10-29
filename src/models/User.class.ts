@@ -18,6 +18,10 @@ class User extends Person {
     vehicleList = []
   }) {
     super({ name, mail, password });
+    this._id = id;
+    this._phoneNumber = phoneNumber;
+    this._isStudent = isStudent;
+    vehicleList.forEach(vehicle => this._vehicleList.push(new Vehicle(vehicle)));
   }
 
   async initialize() {
