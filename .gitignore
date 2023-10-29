@@ -130,3 +130,6 @@ dist
 
 # idea files
 .idea
+
+# qodana files
+qodana.yaml
