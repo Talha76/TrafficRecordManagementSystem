@@ -15,7 +15,6 @@ import Vehicle from './Vehicle.class.js';
  * @param {Vehicle[]} vehicleList - List of vehicles of the user
  * @since 1.0.0
  * @version 1.0.0
- * @exports User
  * @see Person
  * @see Vehicle
  * @constructor User({ name = null, mail = null, password = null, id = null, phoneNumber = null, isStudent = false, vehicleList = [] })
