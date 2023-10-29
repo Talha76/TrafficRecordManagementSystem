@@ -6,6 +6,6 @@ indent_style = space
 trim_trailing_whitespace = true
 end_of_line = lf
 
-[*.{html, ejs}]
+[*.{html,ejs}]
 indent_size = 4
 indent_style = tab
