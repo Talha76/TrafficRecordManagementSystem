@@ -1,3 +1,13 @@
+/**
+ * @abstract
+ * @classdesc Abstract class for Person
+ * @param {string} name - Name of the person
+ * @param {string} mail - Mail of the person
+ * @param {string} password - Password of the person
+ * @since 1.0.0
+ * @version 1.0.0
+ * @exports Person
+ */
 abstract class Person {
   protected _name: string;
   protected _mail: string;
