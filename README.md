@@ -141,7 +141,7 @@ await vehicle.setVehicleName('Car');
 | isStudent   |  `boolean`  | `isStudent`      |                                          |
 | vehicleList | `Vehicle[]` | `vehicleList`    |                                          |
 
-#### Costructor
+#### Constructor
 
 ```typescript
 let user = new User({
