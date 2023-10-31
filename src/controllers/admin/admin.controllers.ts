@@ -35,9 +35,9 @@ async function postSendImage(req, res) {
   const response = await axios.post('http://localhost:3001', formData);
   const data = await response.data;
 
-  const licenseNumber = data.area + '-' + data.number;
+  const licenseNumber = data.area + ' ' + data.number;
   const db = Database.getInstance();
-  // await db.query(`INSERT INTO "vehicle_log" ("license_number") VALUES ('${licenseNumber}')`);
+  await db.query(`-- INSERT INTO "vehicle_log" ("license_number") VALUES ('${licenseNumber}')`);
 
   res.json(data);
 }
