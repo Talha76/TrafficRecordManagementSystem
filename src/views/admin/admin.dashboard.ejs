@@ -8,11 +8,10 @@
 <body>
   <h1>Welcome Admin</h1>
 
-  <form action="/admin" method="POST" enctype="multipart/form-data">
-      <label>
-          <input type="email" name="mail" placeholder="mail">
-      </label>
-      <input type="submit" value="Upload Image" name="submit">
+  <form action="/admin/send-image" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="token" value="abc">
+      <input type="file" name="image">
+      <input type="submit" value="Upload">
   </form>
 </body>
 </html>

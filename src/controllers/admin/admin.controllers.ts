@@ -1,5 +1,6 @@
 import Database from "../../config/Database.class.js";
 import User from "../../models/User.class.js";
+import axios from 'axios';
 
 async function getAdmin(req, res) {
   try {
@@ -12,7 +13,7 @@ async function getAdmin(req, res) {
 async function postAdmin(req, res) {
   try {
     const user = new User({ mail: req.body.mail });
-    await user.initialize();
+    await user.fetch();
     console.log(user);
     res.send('hello');
   } catch(err) {
@@ -31,18 +32,12 @@ async function postSendImage(req, res) {
   const blob = new Blob([file.data], { type: file.mimetype });
   formData.append('image', blob, file.name);
 
-  const response = await fetch('http://localhost:3001', {
-    headers: {
-      Accept: 'application/json',
-    },
-    method: 'POST',
-    body: formData
-  });
-  const data = await response.json();
+  const response = await axios.post('http://localhost:3001', formData);
+  const data = await response.data;
 
   const licenseNumber = data.area + '-' + data.number;
   const db = Database.getInstance();
-  await db.query(`INSERT INTO "vehicle_log" ("license_number") VALUES ('${licenseNumber}')`);
+  // await db.query(`INSERT INTO "vehicle_log" ("license_number") VALUES ('${licenseNumber}')`);
 
   res.json(data);
 }
