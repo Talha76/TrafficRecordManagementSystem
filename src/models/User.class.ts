@@ -53,16 +53,16 @@ class User extends Person {
 
   /**
    * @async
-   * @method initialize
-   * @description Initialize the user
+   * @method fetch
+   * @description Fetches the user. Call fetch() after creating an instance of a user to get the details of the user from database.
    * @returns {Promise<void>}
    * @since 1.0.0
    * @version 1.0.0
    * @example
    * const user = new User({ mail: 'example@gmail.com' });
-   * await user.initialize();
+   * await user.fetch();
    */
-  async initialize() {
+  async fetch() {
     try {
       const sql = `SELECT *
                    FROM "users" JOIN "vehicle_info" ON "users"."mail" = "vehicle_info"."user_mail"
@@ -125,8 +125,16 @@ class User extends Person {
    * @param vehicle {Vehicle} - Vehicle to add
    * @description Add a vehicle to the user
    */
-  addVehicle(vehicle: Vehicle): void {
-    this._vehicleList.push(vehicle);
+  async addVehicle(vehicle: Vehicle) {
+    try {
+      const db = Database.getInstance();
+      const sql = `INSERT INTO "vehicle_info" ("license_number", "vehicle_name", "user_mail")
+                   VALUES ('${vehicle.licenseNumber}', '${vehicle.vehicleName}', '${this.mail}')`;
+      await db.query(sql);
+      this._vehicleList.push(vehicle);
+    } catch(err) {
+      throw err;
+    }
   }
 
   /**
@@ -134,8 +142,16 @@ class User extends Person {
    * @param vehicle {Vehicle} - Vehicle to remove
    * @description Remove a vehicle from the user
    */
-  removeVehicle(vehicle: Vehicle): void {
-    this._vehicleList = this._vehicleList.filter(v => v.licenseNumber !== vehicle.licenseNumber);
+  async removeVehicle(vehicle: Vehicle) {
+    try {
+      const db = Database.getInstance();
+      const sql = `DELETE FROM "vehicle_info"
+                   WHERE "license_number" = '${vehicle.licenseNumber}'`;
+      await db.query(sql);
+      this._vehicleList = this._vehicleList.filter(v => v.licenseNumber !== vehicle.licenseNumber);
+    } catch(err) {
+      throw err;
+    }
   }
 
   /**
@@ -144,9 +160,14 @@ class User extends Person {
    * @description Save the user in the database
    */
   async save(){
-    const db = Database.getInstance();
-    const sql = `INSERT INTO "users" VALUES ('${this.id}', ${this.name}', '${this.mail}', '${this.password}', '${this.phoneNumber}', '${this.isStudent}')`;
-    await db.query(sql);
+    try {
+      const db = Database.getInstance();
+      const sql = `INSERT INTO "users"
+                   VALUES ('${this.id}', '${this.name}', '${this.mail}', '${this.password}', '${this.phoneNumber}', ${this.isStudent})`;
+      await db.query(sql);
+    } catch(err) {
+      throw err;
+    }
   }
 
   /**
@@ -156,10 +177,16 @@ class User extends Person {
    * @description Change the password of the user
    */
   async changePassword(password: string) {
-    this._password = password;
-    const db = Database.getInstance();
-    const sql = `UPDATE "users" SET "password" = ${password} WHERE "id" = ${this._id}`;
-    await db.query(sql);
+    try {
+      const db = Database.getInstance();
+      const sql = `UPDATE "users"
+                   SET "password" = ${password}
+                   WHERE "id" = ${this._id}`;
+      await db.query(sql);
+      this._password = password;
+    } catch(err) {
+      throw err;
+    }
   }
 }
 

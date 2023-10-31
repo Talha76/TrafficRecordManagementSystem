@@ -1,3 +1,4 @@
+import Database from "../config/Database.class.js";
 import User from './User.class.js';
 
 /**
@@ -23,9 +24,9 @@ import User from './User.class.js';
 class Vehicle {
   private readonly _licenseNumber: string;
   private readonly _vehicleOwner: User;
-  private readonly _vehicleName: string;
-  private readonly _allowedDuration: number;
-  private readonly _approvalStatus: boolean;
+  private _vehicleName: string;
+  private _allowedDuration: number;
+  private _approvalStatus: boolean;
 
   /**
    * @constructor
@@ -39,8 +40,8 @@ class Vehicle {
     licenseNumber = null,
     vehicleName = null,
     vehicleOwner = null,
-    allowedDuration = null,
-    approvalStatus = null
+    allowedDuration = 20,
+    approvalStatus = false
   }) {
     this._licenseNumber = licenseNumber;
     this._vehicleName = vehicleName;
@@ -67,6 +68,19 @@ class Vehicle {
     return this._vehicleName;
   }
 
+  async setVehicleName(vehicleName: string) {
+    try {
+      const db = Database.getInstance();
+      const sql = `UPDATE "vehicle_info"
+                   SET "vehicle_name" = '${vehicleName}'
+                   WHERE "license_number" = '${this._licenseNumber}'`;
+      await db.query(sql);
+      this._vehicleName = vehicleName;
+    } catch(err) {
+      throw err;
+    }
+  }
+
   /**
    * @method vehicleOwner
    * @description Get the owner of the vehicle
@@ -86,12 +100,46 @@ class Vehicle {
   }
 
   /**
+   * @method setAllowedDuration
+   * @description Set the allowed duration of the vehicle
+   */
+  async setAllowedDuration(allowedDuration: number) {
+    try {
+      const db = Database.getInstance();
+      const sql = `UPDATE "vehicle_info"
+                   SET "allowed_duration" = ${allowedDuration}
+                   WHERE "license_number" = '${this._licenseNumber}'`;
+      await db.query(sql);
+      this._allowedDuration = allowedDuration;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  /**
    * @method approvalStatus
    * @description Get the approval status of the vehicle
    * @returns {boolean}
    */
   get approvalStatus(): boolean {
     return this._approvalStatus;
+  }
+
+  /**
+   * @method setApprovalStatus
+   * @description Set the approval status of the vehicle
+   */
+  async setApprovalStatus(approvalStatus: boolean) {
+    try {
+      const db = Database.getInstance();
+      const sql = `UPDATE "vehicle_info"
+                   SET "approval_status" = ${approvalStatus}
+                   WHERE "license_number" = '${this._licenseNumber}'`;
+      await db.query(sql);
+      this._approvalStatus = approvalStatus;
+    } catch(err) {
+      throw err;
+    }
   }
 }
 
