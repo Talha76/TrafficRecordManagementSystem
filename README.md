@@ -124,6 +124,7 @@ const vehicle = new Vehicle({
 });
 const user = vehicle.vehicleOwner;
 console.log(vehicle.licenseNumber, vehicle.vehicleName);
+await vehicle.setVehicleName('Car');
 ```
 
 ### User
@@ -160,6 +161,7 @@ user = new User({
 await user.fetch();
 console.log(user.name, user.mail, user.password, user.id, user.phoneNumber);
 console.log(user.isStudent, user.vehicleList);
+await user.changePassword('newPassword');
 ```
 
 #### Methods
