@@ -54,8 +54,8 @@ class User extends Person {
   /**
    * @async
    * @method fetch
-   * @description Fetches the user. Call fetch() after creating an instance of a user to get the details of the user from database.
-   * @returns {Promise<void>}
+   * @description Fetches the user. Returns true if a user exists else returns false. Call fetch() after creating an instance of a user to get the details of the user from database.
+   * @returns {Promise<boolean>}
    * @since 1.0.0
    * @version 1.0.0
    * @example
