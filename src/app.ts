@@ -1,10 +1,10 @@
-import express from 'express';
 import bodyParser from 'body-parser';
-import morgan from 'morgan';
 import flash from 'connect-flash';
-import session from 'express-session';
-import passport from 'passport';
+import express from 'express';
 import fileUpload from 'express-fileupload';
+import session from 'express-session';
+import morgan from 'morgan';
+import passport from 'passport';
 
 const app = express();
 
@@ -19,11 +19,11 @@ app.use(session({
   saveUninitialized: false
 }));
 
-app.use(flash());
 
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(flash());
 app.set('view engine', 'ejs');
 app.set('views', './src/views')
 
@@ -31,9 +31,13 @@ app.use(express.static('./src/public'));
 
 app.use(fileUpload());
 
-import indexRoutes from './routes/index.routes.js';
-app.use(indexRoutes);
 import adminRoutes from './routes/admin/admin.routes.js';
+import indexRoutes from './routes/index.routes.js';
+import userAuthRoutes from './routes/user/user.auth.routes.js';
 app.use('/admin', adminRoutes);
+app.use(indexRoutes);
+app.use('/', userAuthRoutes)
+
+
 
 export default app;
