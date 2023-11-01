@@ -62,13 +62,17 @@ class User extends Person {
    * const user = new User({ mail: 'example@gmail.com' });
    * await user.fetch();
    */
-  async fetch() {
+  async fetch(): Promise<boolean> {
     try {
       const sql = `SELECT *
-                   FROM "users" JOIN "vehicle_info" ON "users"."mail" = "vehicle_info"."user_mail"
-                   WHERE "mail" = '${this.mail}'`;
+                   FROM user_vehicle_info
+                   WHERE mail = '${this.mail}'`;
       const db = Database.getInstance();
       const result = await db.query(sql);
+
+      if (result.length === 0) {
+        return false;
+      }
 
       this._id = result[0].id;
       this._name = result[0].name;
@@ -83,6 +87,7 @@ class User extends Person {
         allowedDuration: vehicle.allowed_duration,
         approvalStatus: vehicle.approval_status
       })));
+      return true;
     } catch(err) {
       throw err;
     }

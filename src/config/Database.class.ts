@@ -25,7 +25,7 @@ class Database {
      * @member {Pool} pool - The database pool
      * @private
      */
-  private readonly pool;
+  private pool;
     /**
      * @member {Database} instance - The singleton instance of Database
      * @private
@@ -60,7 +60,7 @@ class Database {
     /**
      * @method query - Executes a query on the database
      * @param sql {string} - The SQL query to execute
-     * @returns {Promise<pg.QueryResultRow[]>} - The result of the query
+     * @returns {Promise<any>} - The result of the query
      * @throws {Error} - Throws an error if the database pool is not initialized
      * @throws {Error} - Throws an error if the database instance is not initialized
      * @since 1.0.0
@@ -83,6 +83,18 @@ class Database {
     } catch(err) {
       throw err;
     }
+  }
+
+  /**
+   * @method end - Ends the database connection
+   * @throws {Error} - Throws an error if the database pool is not initialized
+   */
+  async end() {
+    if (!this.pool)
+      throw new Error('Database pool is not initialized');
+    await this.pool.end();
+    this.pool = undefined;
+    Database.instance = undefined;
   }
 }
 
