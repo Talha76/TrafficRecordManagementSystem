@@ -166,9 +166,9 @@ await user.changePassword('newPassword');
 
 #### Methods
 
-| Name                                    | Return Type | Description                                                            |
-|-----------------------------------------|:-----------:|------------------------------------------------------------------------|
-| `async fetch()`                         |   `void`    | After initializing a user, call `fetch()` to fetch data from database. |
-| `async addVehicle(vehicle: Vehicle)`    |   `void`    | Adds a vehicle to the user's vehicle list.                             |
-| `async removeVehicle(vehicle: Vehicle)` |   `void`    | Removes a vehicle from the user's vehicle list.                        |
-| `async save()`                          |   `void`    | Saves the user's data to the database.                                 |
+| Name                                    |    Return Type     | Description                                                                                                                        |
+|-----------------------------------------|:------------------:|------------------------------------------------------------------------------------------------------------------------------------|
+| `async fetch()`                         | `Promise<boolean>` | After initializing a user, call `fetch()` to fetch data from database. Returns `true` if a user exists. otherwise returns `false`. |
+| `async addVehicle(vehicle: Vehicle)`    |  `Promise<void>`   | Adds a vehicle to the user's vehicle list.                                                                                         |
+| `async removeVehicle(vehicle: Vehicle)` |  `Promise<void>`   | Removes a vehicle from the user's vehicle list.                                                                                    |
+| `async save()`                          |  `Promise<void>`   | Saves the user's data to the database.                                                                                             |
