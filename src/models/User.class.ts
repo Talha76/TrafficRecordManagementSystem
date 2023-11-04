@@ -83,7 +83,7 @@ class User extends Person {
       result.forEach(vehicle => this._vehicleList.push(new Vehicle({
         licenseNumber: vehicle.license_number,
         vehicleName: vehicle.vehicle_name,
-        vehicleOwner: this,
+        userMail: this.mail,
         allowedDuration: vehicle.allowed_duration,
         approvalStatus: vehicle.approval_status
       })));

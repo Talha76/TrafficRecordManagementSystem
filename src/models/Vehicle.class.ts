@@ -5,17 +5,17 @@ import User from './User.class.js';
  * @class Vehicle
  * @description Vehicle class
  * @param {string} licenseNumber - License number of the vehicle
- * @param {User} vehicleOwner - Owner of the vehicle
+ * @param {string} userMail - Vehicle user's mail
  * @param {string} vehicleName - Name of the vehicle
  * @param {number} allowedDuration - Allowed duration of the vehicle
  * @param {boolean} approvalStatus - Approval status of the vehicle
- * @constructor Vehicle({ licenseNumber = null, vehicleOwner = null, vehicleName = null, allowedDuration = null, approvalStatus = null })
+ * @constructor Vehicle({ licenseNumber = null, userMail = null, vehicleName = null, allowedDuration = null, approvalStatus = null })
  * @since 1.0.0
  * @version 1.0.0
  * @example
  * const vehicle = new Vehicle({
  *  licenseNumber: 'AA-123-AA',
- *  vehicleOwner: user,
+ *  userMail: 'example@gmail.com',
  *  vehicleName: 'Renault Clio',
  *  allowedDuration: 2,
  *  approvalStatus: true
@@ -23,7 +23,7 @@ import User from './User.class.js';
  */
 class Vehicle {
   private readonly _licenseNumber: string;
-  private readonly _vehicleOwner: User;
+  private readonly _userMail: string;
   private _vehicleName: string;
   private _allowedDuration: number;
   private _approvalStatus: boolean;
@@ -32,20 +32,20 @@ class Vehicle {
    * @constructor
    * @param licenseNumber
    * @param vehicleName
-   * @param vehicleOwner
+   * @param userMail
    * @param allowedDuration
    * @param approvalStatus
    */
   constructor({
     licenseNumber = null,
     vehicleName = null,
-    vehicleOwner = null,
+    userMail = null,
     allowedDuration = 20,
     approvalStatus = false
   }) {
     this._licenseNumber = licenseNumber;
     this._vehicleName = vehicleName;
-    this._vehicleOwner = vehicleOwner;
+    this._userMail = userMail;
     this._allowedDuration = allowedDuration;
     this._approvalStatus = approvalStatus;
   }
@@ -82,12 +82,12 @@ class Vehicle {
   }
 
   /**
-   * @method vehicleOwner
-   * @description Get the owner of the vehicle
-   * @returns {User}
+   * @method userMail
+   * @description Get the mail of the vehicle user
+   * @returns {string}
    */
-  get vehicleOwner(): User {
-    return this._vehicleOwner;
+  get userMail(): string {
+    return this._userMail;
   }
 
   /**
