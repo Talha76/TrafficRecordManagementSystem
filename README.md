@@ -104,20 +104,20 @@ classDiagram
 
 #### Properties
 
-| Name             |    Type    | Available getter     | Available setter                             |
-|------------------|:----------:|----------------------|----------------------------------------------|
-| licenseNumber    |  `string`  | `licenseNumber`      |                                              |
-| vehicleOwner     |   `User`   | `vehicleOwner`       |                                              |
-| vehicleName      |  `string`  | `vehicleName`        | `async setVehicleName(vehicleName: string)`  |
-| allowedDuration  |  `number`  | `allowedDuration`    | `async setAllowedDuration(duration: number)` |
-| approvalStatus   | `boolean`  | `approvalStatus`     | `async setApprovalStatus(status: boolean)`   |
+| Name            |   Type    | Available getter  | Available setter                             |
+|-----------------|:---------:|-------------------|----------------------------------------------|
+| licenseNumber   | `string`  | `licenseNumber`   |                                              |
+| userMail        | `string`  | `userMail`        |                                              |
+| vehicleName     | `string`  | `vehicleName`     | `async setVehicleName(vehicleName: string)`  |
+| allowedDuration | `number`  | `allowedDuration` | `async setAllowedDuration(duration: number)` |
+| approvalStatus  | `boolean` | `approvalStatus`  | `async setApprovalStatus(status: boolean)`   |
 
 #### Constructor
 
 ```typescript
 const vehicle = new Vehicle({
   licenseNumber: null,      // Initially set to null
-  vehicleOwner: null,       // Initially set to null
+  userMail: null,       // Initially set to null
   vehicleName: null,        // Initially set to null
   allowedDuration: 20,      // Initially set to 20 minutes
   approvalStatus: false,    // Initially set to false
