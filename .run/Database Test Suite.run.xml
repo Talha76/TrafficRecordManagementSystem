@@ -7,7 +7,7 @@
     <jest-options value="--detectOpenHandles" />
     <envs />
     <scope-kind value="SUITE" />
-    <test-file value="$PROJECT_DIR$/tests/database.test.ts" />
+    <test-file value="$PROJECT_DIR$/tests/Database.test.ts" />
     <test-names>
       <test-name value="Database" />
     </test-names>
