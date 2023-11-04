@@ -1,5 +1,4 @@
 import Database from "../config/Database.class.js";
-import User from './User.class.js';
 
 /**
  * @class Vehicle

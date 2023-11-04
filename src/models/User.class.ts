@@ -48,6 +48,7 @@ class User extends Person {
     this._id = id;
     this._phoneNumber = phoneNumber;
     this._isStudent = isStudent;
+    this._vehicleList = [];
     vehicleList.forEach(vehicle => this._vehicleList.push(new Vehicle(vehicle)));
   }
 
