@@ -27,5 +27,5 @@ describe('Database', () => {
     expect(result).toBeDefined();
     expect(result).toHaveLength(1);
     await db.end();
-  })
+  });
 });
