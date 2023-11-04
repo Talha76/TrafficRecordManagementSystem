@@ -122,7 +122,7 @@ const vehicle = new Vehicle({
   allowedDuration: 20,      // Initially set to 20 minutes
   approvalStatus: false,    // Initially set to false
 });
-const user = vehicle.vehicleOwner;
+const userMail = vehicle.userMail;
 console.log(vehicle.licenseNumber, vehicle.vehicleName);
 await vehicle.setVehicleName('Car');
 ```
