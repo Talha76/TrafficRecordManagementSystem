@@ -81,13 +81,17 @@ class User extends Person {
       this._isStudent = result[0].is_student;
       this._phoneNumber = result[0].phone_number;
       this._vehicleList = [];
-      result.forEach(vehicle => this._vehicleList.push(new Vehicle({
-        licenseNumber: vehicle.license_number,
-        vehicleName: vehicle.vehicle_name,
-        userMail: this.mail,
-        allowedDuration: vehicle.allowed_duration,
-        approvalStatus: vehicle.approval_status
-      })));
+      result.forEach(row => {
+        if (row.license_number === null) return;
+        const vehicle = new Vehicle({
+          licenseNumber: row.license_number,
+          vehicleName: row.vehicle_name,
+          userMail: this.mail,
+          allowedDuration: row.allowed_duration,
+          approvalStatus: row.approval_status
+        })
+        this._vehicleList.push(vehicle);
+      });
       return true;
     } catch(err) {
       throw err;
