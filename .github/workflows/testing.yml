@@ -1,0 +1,30 @@
+name: Unit Testing
+
+on:
+  push:
+    branches: [ main, development ]
+  pull_request:
+    branches: [ main, development ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Create .env file
+        run: touch .env && echo "POOL_URI=${{ secrets.POOL_URI }}" >> .env
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4.0.0
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Tests
+        run: npm test

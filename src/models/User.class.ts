@@ -48,6 +48,7 @@ class User extends Person {
     this._id = id;
     this._phoneNumber = phoneNumber;
     this._isStudent = isStudent;
+    this._vehicleList = [];
     vehicleList.forEach(vehicle => this._vehicleList.push(new Vehicle(vehicle)));
   }
 
@@ -80,13 +81,17 @@ class User extends Person {
       this._isStudent = result[0].is_student;
       this._phoneNumber = result[0].phone_number;
       this._vehicleList = [];
-      result.forEach(vehicle => this._vehicleList.push(new Vehicle({
-        licenseNumber: vehicle.license_number,
-        vehicleName: vehicle.vehicle_name,
-        vehicleOwner: this,
-        allowedDuration: vehicle.allowed_duration,
-        approvalStatus: vehicle.approval_status
-      })));
+      result.forEach(row => {
+        if (row.license_number === null) return;
+        const vehicle = new Vehicle({
+          licenseNumber: row.license_number,
+          vehicleName: row.vehicle_name,
+          userMail: this.mail,
+          allowedDuration: row.allowed_duration,
+          approvalStatus: row.approval_status
+        })
+        this._vehicleList.push(vehicle);
+      });
       return true;
     } catch(err) {
       throw err;
@@ -174,6 +179,10 @@ class User extends Person {
       const sql = `INSERT INTO "users"
                    VALUES ('${this.id}', '${this.name}', '${this.mail}', '${this.password}', '${this.phoneNumber}', ${this.isStudent})`;
       await db.query(sql);
+
+      for (const vehicle of this._vehicleList) {
+        await vehicle.save();
+      }
     } catch(err) {
       throw err;
     }

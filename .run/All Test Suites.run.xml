@@ -4,7 +4,7 @@
     <node-interpreter value="$USER_HOME$/.nvm/versions/node/v18.18.0/bin/node" />
     <jest-package value="$PROJECT_DIR$/node_modules/jest" />
     <working-dir value="$PROJECT_DIR$" />
-    <jest-options value="--detectOpenHandles" />
+    <jest-options value="--detectOpenHandles --watchAll" />
     <envs />
     <scope-kind value="ALL" />
     <method v="2" />
