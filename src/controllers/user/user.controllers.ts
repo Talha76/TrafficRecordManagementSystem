@@ -35,7 +35,7 @@ const postUserDashboard = async (req, res) => {
     const {licenseNumber, vehicleName} = req.body;
     let vehicle = new Vehicle({
         licenseNumber: licenseNumber,
-        vehicleOwner: req.user,
+        userMail : req.user.email,
         vehicleName: vehicleName,
         allowedDuration : 20,
         approvalStatus: false,
@@ -70,12 +70,8 @@ const removeVehicle = async (req, res) => {
 
     const vehicle = new Vehicle({
         licenseNumber: licenseNumber,
-        vehicleOwner: user,
-        vehicleName: vehicleName,
-        allowedDuration : 20,
-        approvalStatus: false,
     });
-
+    await vehicle.fetch();
     try {
         user.removeVehicle(vehicle);
         res.redirect('/dashboard');
