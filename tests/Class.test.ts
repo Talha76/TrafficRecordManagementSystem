@@ -5,6 +5,8 @@ import Vehicle from "../src/models/Vehicle.class";
 import VehicleLog from "../src/models/VehicleLog.class";
 import Allegation from "../src/models/Allegation.class";
 
+afterAll(async () => Database.getInstance().end());
+
 describe ('User Class', () => {
   it ('Should be a valid instance', () => {
     const user = new User({});
@@ -31,8 +33,6 @@ describe ('User Class', () => {
       expect(user.vehicleList).toHaveLength(0);
     } catch (err) {
       console.error(err);
-    } finally {
-      await Database.getInstance().end();
     }
   });
 });
@@ -66,8 +66,6 @@ describe('Vehicle Class', () => {
       expect(vehicle.allegationList).toHaveLength(0);
     } catch (err) {
       console.error(err);
-    } finally {
-      await Database.getInstance().end();
     }
   });
 });
