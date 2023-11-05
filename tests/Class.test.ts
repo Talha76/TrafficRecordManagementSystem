@@ -2,7 +2,7 @@ import { describe, it, expect } from "@jest/globals";
 import User from "../src/models/User.class";
 import exp = require("constants");
 
-describe('User class tests.', () => {
+describe('User Class', () => {
   const user = new User({});
   it('Should be a valid instance', () => {
     expect(user).toBeDefined();
