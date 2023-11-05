@@ -175,6 +175,10 @@ class User extends Person {
       const sql = `INSERT INTO "users"
                    VALUES ('${this.id}', '${this.name}', '${this.mail}', '${this.password}', '${this.phoneNumber}', ${this.isStudent})`;
       await db.query(sql);
+
+      for (const vehicle of this._vehicleList) {
+        await vehicle.save();
+      }
     } catch(err) {
       throw err;
     }

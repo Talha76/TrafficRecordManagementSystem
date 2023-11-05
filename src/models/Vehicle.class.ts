@@ -205,6 +205,25 @@ class Vehicle {
       throw err;
     }
   }
+
+  async save() {
+    try {
+      const db = Database.getInstance();
+      const sql = `INSERT INTO "vehicle_info"
+                   VALUES ('${this._licenseNumber}', '${this._vehicleName}', '${this._userMail}', ${this._allowedDuration}, ${this._approvalStatus})`;
+      await db.query(sql);
+
+      for (const log of this._logs) {
+        await log.save();
+      }
+
+      for (const allegation of this._allegationList) {
+        await allegation.save();
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export default Vehicle;

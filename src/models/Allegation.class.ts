@@ -92,6 +92,17 @@ class Allegation {
       throw err;
     }
   }
+
+  async save() {
+    try {
+      const db = Database.getInstance();
+      const sql = `INSERT INTO "vehicle_allegation_record"
+                   VALUES (DEFAULT, '${this._licenseNumber}', ${this._lateDuration}, '${this._date}', '${this._comment}')`;
+      await db.query(sql);
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export default Allegation;

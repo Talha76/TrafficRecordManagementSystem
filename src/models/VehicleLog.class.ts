@@ -115,6 +115,17 @@ class Log {
       throw err;
     }
   }
+
+  async save() {
+    try {
+      const db = Database.getInstance();
+      const sql = `INSERT INTO "vehicle_log"
+                   VALUES (DEFAULT, '${this._licenseNumber}', '${this._entryTime}', '${this._exitTime}', '${this._comment}')`;
+      await db.query(sql);
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export default Log;
