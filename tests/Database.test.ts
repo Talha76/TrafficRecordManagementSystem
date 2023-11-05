@@ -13,5 +13,6 @@ describe('Database', () => {
     const result = await db.query(sql);
     expect(result).toBeDefined();
     expect(result).toHaveLength(1);
+    await db.end();
   });
 });
