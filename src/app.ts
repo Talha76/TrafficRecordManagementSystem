@@ -34,9 +34,11 @@ app.use(fileUpload());
 import adminRoutes from './routes/admin/admin.routes.js';
 import indexRoutes from './routes/index.routes.js';
 import userAuthRoutes from './routes/user/user.auth.routes.js';
+import userRoutes from './routes/user/user.routes.js';
 app.use('/admin', adminRoutes);
 app.use(indexRoutes);
-app.use('/', userAuthRoutes)
+app.use('/', userAuthRoutes);
+app.use('/', userRoutes);
 
 
 

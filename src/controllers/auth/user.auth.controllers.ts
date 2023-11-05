@@ -1,14 +1,10 @@
 import passport from "../../config/auth/oauth.passport.js";
-const emailVerificationMiddleware  = async (req, res, next) => {
-    console.log(req.user);
-    next();
-};
 
 // These two are to be variables for the respected routes
 const getScope = passport.authenticate('google', { scope: ['email', 'profile'] });
 
 const getCallback =  passport.authenticate('google', {
-            successRedirect: '/protected',
+            successRedirect: '/dashboard',
             failureRedirect: 'auth/google/failure',
             successFlash: true,
             failureFlash: true
@@ -18,10 +14,6 @@ const getLogin = (req, res) => {
     res.send('<a href="/auth/google">Login with Google</a>');
 };
 
-const getProtected = (req, res) => {
-    const email = req.user.email;
-    res.send(`protected ${email} "\n "<a href="/logout">Logout</a>`);
-};
 
 const postLogin = (req, res) => {
     res.send('login');
@@ -52,7 +44,5 @@ export default {
     getScope,
     getCallback,
     getLogout,
-    getProtected,
     getFailure,
-    emailVerificationMiddleware
 }

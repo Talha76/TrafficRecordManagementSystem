@@ -1,10 +1,8 @@
 import { Router } from 'express';
-import {
-  getIndex,
-} from '../controllers/index.controllers.js';
+import indexControllers from '../controllers/index.controllers.js';
 
 const route = Router();
 
-route.get('/', getIndex);
+route.get('/', indexControllers.getIndex);
 
 export default route;

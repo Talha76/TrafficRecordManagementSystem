@@ -1,0 +1,78 @@
+<!-- FILEPATH: /c:/STUDY/SEM 3 - 1/DP/TrafficRecordManagementSystem/src/views/user/user.dashboard.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- Form to register a vehicle -->
+    <h1>Welcome <%= user.name %></h1>
+    <div>
+        <p> Student Id : <%= user.id %></p>
+        <p> mail : <%= user.mail %></p>
+        <p> phoneNumber : <%= user.phoneNumber %></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Vehicle Name</th>
+                    <th>License Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let i = 0; i < user.vehicleList.length; i++) { %>
+                    <tr>
+                      <td><%= user.vehicleList[i].vehicleName %></td>
+                      <td><%= user.vehicleList[i].licenseNumber %></td>
+                      <td>
+                        <a href="/dashboard/removeVehicle?vehicleName=<%= user.vehicleList[i].vehicleName %>&licenseNumber=<%= user.vehicleList[i].licenseNumber %>">
+                          Remove vehicle
+                        </a>
+                      </td>
+                    </tr>
+                  <% } %>
+                  
+            </tbody>
+        </table>
+    </div>
+    <br>
+        <form action="/dashboard" method="POST" enctype="multipart/form-data">
+            <label for="license-number">License Number:</label>
+            <input type="text" id="license-number" name="licenseNumber" required>
+        
+            <label for="vehicle-name">vehicle Name:</label>
+            <input type="text" id="vehicle-name" name="vehicleName" required>
+        
+            <label for="vehicle-image">vehicle Image:</label>
+            <input type="file" id="vehicle-image" name="vehicleImage">
+        
+            <button type="submit">Register vehicle</button>
+        </form>
+        
+        
+        <!-- Table to view the logs of the user's vehicles -->
+        <form action="/view-vehicle-logs" method="POST">
+            <label for="date-filter">Filter by Date:</label>
+            <input type="date" id="date-filter" name="dateFilter">
+        
+            <button type="submit">Filter</button>
+        </form>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>License Number</th>
+                    <th>vehicle Name</th>
+                    <th>Entry Time</th>
+                    <th>Exit Time</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <!-- button diye korle hoyna keno? -->
+    <a href="/logout">User Logout</a> 
+    </body>
+</html>

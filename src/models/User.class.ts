@@ -137,8 +137,11 @@ class User extends Person {
                    VALUES ('${vehicle.licenseNumber}', '${vehicle.vehicleName}', '${this.mail}')`;
       await db.query(sql);
       this._vehicleList.push(vehicle);
+      
+      console.log("Vehicle added");
+      
     } catch(err) {
-      throw err;
+      throw "ERROR" + err;
     }
   }
 
@@ -153,6 +156,7 @@ class User extends Person {
       const sql = `DELETE FROM "vehicle_info"
                    WHERE "license_number" = '${vehicle.licenseNumber}'`;
       await db.query(sql);
+      console.log("Vehicle removed");
       this._vehicleList = this._vehicleList.filter(v => v.licenseNumber !== vehicle.licenseNumber);
     } catch(err) {
       throw err;

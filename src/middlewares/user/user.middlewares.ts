@@ -2,7 +2,7 @@ import '../../config/auth/oauth.passport.js';
 import User from '../../models/User.class.js';
 const emailVerificationMiddleware  = async (req, res, next) => {
     const _email = req.user.email;
-    console.log(_email);
+    console.log("fetching by mail = " + _email);
     let user = new User({
         mail : _email
     });

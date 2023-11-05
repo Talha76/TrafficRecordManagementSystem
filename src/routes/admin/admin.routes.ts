@@ -5,10 +5,10 @@ import {
 } from '../../controllers/admin/admin.controllers.js';
 import { Router } from 'express';
 
-const router = Router();
+const route = Router();
 
-router.get('/', getAdmin);
-router.post('/', postAdmin);
-router.post('/send-image', postSendImage);
+route.get('/', getAdmin);
+route.post('/', postAdmin);
+route.post('/send-image', postSendImage);
 
-export default router;
+export default route;
