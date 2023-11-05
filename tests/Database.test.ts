@@ -1,6 +1,8 @@
 import Database from '../src/config/Database.class';
 import { describe, it, expect } from '@jest/globals';
 
+afterAll(async () => Database.getInstance().end());
+
 describe('Database', () => {
   const db = Database.getInstance();
   it('Should be valid instance', () => {
