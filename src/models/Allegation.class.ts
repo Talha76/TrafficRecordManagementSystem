@@ -26,6 +26,7 @@ class Allegation {
     this._licenseNumber = licenseNumber;
     this._lateDuration = lateDuration;
     this._date = date;
+    this._comment = comment;
   }
 
   /**
