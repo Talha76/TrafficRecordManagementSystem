@@ -1,7 +1,7 @@
-function getIndex(req, res) {
-  res.redirect('/admin');
+const getIndex = (req, res) => {
+    res.send('INDEX = <a href="/auth/google">Login with Google</a>');
 }
 
-export {
-  getIndex,
-};
+export default {
+    getIndex
+}
