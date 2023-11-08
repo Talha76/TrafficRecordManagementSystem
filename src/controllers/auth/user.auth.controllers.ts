@@ -33,7 +33,7 @@ const getFailure = (req, res) => {
         if (err) {
             console.error(err);
         }
-        res.send('USER NOT FOUND!!! Go to dashboard and try again <a href="/">dashboard</a>');
+        res.send('USER NOT FOUND!!! Go to dashboard and try again <a href="/logout">dashboard</a>');
     })
     // res.send('failure <a href="/logout">Logout</a>');
 };
