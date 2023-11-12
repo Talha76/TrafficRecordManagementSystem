@@ -1,6 +1,7 @@
 import passport from 'passport';
 import {Strategy as GoogleStrategy} from 'passport-google-oauth2';
 import dotenv from 'dotenv';
+import * as UserServices from "../services/User.services.js";
 dotenv.config();
 
 const googleStrategy = new GoogleStrategy({
@@ -14,14 +15,15 @@ const googleStrategy = new GoogleStrategy({
   }
 );
 
-passport.use(googleStrategy);
+passport.use('google', googleStrategy);
 
-passport.serializeUser((user, done) => {
+passport.serializeUser(async (user, done) => {
   done(null, user);
 });
 
-passport.deserializeUser((user, done) => {
-  done(null, user);
+passport.deserializeUser(async (user, done) => {
+  const newUser = await UserServices.findUserByEmail(user.email);
+  done(null, newUser);
 });
 
 export default passport;

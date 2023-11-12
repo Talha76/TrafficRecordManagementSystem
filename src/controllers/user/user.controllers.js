@@ -1,33 +1,31 @@
-import User from "../../services/User.class.js";
-import Vehicle from "../../services/Vehicle.class.js";
+import * as User from "../../services/User.services.js";
+import * as Vehicle from "../../services/Vehicle.services.js";
 
 const getUserDashboard = async (req, res) => {
   let _mail = req.user.email;
-  let user = new User({
-    mail: _mail
-  });
-  await user.fetch();
-
-  res.render('user/user.dashboard.ejs', {"user": user});
+  try {
+    const user = await User.findUserByEmail(_mail);
+    const vehicles = await User.getVehicleList({userMail: _mail});
+    console.log(vehicles);
+    res.render('user/user.dashboard.ejs', {
+      "user": user,
+      "vehicles": vehicles
+    });
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 const addVehicle = async (req, res) => {
   const {licenseNumber, vehicleName} = req.body;
-  let vehicle = new Vehicle({
-    licenseNumber: licenseNumber,
-    userMail: req.user.email,
-    vehicleName: vehicleName,
-    allowedDuration: 20,
-    approvalStatus: false,
-  });
-
   const _mail = req.user.email;
-  const user = new User({
-    mail: _mail
-  });
-  await user.fetch();
+  console.trace(req.user);
   try {
-    user.addVehicle(vehicle);
+    await User.addVehicle({
+      userMail: _mail,
+      licenseNumber: licenseNumber,
+      vehicleName: vehicleName
+    });
     res.redirect('/dashboard');
   } catch (err) {
     console.error(err);
@@ -35,25 +33,15 @@ const addVehicle = async (req, res) => {
 }
 
 const removeVehicle = async (req, res) => {
-  const {vehicleName, licenseNumber} = req.query;
+  const {licenseNumber} = req.query;
 
-  console.log('Removing vehicle with Name:', vehicleName, 'and License Number:', licenseNumber);
+  console.log('Removing vehicle with License Number:', licenseNumber);
 
-  const _mail = req.user.email;
-  const user = new User({
-    mail: _mail
-  });
-  await user.fetch();
-
-  const vehicle = new Vehicle({
-    licenseNumber: licenseNumber,
-  });
-  await vehicle.fetch();
   try {
-    user.removeVehicle(vehicle);
+    await Vehicle.removeVehicle(licenseNumber);
     res.redirect('/dashboard');
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 

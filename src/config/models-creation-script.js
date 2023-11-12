@@ -7,8 +7,8 @@ import VehicleLog from "../models/VehicleLog.model.js";
 import VehicleAllegation from "../models/VehicleAllegation.model.js";
 
 // await User.sync({force: true});
-await Admin.sync({force: true});
-await Vehicle.sync({force: true});
+// await Admin.sync({force: true});
+// await Vehicle.sync({force: true});
 // await VehicleLog.sync({force: true});
-// await VehicleAllegation.sync({force: true});
-await sequelize.sync({force: true});
+// await VehicleAllegation.sync({alter: true});
+// await sequelize.sync({force: true});

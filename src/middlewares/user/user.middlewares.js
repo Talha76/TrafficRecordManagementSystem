@@ -1,14 +1,12 @@
 import '../../config/oauth.passport.js';
-import User from '../../services/User.class.js';
+import * as User from '../../services/User.services.js';
 
 const emailVerificationMiddleware = async (req, res, next) => {
   const _email = req.user.email;
+  console.trace(req.user);
   console.log("fetching by mail = " + _email);
-  let user = new User({
-    mail: _email
-  });
-  const isUserAvailable = await user.fetch();
-  if (isUserAvailable) next();
+  const user = await User.findUserByEmail(_email);
+  if (user) next();
   else res.redirect('/auth/google/failure');
 }
 
