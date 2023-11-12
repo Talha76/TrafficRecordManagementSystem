@@ -20,7 +20,7 @@ const Vehicle = sequelize.define('Vehicle', {
     },
     references: {
       model: User,
-      key: 'mail'
+      key: 'email'
     },
   },
   defaultDuration: {

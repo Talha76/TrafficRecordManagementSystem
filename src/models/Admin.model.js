@@ -2,7 +2,7 @@ import {DataTypes} from "sequelize";
 import sequelize from "../config/sequelize.config.js";
 
 const Admin = sequelize.define('Admin', {
-  mail: {
+  email: {
     type: DataTypes.STRING,
     allowNull: false,
     primaryKey: true,
