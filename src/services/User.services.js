@@ -50,12 +50,22 @@ export async function addVehicle({userId=undefined, userMail=undefined, licenseN
     throw new Error('Error: Either ID or email must be provided for user update');
   }
 
+  let user;
+  if (userId) {
+    user = await User.findByPk(userId);
+  } else if (userMail) {
+    user = await User.findOne({ where: { email: userMail } });
+  }
+  if (!user) {
+    throw new Error('Error: User not found');
+  }
+
   return (await Vehicle.create({
     licenseNumber: licenseNumber,
     defaultDuration: defaultDuration,
     approvalStatus: approvalStatus,
     vehicleName: vehicleName,
-    userMail: userMail
+    userMail: user.email
   })).dataValues;
 }
 
