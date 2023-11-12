@@ -1,4 +1,4 @@
-import Database from '../src/config/Database.class';
+import Database from '../config/Database.class.js';
 import { describe, it, expect } from '@jest/globals';
 
 afterAll(async () => Database.getInstance().end());
