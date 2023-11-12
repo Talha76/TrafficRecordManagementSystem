@@ -222,3 +222,21 @@ const vehicleList = await UserService.getVehicleList({
   userMail: 'example@mail.xyz'
 });
 ```
+
+### Admin Services
+
+| Method                      | Return Type | Description              |
+|-----------------------------|:-----------:|--------------------------|
+| `async findAdminByEmail()`  |   `Admin`   | Finds an admin by email. |
+
+#### Usage
+
+```javascript
+// You can import whole namespace as follows:
+import * as AdminService from './services/AdminService';
+
+// Or you can import necessary methods as follows:
+// import { findAdminByEmail } from './services/AdminService';
+
+const admin = await AdminService.findAdminByEmail('example@mail.xyz');
+```
