@@ -31,12 +31,6 @@ const User = sequelize.define('User', {
         msg: "Invalid phone number"
       }
     }
-  },
-  isStudent: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-    field: "is_student",
   }
 }, {
   tableName: 'users',

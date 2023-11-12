@@ -1,17 +1,9 @@
 import { describe, it, expect } from "@jest/globals";
-<<<<<<< HEAD:src/tests/Class.test.ts
 import User from "../services/User.class.js";
 import Database from "../services/Database.class.js";
 import Vehicle from "../services/Vehicle.class.js";
 import VehicleLog from "../services/VehicleLog.class.js";
 import Allegation from "../services/Allegation.class.js";
-=======
-import User from "../models/User.class.js";
-import Database from "../config/Database.class.js";
-import Vehicle from "../models/Vehicle.class.js";
-import VehicleLog from "../models/VehicleLog.class.js";
-import Allegation from "../models/Allegation.class.js";
->>>>>>> development:src/tests/Class.test.js
 
 afterAll(async () => Database.getInstance().end());
 

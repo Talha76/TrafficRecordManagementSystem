@@ -14,10 +14,6 @@ const Admin = sequelize.define('Admin', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   designation: {
     type: DataTypes.STRING,
     allowNull: false,
