@@ -1,4 +1,4 @@
-import Database from "../config/Database.class.js";
+import Database from "./Database.class.js";
 
 class Allegation {
   private readonly _id: number;
@@ -16,12 +16,12 @@ class Allegation {
    * @param comment
    */
   constructor({
-    id = null,
-    licenseNumber = null,
-    lateDuration = null,
-    date = null,
-    comment = null
-  }) {
+                id = null,
+                licenseNumber = null,
+                lateDuration = null,
+                date = null,
+                comment = null
+              }) {
     this._id = id;
     this._licenseNumber = licenseNumber;
     this._lateDuration = lateDuration;
@@ -97,7 +97,8 @@ class Allegation {
     try {
       const db = Database.getInstance();
       const sql = `INSERT INTO "vehicle_allegation_record"
-                   VALUES (DEFAULT, '${this._licenseNumber}', ${this._lateDuration}, '${this._date}', '${this._comment}')`;
+                   VALUES (DEFAULT, '${this._licenseNumber}', ${this._lateDuration}, '${this._date}', '${this._comment}
+                           ')`;
       await db.query(sql);
     } catch (err) {
       throw err;

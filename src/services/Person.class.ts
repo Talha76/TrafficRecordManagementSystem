@@ -13,7 +13,7 @@ abstract class Person {
   protected _mail: string;
   protected _password: string;
 
-  protected constructor({ name = null, mail = null, password = null }) {
+  protected constructor({name = null, mail = null, password = null}) {
     this._name = name;
     this._mail = mail;
     this._password = password;

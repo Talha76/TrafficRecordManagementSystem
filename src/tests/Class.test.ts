@@ -1,9 +1,9 @@
 import { describe, it, expect } from "@jest/globals";
-import User from "../src/models/User.class";
-import Database from "../src/config/Database.class";
-import Vehicle from "../src/models/Vehicle.class";
-import VehicleLog from "../src/models/VehicleLog.class";
-import Allegation from "../src/models/Allegation.class";
+import User from "../services/User.class.js";
+import Database from "../services/Database.class.js";
+import Vehicle from "../services/Vehicle.class.js";
+import VehicleLog from "../services/VehicleLog.class.js";
+import Allegation from "../services/Allegation.class.js";
 
 afterAll(async () => Database.getInstance().end());
 

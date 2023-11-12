@@ -1,4 +1,4 @@
-import Database from "../config/Database.class.js";
+import Database from "./Database.class.js";
 
 /**
  * @class Log
@@ -25,12 +25,12 @@ class Log {
    * @param comment
    */
   constructor({
-    id = null,
-    licenseNumber = null,
-    entryTime = null,
-    exitTime = null,
-    comment = null
-  }) {
+                id = null,
+                licenseNumber = null,
+                entryTime = null,
+                exitTime = null,
+                comment = null
+              }) {
     this._id = id;
     this._licenseNumber = licenseNumber;
     this._entryTime = entryTime;
@@ -65,7 +65,7 @@ class Log {
       this._exitTime = result[0].exit_time;
       this._comment = result[0].comment;
       return true;
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -98,7 +98,7 @@ class Log {
                    WHERE "id" = ${this._id}`;
       await db.query(sql);
       this._exitTime = exitTime;
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -111,7 +111,7 @@ class Log {
                    WHERE "id" = ${this._id}`;
       await db.query(sql);
       this._comment = comment;
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -120,7 +120,8 @@ class Log {
     try {
       const db = Database.getInstance();
       const sql = `INSERT INTO "vehicle_log"
-                   VALUES (DEFAULT, '${this._licenseNumber}', '${this._entryTime}', '${this._exitTime}', '${this._comment}')`;
+                   VALUES (DEFAULT, '${this._licenseNumber}', '${this._entryTime}', '${this._exitTime}',
+                           '${this._comment}')`;
       await db.query(sql);
     } catch (err) {
       throw err;

@@ -1,6 +1,7 @@
-import { Router } from 'express';
+import {Router} from 'express';
 import userControllers from '../../controllers/user/user.controllers.js';
 import userMiddlewares from '../../middlewares/user/user.middlewares.js';
+
 const router = Router();
 
 router.get('/dashboard', userMiddlewares.isloggedIn, userMiddlewares.emailVerificationMiddleware, userControllers.getUserDashboard);

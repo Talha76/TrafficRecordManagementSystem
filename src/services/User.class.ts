@@ -1,4 +1,4 @@
-import Database from '../config/Database.class.js';
+import Database from './Database.class.js';
 import Person from './Person.class.js';
 import Vehicle from './Vehicle.class.js';
 
@@ -36,15 +36,15 @@ class User extends Person {
    * @param vehicleList
    */
   constructor({
-    name = null,
-    mail = null,
-    password = null,
-    id = null,
-    phoneNumber = null,
-    isStudent = false,
-    vehicleList = []
-  }) {
-    super({ name, mail, password });
+                name = null,
+                mail = null,
+                password = null,
+                id = null,
+                phoneNumber = null,
+                isStudent = false,
+                vehicleList = []
+              }) {
+    super({name, mail, password});
     this._id = id;
     this._phoneNumber = phoneNumber;
     this._isStudent = isStudent;
@@ -93,7 +93,7 @@ class User extends Person {
         this._vehicleList.push(vehicle);
       });
       return true;
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -142,10 +142,10 @@ class User extends Person {
                    VALUES ('${vehicle.licenseNumber}', '${vehicle.vehicleName}', '${this.mail}')`;
       await db.query(sql);
       this._vehicleList.push(vehicle);
-      
+
       console.log("Vehicle added");
-      
-    } catch(err) {
+
+    } catch (err) {
       throw "ERROR" + err;
     }
   }
@@ -158,12 +158,13 @@ class User extends Person {
   async removeVehicle(vehicle: Vehicle) {
     try {
       const db = Database.getInstance();
-      const sql = `DELETE FROM "vehicle_info"
+      const sql = `DELETE
+                   FROM "vehicle_info"
                    WHERE "license_number" = '${vehicle.licenseNumber}'`;
       await db.query(sql);
       console.log("Vehicle removed");
       this._vehicleList = this._vehicleList.filter(v => v.licenseNumber !== vehicle.licenseNumber);
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -173,17 +174,18 @@ class User extends Person {
    * @method save
    * @description Save the user in the database
    */
-  async save(){
+  async save() {
     try {
       const db = Database.getInstance();
       const sql = `INSERT INTO "users"
-                   VALUES ('${this.id}', '${this.name}', '${this.mail}', '${this.password}', '${this.phoneNumber}', ${this.isStudent})`;
+                   VALUES ('${this.id}', '${this.name}', '${this.mail}', '${this.password}', '${this.phoneNumber}',
+                           ${this.isStudent})`;
       await db.query(sql);
 
       for (const vehicle of this._vehicleList) {
         await vehicle.save();
       }
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -202,7 +204,7 @@ class User extends Person {
                    WHERE "id" = ${this._id}`;
       await db.query(sql);
       this._password = password;
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }

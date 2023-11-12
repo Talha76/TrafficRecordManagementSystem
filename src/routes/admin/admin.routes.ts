@@ -3,7 +3,7 @@ import {
   postAdmin,
   postSendImage,
 } from '../../controllers/admin/admin.controllers.js';
-import { Router } from 'express';
+import {Router} from 'express';
 
 const route = Router();
 

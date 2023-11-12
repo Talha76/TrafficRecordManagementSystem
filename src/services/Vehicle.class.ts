@@ -1,4 +1,4 @@
-import Database from "../config/Database.class.js";
+import Database from "./Database.class.js";
 import VehicleLog from "./VehicleLog.class.js";
 import Allegation from "./Allegation.class.js";
 
@@ -42,14 +42,14 @@ class Vehicle {
    * @param allegationList
    */
   constructor({
-    licenseNumber = null,
-    vehicleName = null,
-    userMail = null,
-    allowedDuration = 20,
-    approvalStatus = false,
-    logs = [],
-    allegationList = []
-  }) {
+                licenseNumber = null,
+                vehicleName = null,
+                userMail = null,
+                allowedDuration = 20,
+                approvalStatus = false,
+                logs = [],
+                allegationList = []
+              }) {
     this._licenseNumber = licenseNumber;
     this._vehicleName = vehicleName;
     this._userMail = userMail;
@@ -70,7 +70,7 @@ class Vehicle {
    * const vehicle = new Vehicle({ licenseNumber: 'example' });
    * await vehicle.fetch();
    */
-  async fetch():Promise<boolean> {
+  async fetch(): Promise<boolean> {
     try {
       const db = Database.getInstance();
       const sql = `SELECT *
@@ -110,7 +110,7 @@ class Vehicle {
         this._allegationList.push(allegation);
       });
       return true;
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -151,7 +151,7 @@ class Vehicle {
                    WHERE "license_number" = '${this._licenseNumber}'`;
       await db.query(sql);
       this._vehicleName = vehicleName;
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -177,7 +177,7 @@ class Vehicle {
                    WHERE "license_number" = '${this._licenseNumber}'`;
       await db.query(sql);
       this._approvalStatus = approvalStatus;
-    } catch(err) {
+    } catch (err) {
       throw err;
     }
   }
@@ -198,7 +198,8 @@ class Vehicle {
     try {
       const db = Database.getInstance();
       const sql = `INSERT INTO "vehicle_allegation_record"
-                   VALUES (DEFAULT, '${allegation.licenseNumber}', ${allegation.lateDuration}, '${allegation.date}', '${allegation.comment}')`;
+                   VALUES (DEFAULT, '${allegation.licenseNumber}', ${allegation.lateDuration}, '${allegation.date}',
+                           '${allegation.comment}')`;
       await db.query(sql);
       this._allegationList.push(allegation);
     } catch (err) {
@@ -210,7 +211,8 @@ class Vehicle {
     try {
       const db = Database.getInstance();
       const sql = `INSERT INTO "vehicle_info"
-                   VALUES ('${this._licenseNumber}', '${this._vehicleName}', '${this._userMail}', ${this._allowedDuration}, ${this._approvalStatus})`;
+                   VALUES ('${this._licenseNumber}', '${this._vehicleName}', '${this._userMail}',
+                           ${this._allowedDuration}, ${this._approvalStatus})`;
       await db.query(sql);
 
       for (const log of this._logs) {
