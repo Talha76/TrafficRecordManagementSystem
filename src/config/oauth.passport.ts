@@ -1,7 +1,7 @@
 import passport from 'passport';
 import {Strategy as GoogleStrategy} from 'passport-google-oauth2';
-
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 const googleStrategy = new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID as string,
