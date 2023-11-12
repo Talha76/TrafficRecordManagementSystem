@@ -1,5 +1,5 @@
 import {Sequelize} from "sequelize";
-
-require('dotenv').config()
+import dotenv from "dotenv";
+dotenv.config();
 
 export default new Sequelize(process.env.POOL_URI);
