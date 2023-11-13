@@ -1,65 +1,53 @@
-import User from "../../models/User.class.js";
-import Vehicle from "../../models/Vehicle.class.js";
+import * as User from "../../services/User.services.js";
+import * as Vehicle from "../../services/Vehicle.services.js";
 
 const getUserDashboard = async (req, res) => {
-    let _mail = req.user.email;
-    let user = new User({
-        mail : _mail
+  let _mail = req.user.email;
+  try {
+    const user = await User.findUserByEmail(_mail);
+    const vehicles = await Vehicle.getVehicleList({userMail: _mail});
+    res.render('user/user.dashboard.ejs', {
+      "user": user,
+      "vehicles": vehicles
     });
-    await user.fetch();
-
-    res.render('user/user.dashboard.ejs', {"user" : user});
-}   
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 const addVehicle = async (req, res) => {
-    const {licenseNumber, vehicleName} = req.body;
-    let vehicle = new Vehicle({
-        licenseNumber: licenseNumber,
-        userMail : req.user.email,
-        vehicleName: vehicleName,
-        allowedDuration : 20,
-        approvalStatus: false,
+  const {licenseNumber, vehicleName} = req.body;
+  const _mail = req.user.email;
+  console.trace(req.user);
+  try {
+    await Vehicle.addVehicle({
+      userMail: _mail,
+      licenseNumber: licenseNumber,
+      vehicleName: vehicleName
     });
-
-    const _mail = req.user.email;
-    const user = new User({
-        mail : _mail
-    });
-    await user.fetch();
-    try {
-        user.addVehicle(vehicle);
-        res.redirect('/dashboard');
-    } catch(err) {
-        console.log(err);
-    }       
+    res.redirect('/dashboard');
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 const removeVehicle = async (req, res) => {
-    const { vehicleName, licenseNumber } = req.query;
+  const {licenseNumber} = req.query;
 
-    console.log('Removing vehicle with Name:', vehicleName, 'and License Number:', licenseNumber);
+  console.log('Removing vehicle with License Number:', licenseNumber);
 
-    const _mail = req.user.email;
-    const user = new User({
-        mail : _mail
-    });
-    await user.fetch();
+  try {
+    await Vehicle.removeVehicle(licenseNumber);
+    res.redirect('/dashboard');
+  } catch (err) {
+    console.error(err);
+  }
 
-    const vehicle = new Vehicle({
-        licenseNumber: licenseNumber,
-    });
-    await vehicle.fetch();
-    try {
-        user.removeVehicle(vehicle);
-        res.redirect('/dashboard');
-    } catch(err) {
-        console.log(err);
-    }
 };
 
 
 export default {
-    getUserDashboard,
-    addVehicle,
-    removeVehicle
+  getUserDashboard,
+  addVehicle,
+  removeVehicle
 }
