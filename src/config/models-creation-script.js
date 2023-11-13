@@ -6,9 +6,9 @@ import Vehicle from "../models/Vehicle.model.js";
 import VehicleLog from "../models/VehicleLog.model.js";
 import VehicleAllegation from "../models/VehicleAllegation.model.js";
 
-// await User.sync({force: true});
-// await Admin.sync({force: true});
-// await Vehicle.sync({force: true});
-// await VehicleLog.sync({force: true});
+// await User.sync({alter: true});
+// await Admin.sync({alter: true});
+// await Vehicle.sync({alter: true});
+// await VehicleLog.sync({alter: true});
 // await VehicleAllegation.sync({alter: true});
-// await sequelize.sync({force: true});
+// await sequelize.sync({alter: true});

@@ -1,8 +1,11 @@
 import User from "../models/User.model.js";
-import Vehicle from "../models/Vehicle.model.js";
 
-export async function findUserById(userId) {
-  const user = await User.findByPk(userId);
+export async function findUserById(id) {
+  if (id === undefined || !id) {
+    throw new Error('Error: ID must be provided for user lookup');
+  }
+
+  const user = await User.findByPk(id);
   if (user) {
     return user.dataValues;
   }
@@ -10,7 +13,11 @@ export async function findUserById(userId) {
 }
 
 export async function findUserByEmail(email) {
-  const user = await User.findOne({ where: { email: email } });
+  if (email === undefined || !email) {
+    throw new Error('Error: Email must be provided for user lookup');
+  }
+
+  const user = await User.findOne({where: {email: email}});
   if (user) {
     return user.dataValues;
   }
@@ -18,6 +25,11 @@ export async function findUserByEmail(email) {
 }
 
 export async function createUser(id, name, email, phoneNumber) {
+  if (id === undefined || name === undefined || email === undefined || phoneNumber === undefined
+    || !id || !name || !email || !phoneNumber) {
+    throw new Error('Error: ID, name, email and phone number must be provided for user creation');
+  }
+
   return (await User.create({
     id: id,
     name: name,
@@ -26,64 +38,27 @@ export async function createUser(id, name, email, phoneNumber) {
   })).dataValues;
 }
 
-export async function updateUser({id=undefined, name=undefined, email=undefined, phoneNumber=undefined}) {
-  if (!id && !email) {
-    throw new Error('Error: Either ID or email must be provided for user update');
+async function findAvailableUser(id, email) {
+  if ((id === undefined && email === undefined) || (!id && !email)) {
+    throw new Error('Error: Either ID or email must be provided');
   }
 
   let user;
-  if (id) {
+  if (id !== undefined) {
     user = await User.findByPk(id);
-  } else if (email) {
-    user = await User.findOne({ where: { email: email } });
+  } else if (email !== undefined) {
+    user = await User.findOne({where: {email: email}});
   }
   if (!user) {
     throw new Error('Error: User not found');
   }
-  if (name) user.name = name;
-  if (phoneNumber) user.phoneNumber = phoneNumber;
+  return user;
+}
+
+export async function updateUser({id = undefined, name = undefined, email = undefined, phoneNumber = undefined}) {
+  const user = await findAvailableUser(id, email);
+
+  if (name !== undefined) user.name = name;
+  if (phoneNumber !== undefined) user.phoneNumber = phoneNumber;
   return (await user.save()).dataValues;
-}
-
-export async function addVehicle({userId=undefined, userMail=undefined, licenseNumber, defaultDuration=20, approvalStatus=false, vehicleName=undefined}) {
-  if (!userId && !userMail) {
-    throw new Error('Error: Either ID or email must be provided for user update');
-  }
-
-  let user;
-  if (userId) {
-    user = await User.findByPk(userId);
-  } else if (userMail) {
-    user = await User.findOne({ where: { email: userMail } });
-  }
-  if (!user) {
-    throw new Error('Error: User not found');
-  }
-
-  return (await Vehicle.create({
-    licenseNumber: licenseNumber,
-    defaultDuration: defaultDuration,
-    approvalStatus: approvalStatus,
-    vehicleName: vehicleName,
-    userMail: user.email
-  })).dataValues;
-}
-
-export async function getVehicleList({userId=undefined, userMail=undefined}) {
-  if (!userId && !userMail) {
-    throw new Error('Error: Either ID or email must be provided for user update');
-  }
-
-  let user;
-  if (userId) {
-    user = await User.findByPk(userId);
-  } else if (userMail) {
-    user = await User.findOne({ where: { email: userMail } });
-  }
-  if (!user) {
-    throw new Error('Error: User not found');
-  }
-
-  const vehicles = await Vehicle.findAll({ where: { userMail: user.email }});
-  return vehicles.map(vehicle => vehicle.dataValues);
 }

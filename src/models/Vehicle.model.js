@@ -39,6 +39,10 @@ const Vehicle = sequelize.define('Vehicle', {
     type: DataTypes.STRING,
     allowNull: false,
     field: "vehicle_name"
+  },
+  deletedAt: {
+    type: DataTypes.DATE,
+    field: "deleted_at"
   }
 }, {
   tableName: 'vehicles',

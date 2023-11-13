@@ -5,8 +5,7 @@ const getUserDashboard = async (req, res) => {
   let _mail = req.user.email;
   try {
     const user = await User.findUserByEmail(_mail);
-    const vehicles = await User.getVehicleList({userMail: _mail});
-    console.log(vehicles);
+    const vehicles = await Vehicle.getVehicleList({userMail: _mail});
     res.render('user/user.dashboard.ejs', {
       "user": user,
       "vehicles": vehicles
@@ -21,7 +20,7 @@ const addVehicle = async (req, res) => {
   const _mail = req.user.email;
   console.trace(req.user);
   try {
-    await User.addVehicle({
+    await Vehicle.addVehicle({
       userMail: _mail,
       licenseNumber: licenseNumber,
       vehicleName: vehicleName

@@ -3,7 +3,6 @@ import * as User from '../../services/User.services.js';
 
 const emailVerificationMiddleware = async (req, res, next) => {
   const _email = req.user.email;
-  console.trace(req.user);
   console.log("fetching by mail = " + _email);
   const user = await User.findUserByEmail(_email);
   if (user) next();
