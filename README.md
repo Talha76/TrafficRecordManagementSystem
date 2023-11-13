@@ -169,8 +169,6 @@ erDiagram
 | `async findUserByEmail()` |   `User`    | Finds a user by email.                     |
 | `async createUser()`      |   `User`    | Creates a new user.                        |
 | `async updateUser()`      |   `User`    | Updates a user.                            |
-| `async addVehicle()`      |   `User`    | Adds a vehicle to the user's vehicle list. |
-| `async getVehicleList()`  | `Vehicle[]` | Gets the user's vehicle list.              |
 
 #### Usage
 
@@ -209,18 +207,6 @@ const user3 = await UserService.updateUser({
   email: 'user3@mail.org',
   name: 'temporary user 3'
 });
-
-// At least one of `userID` or `userMail` is required in addVehicle method
-// licenseNumber and vehicleName are required in addVehicle method
-const user2 = await UserService.addVehicle({
-  licenseNumber: '1234',
-  userMail: 'example@mail.xyz'
-});
-
-// At least one of `userID` or `userMail` is required in getVehicleList method
-const vehicleList = await UserService.getVehicleList({
-  userMail: 'example@mail.xyz'
-});
 ```
 
 ### Admin Services
@@ -228,6 +214,8 @@ const vehicleList = await UserService.getVehicleList({
 | Method                      | Return Type | Description              |
 |-----------------------------|:-----------:|--------------------------|
 | `async findAdminByEmail()`  |   `Admin`   | Finds an admin by email. |
+| `async createAdmin()`       |   `Admin`   | Creates a new admin.     |
+| `async updateAdmin()`       |   `Admin`   | Updates an admin.        |
 
 #### Usage
 
@@ -238,5 +226,127 @@ import * as AdminService from './services/AdminService';
 // Or you can import necessary methods as follows:
 // import { findAdminByEmail } from './services/AdminService';
 
-const admin = await AdminService.findAdminByEmail('example@mail.xyz');
+const admin1 = await AdminService.findAdminByEmail('example@mail.xyz');
+const admin2 = await AdminService.createAdmin({
+  email: 'mail1@mail.xyz',
+  name: 'Admin 1',
+  designation: 'sco'        // sco: Security in Charge Officer
+                            // patrol: Patrol team
+});
+const admin1 = await AdminService.updateAdmin('example@mail.xyz', {
+  name: 'Admin 1',
+  designation: 'patrol'
+});
+```
+
+### Vehicle Services
+
+| Method                               |      Return Type      | Description                        |
+|--------------------------------------|:---------------------:|------------------------------------|
+| `async findVehicleByLicenseNumber()` |       `Vehicle`       | Finds a vehicle by license number. |
+| `async addVehicle()`                 |       `Vehicle`       | Adds a new vehicle.                |
+| `async removeVehicle()`              |       `Vehicle`       | Removes a vehicle.                 |
+| `async updateVehicle()`              |       `Vehicle`       | Updates a vehicle.                 |
+| `async getVehicleList()`             |      `Vehicle[]`      | Gets vehicles.                     |
+| `async findVehicleLogById()`         |     `VehicleLog`      | Finds a vehicle log by id.         |
+| `async addVehicleLog()`              |     `VehicleLog`      | Adds a new vehicle log.            |
+| `async updateVehicleLog()`           |     `VehicleLog`      | Updates a vehicle log.             |
+| `async getVehicleLogs()`             |    `VehicleLog[]`     | Gets vehicle logs.                 |
+| `async findVehicleAllegationById()`  |  `VehicleAllegation`  | Finds a vehicle allegation by id.  |
+| `async updateVehicleAllegation()`    |  `VehicleAllegation`  | Updates a vehicle allegation.      |
+| `async getVehicleAllegations()`      | `VehicleAllegation[]` | Gets vehicle allegations.          |
+
+#### Usage
+
+```javascript
+// You can import whole namespace as follows:
+import * as VehicleService from './services/VehicleService';
+
+// Or you can import necessary methods as follows:
+// import { findVehicleByLicenseNumber, addVehicle } from './services/VehicleService';
+
+const vehicle1 = await VehicleService.findVehicleByLicenseNumber('1234');
+
+// `liceseNumber`, `vehicleName`, and `userMail` are required in addVehicle method
+// `defaultDuration` and `approvalStatus` are optional
+const vehicle2 = await VehicleService.addVehicle({
+  licenseNumber: '1234',
+  vehicleName: 'Car',
+  userMail: 'a@mail.co'
+});
+
+// `licenseNumber` is required in removeVehicle method
+const vehicle3 = await VehicleService.removeVehicle('1234');
+
+// `licenseNumber` is required in updateVehicle method
+// Other fields are optional
+const vehicle4 = await VehicleService.updateVehicle({
+  licenseNumber: '1234',
+  vehicleName: 'Car',
+  userMail: 'a@mail.co',
+  defaultDuration: 60,
+  approvalStatus: true
+});
+
+// All fields are optional in getVehicleList method
+const vehicleList = await VehicleService.getVehicleList({
+  userMail: 'tmp@mail.co',
+  approvalStatus: true,
+  defaultDurationEqual: 60,
+  defaultDurationFrom: 10,
+  defaultDurationTo: 60
+});
+
+const vehicleLog1 = await VehicleService.findVehicleLogById('1234');
+
+// `licenseNumber`, and `entryTime` are required in addVehicleLog method
+// `allowedDuration`, and `comment` are optional
+const vehicleLog2 = await VehicleService.addVehicleLog({
+  licenseNumber: '1234',
+  entryTime: new Date(),
+  allowedDuration: 60,
+  comment: 'comment'
+});
+
+// `id` is required in updateVehicleLog method
+// Other fields are optional
+const vehicleLog3 = await VehicleService.updateVehicleLog({
+  id: '1234',
+  licenseNumber: '1234',
+  entryTime: new Date(),
+  exitTime: new Date(),
+  allowedDuration: 60,
+  comment: 'comment'
+});
+
+// All fields are optional in getVehicleLogs method
+const vehicleLogs = await VehicleService.getVehicleLogs({
+  licenseNumber: '1234',
+  entryTimeEqual: new Date(),
+  entryTimeFrom: new Date(),
+  entryTimeTo: new Date(),
+  exitTimeEqual: new Date(),
+  exitTimeFrom: new Date(),
+  exitTimeTo: new Date(),
+  allowedDurationEqual: 60,
+  allowedDurationFrom: 10,
+  allowedDurationTo: 60
+});
+
+const vehicleAllegation1 = await VehicleService.findVehicleAllegationById('1234');
+
+// `logId` is required in updateVehicleAllegation method
+// Other fields are optional
+const vehicleAllegation2 = await VehicleService.updateVehicleAllegation({
+  id: '1234',
+  comment: 'comment'
+});
+
+// All fields are optional in getVehicleAllegations method
+const vehicleAllegations = await VehicleService.getVehicleAllegations({
+  logId: '1234',
+  lateDurationEqual: 60,
+  lateDurationFrom: 10,
+  lateDurationTo: 60
+});
 ```
