@@ -35,8 +35,8 @@ import indexRoutes from './routes/index.routes.js';
 import userAuthRoutes from './routes/user/user.auth.routes.js';
 import userRoutes from './routes/user/user.routes.js';
 app.use(indexRoutes);
-app.use('/', userAuthRoutes);
-app.use('/', userRoutes);
+app.use(userAuthRoutes);
+app.use(userRoutes);
 
 
 
