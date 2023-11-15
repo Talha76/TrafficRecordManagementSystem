@@ -7,7 +7,7 @@ export async function findAdminByEmail(email) {
 
   const user = await Admin.findByPk(email);
   if (user) {
-    return user.dataValues;
+    return user;
   }
   return null;
 }
@@ -18,11 +18,11 @@ export async function createAdmin(email, name, designation) {
     throw new Error('Error: email, name and designation must be provided for admin creation');
   }
 
-  return (await Admin.create({
+  return await Admin.create({
     email: email,
     name: name,
     designation: designation
-  })).dataValues;
+  });
 }
 
 export async function updateAdmin(email, {name = undefined, designation = undefined}) {
@@ -37,5 +37,5 @@ export async function updateAdmin(email, {name = undefined, designation = undefi
 
   if (name !== undefined) admin.name = name;
   if (designation !== undefined) admin.designation = designation;
-  return (await admin.save()).dataValues;
+  return await admin.save();
 }

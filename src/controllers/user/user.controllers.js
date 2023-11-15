@@ -18,7 +18,6 @@ const getUserDashboard = async (req, res) => {
 const addVehicle = async (req, res) => {
   const {licenseNumber, vehicleName} = req.body;
   const _mail = req.user.email;
-  console.trace(req.user);
   try {
     await Vehicle.addVehicle({
       userMail: _mail,

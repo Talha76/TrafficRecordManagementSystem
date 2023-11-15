@@ -7,7 +7,7 @@ export async function findUserById(id) {
 
   const user = await User.findByPk(id);
   if (user) {
-    return user.dataValues;
+    return user;
   }
   return null;
 }
@@ -19,7 +19,7 @@ export async function findUserByEmail(email) {
 
   const user = await User.findOne({where: {email: email}});
   if (user) {
-    return user.dataValues;
+    return user;
   }
   return null;
 }
@@ -30,12 +30,12 @@ export async function createUser(id, name, email, phoneNumber) {
     throw new Error('Error: ID, name, email and phone number must be provided for user creation');
   }
 
-  return (await User.create({
+  return await User.create({
     id: id,
     name: name,
     email: email,
     phoneNumber: phoneNumber
-  })).dataValues;
+  });
 }
 
 async function findAvailableUser(id, email) {
@@ -60,5 +60,5 @@ export async function updateUser({id = undefined, name = undefined, email = unde
 
   if (name !== undefined) user.name = name;
   if (phoneNumber !== undefined) user.phoneNumber = phoneNumber;
-  return (await user.save()).dataValues;
+  return await user.save();
 }

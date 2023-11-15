@@ -13,7 +13,7 @@ export async function findVehicleByLicenseNumber(licenseNumber) {
 
   const vehicle = await Vehicle.findByPk(licenseNumber);
   if (vehicle) {
-    return vehicle.dataValues;
+    return vehicle;
   }
   return null;
 }
@@ -47,23 +47,34 @@ export async function addVehicle({
     }
   });
 
-  if (vehicleCount === process.env.MAX_VEHICLE) {
+  console.trace(vehicleCount.toString(), process.env.MAX_VEHICLE);
+  if (vehicleCount.toString() === process.env.MAX_VEHICLE) {
     throw new Error('Error: Maximum number of vehicles reached');
   }
 
-  vehicle = await Vehicle.build({
-    licenseNumber: licenseNumber,
-    vehicleName: vehicleName,
-    userMail: userMail
+  let created;
+  [vehicle, created] = await Vehicle.findOrCreate({
+    where: {
+      licenseNumber: licenseNumber
+    },
+    defaults: {
+      vehicleName: vehicleName,
+      userMail: userMail,
+      deletedAt: null
+    }
   });
-  vehicle.deletedAt = null;
+  if (created === false) {
+    vehicle.vehicleName = vehicleName;
+    vehicle.userMail = userMail;
+    vehicle.deletedAt = null;
+  }
   if (defaultDuration !== undefined) {
     vehicle.defaultDuration = defaultDuration;
   }
   if (approvalStatus !== undefined) {
     vehicle.approvalStatus = approvalStatus;
   }
-  return (await vehicle.save()).dataValues;
+  return await vehicle.save();
 }
 
 export async function removeVehicle(licenseNumber) {
@@ -75,12 +86,13 @@ export async function removeVehicle(licenseNumber) {
   if (vehicle) {
     if (vehicle.defaultDuration === 0) {
       throw new Error('Error: Banned vehicles cannot be deleted');
-    } else if (vehicle.deletedAt !== null) {
+    }
+    if (vehicle.deletedAt !== null) {
       throw new Error('Error: Vehicle already deleted');
     }
 
     vehicle.deletedAt = new Date();
-    return (await vehicle.save()).dataValues;
+    return await vehicle.save();
   }
   return null;
 }
@@ -109,7 +121,7 @@ export async function updateVehicle({
   if (vehicleName !== undefined) {
     vehicle.vehicleName = vehicleName;
   }
-  return (await vehicle.save()).dataValues;
+  return await vehicle.save();
 }
 
 export async function getVehicleList({
@@ -119,7 +131,9 @@ export async function getVehicleList({
                                        defaultDurationFrom = undefined,
                                        approvalStatus = undefined,
                                      }) {
-  const queries = {};
+  const queries = {
+    deletedAt: null
+  };
   if (userMail !== undefined && userMail) {
     queries.userMail = userMail;
   }
@@ -142,8 +156,7 @@ export async function getVehicleList({
     queries.approvalStatus = approvalStatus;
   }
 
-  const vehicles = await Vehicle.findAll({where: queries});
-  return vehicles.map(vehicle => vehicle.dataValues);
+  return await Vehicle.findAll({where: queries});
 }
 
 export async function findVehicleLogById(id) {
@@ -153,7 +166,7 @@ export async function findVehicleLogById(id) {
 
   const log = await VehicleLog.findByPk(id);
   if (log) {
-    return log.dataValues;
+    return log;
   }
   return null;
 }
@@ -188,7 +201,7 @@ export async function addVehicleLog({
   if (comment !== undefined && comment) {
     log.comment = comment;
   }
-  return (await log.save()).dataValues;
+  return await log.save();
 }
 
 export async function updateVehicleLog({
@@ -219,7 +232,7 @@ export async function updateVehicleLog({
   if (comment !== undefined && comment) {
     log.comment = comment;
   }
-  return (await log.save()).dataValues;
+  return await log.save();
 }
 
 export async function getVehicleLogs({
@@ -284,8 +297,7 @@ export async function getVehicleLogs({
     }
   }
 
-  const logs = await VehicleLog.findAll({where: queries});
-  return logs.map(log => log.dataValues);
+  return await VehicleLog.findAll({where: queries});
 }
 
 export async function findVehicleAllegationById(id) {
@@ -295,7 +307,7 @@ export async function findVehicleAllegationById(id) {
 
   const allegation = await VehicleAllegation.findByPk(id);
   if (allegation) {
-    return allegation.dataValues;
+    return allegation;
   }
   return null;
 }
@@ -313,7 +325,7 @@ export async function updateVehicleAllegation({id = undefined, comment = undefin
   if (comment !== undefined && comment) {
     allegation.comment = comment;
   }
-  return (await allegation.save()).dataValues;
+  return await allegation.save();
 }
 
 export async function getVehicleAllegations({
@@ -344,6 +356,5 @@ export async function getVehicleAllegations({
     }
   }
 
-  const allegations = await VehicleAllegation.findAll({where: queries});
-  return allegations.map(allegation => allegation.dataValues);
+  return await VehicleAllegation.findAll({where: queries});
 }
