@@ -124,27 +124,7 @@
 <script src="userDashboardAssets/js/Lightbox-Gallery-No-Gutters-Lightbox-Gallery.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-	async function extractLPText(req, res) {
-		const formData = new FormData();
-
-		const file = document.getElementById('image').files[0];
-		formData.append('image', file, file.name);
-
-		try {
-			const response = await axios.post('http://localhost:3001', formData, {
-				headers: {
-					'Content-Type': 'multipart/form-data'
-				}
-			});
-			const {area, number} = await response.data;
-
-			document.getElementById('license-number').value = area + ' ' + number;
-		} catch (err) {
-			console.error(err);
-		}
-	}
-</script>
+<script src="extract-lptext.js"></script>
 
 </body>
 </html>
