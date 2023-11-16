@@ -136,3 +136,5 @@ qodana.yaml
 
 # public css, js scripts
 src/public
+
+*models-creation-script.js
