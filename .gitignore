@@ -138,3 +138,5 @@ qodana.yaml
 src/public
 
 *models-creation-script.js
+
+*tmp.js
