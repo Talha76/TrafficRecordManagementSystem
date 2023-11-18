@@ -135,7 +135,11 @@ dist
 qodana.yaml
 
 # public css, js scripts
-src/public
+*assets
+*asset
+*Assets
+*Asset
+*.min*
 
 *models-creation-script.js
 

@@ -45,7 +45,7 @@
                 <input class="form-control" type="file" id="image"
                        style="background: var(--bs-body-bg);margin-right: 12px;padding-right: 0px;border-radius: 7px;border-width: .5px;border-color: var(--bs-emphasis-color);"
                        name="image">
-                <input class="btn btn-primary" id="upload_image"
+                <input class="btn btn-primary" id="upload_image" type="button"
                        style="background: var(--bs-danger-border-subtle);color: var(--bs-primary-text-emphasis);border-radius: 7px;"
                        name="upload_image"
                        onclick="extractLPText()"
@@ -63,10 +63,10 @@
                    style="width: 35%;height: 40px;margin-left: 12%;border-radius: 7px;margin-top: -25px;border-width: 1px;border-color: var(--bs-emphasis-color);"
                    placeholder="Enter The License Number"
                    name="licenseNumber">
-            <button class="btn btn-primary" id="register_car" type="button"
-                    style="height: 44px;width: initial;margin-left: 45%;margin-top: 2%;font-size: 16px;"
-                    name="register_car">Register
-            </button>
+            <input class="btn btn-primary" id="register_car" type="submit"
+                   style="height: 44px;width: initial;margin-left: 45%;margin-top: 2%;font-size: 16px;"
+                   name="register_car"
+                   value="Register">
         </div>
     </div>
 </form>
@@ -124,27 +124,7 @@
 <script src="userDashboardAssets/js/Lightbox-Gallery-No-Gutters-Lightbox-Gallery.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
-	async function extractLPText(req, res) {
-		const formData = new FormData();
-
-		const file = document.getElementById('image').files[0];
-		formData.append('image', file, file.name);
-
-		try {
-			const response = await axios.post('http://localhost:3001', formData, {
-				headers: {
-					'Content-Type': 'multipart/form-data'
-				}
-			});
-			const {area, number} = await response.data;
-
-			document.getElementById('license-number').value = area + ' ' + number;
-		} catch (err) {
-			console.error(err);
-		}
-	}
-</script>
+<script src="extract-lptext.js"></script>
 
 </body>
 </html>
