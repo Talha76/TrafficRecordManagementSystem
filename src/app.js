@@ -8,22 +8,22 @@ import passport from 'passport';
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-
-app.use(morgan('dev'));
-
 app.use(session({
   secret: 'mysecret',
   resave: false,
   saveUninitialized: false
 }));
+app.use(flash());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use(morgan('dev'));
+
 
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(flash());
 app.set('view engine', 'ejs');
 app.set('views', './src/views')
 

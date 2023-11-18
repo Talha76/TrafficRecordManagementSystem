@@ -22,25 +22,28 @@ const getUserDashboard = async (req, res) => {
   }
 }
 
+
 // const addVehicle = async (req, res) => {
-//   const {licenseNumber, vehicleName} = req.body;
+//   const { licenseNumber, vehicleName } = req.body;
 //   const _mail = req.user.email;
 //   try {
 //     const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-//     if(vehicle != null) {
+//     if (vehicle != null) {
 //       res.redirect('/dashboard');
 //     }
 
 //     await Vehicle.addVehicle({
 //       userMail: _mail,
 //       licenseNumber: licenseNumber,
-//       vehicleName: vehicleName
+//       vehicleName: vehicleName,
 //     });
 //     res.redirect('/dashboard');
 //   } catch (err) {
 //     console.error(err);
+
+//     res.redirect('/dashboard');
 //   }
-// }
+// };
 
 const addVehicle = async (req, res) => {
   const { licenseNumber, vehicleName } = req.body;
@@ -48,25 +51,22 @@ const addVehicle = async (req, res) => {
   try {
     const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
     if (vehicle != null) {
-      res.render('user/user.dashboard.ejs', {
-        error: 'Vehicle already exists', // Set an error message
-      });
-      res.redirect('/dashboard');
-      return; // Return to prevent further execution
+      req.flash('message', 'Vehicle cannot be added');
+      return res.redirect('/dashboard');
     }
-    
+
     await Vehicle.addVehicle({
       userMail: _mail,
       licenseNumber: licenseNumber,
       vehicleName: vehicleName,
     });
-    res.redirect('/dashboard');
+    return res.redirect('/dashboard');
   } catch (err) {
     console.error(err);
+    req.flash('message', 'An error occurred');
+    return res.redirect('/dashboard');
   }
 };
-
-
 const removeVehicle = async (req, res) => {
   const {licenseNumber} = req.query;
 
