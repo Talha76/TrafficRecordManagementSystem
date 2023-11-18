@@ -37,14 +37,16 @@
         </div>
     </div>
 </nav>
-<form action="/dashboard/add-vehicle" method="post">
+<form action="/dashboard/addVehicle" method="post">
     <div class="flex-column justify-content-between align-items-center"
          style="background: var(--bs-btn-hover-color);width: 50%;margin-left: 25%;margin-right: 25%;margin-top: 5%;border-radius: 25px;box-shadow: 0px 0px 6px;height: 302.688px;">
         <div style="width: 90%;background: var(--bs-body-bg);height: 40%;margin-right: 5%;margin-left: 5%;">
             <div class="input-group" style="margin-left: 10%;margin-top: 5%;width: 80%;height: 44px;margin-right: 10%;">
+                <!-- choose image input type=file -->
                 <input class="form-control" type="file" id="image"
                        style="background: var(--bs-body-bg);margin-right: 12px;padding-right: 0px;border-radius: 7px;border-width: .5px;border-color: var(--bs-emphasis-color);"
                        name="image">
+                <!-- upoload image input type=button -->
                 <input class="btn btn-primary" id="upload_image" type="button"
                        style="background: var(--bs-danger-border-subtle);color: var(--bs-primary-text-emphasis);border-radius: 7px;"
                        name="upload_image"
@@ -55,17 +57,34 @@
         <span style="font-size: 27px;margin-top: -22px;">or</span>
         <div class="flex-column justify-content-center"
              style="background: var(--bs-body-bg);width: 90%;height: 54%;margin-right: 5%;margin-left: 5%;margin-bottom: initial;border-color: var(--bs-primary-bg-subtle);">
-            <input class="form-control" type="text" id="car_name"
-                   style="margin-left: 53%;height: 40px;margin-top: -25px;margin-bottom: -15px;width: 35%;border-radius: 7px;border-width: 1px;"
-                   placeholder="Give a Car Name" name="car_name">
             <input class="form-control" type="text"
-                   id="license-number"
-                   style="width: 35%;height: 40px;margin-left: 12%;border-radius: 7px;margin-top: -25px;border-width: 1px;border-color: var(--bs-emphasis-color);"
-                   placeholder="Enter The License Number"
-                   name="licenseNumber">
-            <input class="btn btn-primary" id="register_car" type="submit"
+             id="license-number"
+             style="width: 35%;
+                    height: 40px;
+                    margin-left: 12%;
+                    border-radius: 7px;
+                    margin-top: -25px;
+                    margin-bottom: -15px;
+                    border-width: 1px;
+                    border-color: var(--bs-emphasis-color);"
+             placeholder="Enter The License Number"
+             name="licenseNumber" required> 
+            <input class="form-control" type="text" 
+             id="vehicle-name"
+             style="width: 35%;
+                    height: 40px;
+                    margin-left: 53%;
+                    border-radius: 7px;
+                    margin-top: -25px;
+                    margin-bottom: -15px;
+                    border-width: 1px;
+                    border-color: var(--bs-emphasis-color);"
+             placeholder="Give a vehicle Name" name="vehicleName" required>
+            
+            <!-- Register submit button -->
+            <input class="btn btn-primary" id="register_vehicle" type="submit"
                    style="height: 44px;width: initial;margin-left: 45%;margin-top: 2%;font-size: 16px;"
-                   name="register_car"
+                   name="registerVehicle"
                    value="Register">
         </div>
     </div>
@@ -76,48 +95,26 @@
         <thead style="width: 80%;padding: 0px;">
         <tr style="width: 80%;height: 57.5px;">
             <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">License number</th>
-            <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">Car Name</th>
+            <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">vehicle Name</th>
             <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">Status</th>
             <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">Remove</th>
         </tr>
         </thead>
         <tbody style="width: 80%;height: initial;">
+        <% for (let i = 0; i < vehicles.length; i++) { %>
         <tr style="margin-right: 19px;margin-top: 0px;margin-left: -2px;">
-            <td style="box-shadow: 0px 0px 5px 0px;">Cell 1</td>
-            <td style="box-shadow: 0px 0px 5px 0px;">Cell 1</td>
-            <td style="box-shadow: 0px 0px 5px 0px;">Cell 1</td>
-            <td style="box-shadow: 0px 0px 5px 0px;">
-                <button class="btn btn-primary" id="remove_car" type="button"
-                        style="width: 40%;background: rgb(235,19,5);padding: 6px 12px;padding-right: 35px;margin-right: -31px;"
-                        name="remove_car">Remove
-                </button>
+            <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicles[i].licenseNumber %></td>
+            <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicles[i].vehicleName %></td>
+            <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicles[i].approvalStatus %></td>
+            <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;">
+                <a href="/dashboard/removeVehicle?licenseNumber=<%= vehicles[i].licenseNumber %>"
+                    style="color: var(--bs-primary-text-emphasis);">Remove</a>
             </td>
         </tr>
+        <% } %>
         </tbody>
     </table>
 </div>
-<!-- <div class="table-responsive fw-semibold text-start" style="margin-top: 2%;width: 80%;margin-right: 10%;margin-left: 10%;box-shadow: 0px 0px 9px;border-radius: 12px;height: 40%;background: var(--bs-btn-hover-color);">
-    <table class="table">
-        <thead style="width: 80%;padding: 0px;">
-            <tr style="width: 80%;height: 57.5px;">
-                <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">License number</th>
-                <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">Entry time</th>
-                <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">Exit time</th>
-                <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">Car Name</th>
-                <th style="box-shadow: 0px 0px 5px 0px;">Comment</th>
-            </tr>
-        </thead>
-        <tbody style="width: 80%;height: initial;">
-            <tr style="margin-right: 19px;margin-top: 0px;margin-left: -2px;">
-                <td style="box-shadow: 0px 0px 5px 0px;">Cell 1</td>
-                <td style="box-shadow: 0px 0px 5px 0px;">Cell 1</td>
-                <td style="box-shadow: 0px 0px 5px 0px;">Cell 1</td>
-                <td style="box-shadow: 0px 0px 5px 0px;">cell 1</td>
-                <td style="box-shadow: 0px 0px 5px 0px;">Cell 1</td>
-            </tr>
-        </tbody>
-    </table>
-</div> -->
 <script src="userDashboardAssets/bootstrap/js/bootstrap.min.js"></script>
 <script src="userDashboardAssets/js/bs-init.js"></script>
 <script src="userDashboardAssets/js/Lightbox-Gallery-No-Gutters-baguetteBox.min.js"></script>
@@ -125,6 +122,18 @@
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="extract-lptext.js"></script>
+
+<!-- Your existing HTML content -->
+
+<!-- Add this script block at the end of your HTML body -->
+<script>
+    // Check if an error message exists in the response data
+     if (typeof error !== 'undefined') {
+      // Show a JavaScript alert with the error message
+      alert("= error");
+     }
+</script>
+  
 
 </body>
 </html>
