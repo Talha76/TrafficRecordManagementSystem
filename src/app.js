@@ -34,10 +34,10 @@ app.use(fileUpload());
 import indexRoutes from './routes/index.routes.js';
 import userAuthRoutes from './routes/user/user.auth.routes.js';
 import userRoutes from './routes/user/user.routes.js';
+import adminRoutes from './routes/admin/admin.routes.js';
 app.use(indexRoutes);
 app.use(userAuthRoutes);
 app.use(userRoutes);
-
-
+app.use('/admin', adminRoutes);
 
 export default app;
