@@ -7,14 +7,9 @@ const getScope = passport.authenticate('google', {
 const getCallback = passport.authenticate('google', {
   successRedirect: '/dashboard',
   failureRedirect: '/auth/google/failure',
+  successFlash: true,
   failureFlash: true
 });
-
-const getLogin = (req, res) => {
-  res.render('user/user.login.ejs', {
-    error: req.flash('error')
-  });
-};
 
 const getLogout = (req, res) => {
   req.logout(err => console.error(err));
@@ -22,15 +17,12 @@ const getLogout = (req, res) => {
 };
 
 const getFailure = (req, res) => {
-  req.logout(err => console.trace('Login error:', err));
-  req.flash('error', 'Login error');
-  res.redirect('/login');
+  res.send('USER NOT FOUND!!! Go to dashboard and try again <a href="/">frontPage</a>');
 };
 
 export default {
-  getLogin,
   getScope,
   getCallback,
   getLogout,
-  getFailure,
+  getFailure
 }
