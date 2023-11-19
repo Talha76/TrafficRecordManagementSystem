@@ -34,11 +34,6 @@ const addVehicle = async (req, res) => {
     );
     const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
     if (vehicle != null) {
-      // res.render('user/user.dashboard.ejs', {
-      //   'vehicles' : vehicles, 
-      //   'user': user, 
-      //   'message': 'Vehicle already exists'
-      // });
       res.redirect('/dashboard');
       return; // Return to prevent further execution
     }
