@@ -21,7 +21,6 @@ app.use(morgan('dev'));
 app.use(express.static('public')); // Assuming your CSS files are in a folder named 'public'
 
 
-
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -38,7 +37,5 @@ import userRoutes from './routes/user/user.routes.js';
 app.use(indexRoutes);
 app.use(userAuthRoutes);
 app.use(userRoutes);
-
-
 
 export default app;

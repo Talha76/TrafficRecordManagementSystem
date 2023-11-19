@@ -1,7 +1,8 @@
 import passport from "../../config/oauth.passport.js";
 
-// These two are to be variables for the respected routes
-const getScope = passport.authenticate('google', {scope: ['email', 'profile']});
+const getScope = passport.authenticate('google', {
+  scope: ['email', 'profile']}
+);
 
 const getCallback = passport.authenticate('google', {
   successRedirect: '/dashboard',
@@ -11,12 +12,8 @@ const getCallback = passport.authenticate('google', {
 });
 
 const getLogout = (req, res) => {
-  req.logout(function (err) {
-    if (err) {
-      console.error(err);
-    }
-    res.redirect('/');
-  });
+  req.logout(err => console.error(err));
+  res.redirect('/login');
 };
 
 const getFailure = (req, res) => {

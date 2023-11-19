@@ -27,7 +27,7 @@ passport.serializeUser(async (user, done) => {
 });
 
 passport.deserializeUser(async (user, done) => {
-  const newUser = await UserServices.findUserByEmail(user.email);
+  const newUser = await findUserByEmail(user.email);
   done(null, newUser);
 });
 

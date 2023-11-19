@@ -223,13 +223,13 @@ export async function updateVehicleLog({
   if (entryTime !== undefined && entryTime) {
     log.entryTime = entryTime;
   }
-  if (exitTime !== undefined && exitTime) {
+  if (exitTime !== undefined) {
     log.exitTime = exitTime;
   }
   if (allowedDuration !== undefined && allowedDuration) {
     log.allowedDuration = allowedDuration;
   }
-  if (comment !== undefined && comment) {
+  if (comment !== undefined) {
     log.comment = comment;
   }
   return await log.save();
@@ -266,17 +266,17 @@ export async function getVehicleLogs({
       [Op.gte]: entryTimeFrom
     }
   }
-  if (exitTimeEqual !== undefined && exitTimeEqual) {
+  if (exitTimeEqual !== undefined) {
     queries.exitTime = exitTimeEqual;
-  } else if (exitTimeTo !== undefined && exitTimeTo && exitTimeFrom !== undefined && exitTimeFrom) {
+  } else if (exitTimeTo !== undefined && exitTimeFrom !== undefined) {
     queries.exitTime = {
       [Op.between]: [exitTimeFrom, exitTimeTo]
     }
-  } else if (exitTimeTo !== undefined && exitTimeTo) {
+  } else if (exitTimeTo !== undefined) {
     queries.exitTime = {
       [Op.lte]: exitTimeTo
     }
-  } else if (exitTimeFrom !== undefined && exitTimeFrom) {
+  } else if (exitTimeFrom !== undefined) {
     queries.exitTime = {
       [Op.gte]: exitTimeFrom
     }
@@ -322,7 +322,7 @@ export async function updateVehicleAllegation({id = undefined, comment = undefin
     throw new Error('Error: Vehicle allegation not found');
   }
 
-  if (comment !== undefined && comment) {
+  if (comment !== undefined) {
     allegation.comment = comment;
   }
   return await allegation.save();
@@ -337,7 +337,7 @@ export async function getVehicleAllegations({
   let logs = await getVehicleLogs({licenseNumber: licenseNumber});
   const queries = {
     logId: {
-      [Op.in]: logs.map(log => log.id)
+      [Op.in]: logs.map(log => log.dataValues.id)
     }
   };
   if (lateDurationEqual !== undefined && lateDurationEqual) {

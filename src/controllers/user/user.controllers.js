@@ -11,9 +11,10 @@ const getUserDashboard = async (req, res) => {
         approvalStatus: true,
       }
     );
+
     res.render('user/user.dashboard.ejs', {
-      "user": user,
-      "vehicles": vehicles
+      user,
+      vehicles
     });
   } catch (err) {
     console.error(err);
@@ -54,8 +55,6 @@ const addVehicle = async (req, res) => {
 
 const removeVehicle = async (req, res) => {
   const {licenseNumber} = req.query;
-
-  console.log('Removing vehicle with License Number:', licenseNumber);
 
   try {
     await Vehicle.removeVehicle(licenseNumber);
