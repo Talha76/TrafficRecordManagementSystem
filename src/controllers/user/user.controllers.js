@@ -5,7 +5,12 @@ const getUserDashboard = async (req, res) => {
   let _mail = req.user.email;
   try {
     const user = await User.findUserByEmail(_mail);
-    const vehicles = await Vehicle.getVehicleList({userMail: _mail});
+    const vehicles = await Vehicle.getVehicleList(
+      {
+        userMail: _mail,
+        approvalStatus: true,
+      }
+    );
 
     res.render('user/user.dashboard.ejs', {
       user,
@@ -17,6 +22,7 @@ const getUserDashboard = async (req, res) => {
 }
 
 const addVehicle = async (req, res) => {
+
   const {licenseNumber, vehicleName} = req.body;
   const _mail = req.user.email;
   try {
@@ -40,11 +46,14 @@ const addVehicle = async (req, res) => {
       licenseNumber: licenseNumber,
       vehicleName: vehicleName
     });
-    res.redirect('/dashboard');
+    return res.redirect('/dashboard');
   } catch (err) {
     console.error(err);
+    req.flash('message', 'An error occurred');
+    return res.redirect('/dashboard');
   }
-}
+};
+
 
 const removeVehicle = async (req, res) => {
   const {licenseNumber} = req.query;
@@ -57,7 +66,6 @@ const removeVehicle = async (req, res) => {
   }
 
 };
-
 
 export default {
   getUserDashboard,
