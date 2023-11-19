@@ -42,11 +42,9 @@
          style="background: var(--bs-btn-hover-color);width: 50%;margin-left: 25%;margin-right: 25%;margin-top: 5%;border-radius: 25px;box-shadow: 0px 0px 6px;height: 302.688px;">
         <div style="width: 90%;background: var(--bs-body-bg);height: 40%;margin-right: 5%;margin-left: 5%;">
             <div class="input-group" style="margin-left: 10%;margin-top: 5%;width: 80%;height: 44px;margin-right: 10%;">
-                <!-- choose image input type=file -->
                 <input class="form-control" type="file" id="image"
                        style="background: var(--bs-body-bg);margin-right: 12px;padding-right: 0px;border-radius: 7px;border-width: .5px;border-color: var(--bs-emphasis-color);"
                        name="image">
-                <!-- upoload image input type=button -->
                 <input class="btn btn-primary" id="upload_image" type="button"
                        style="background: var(--bs-danger-border-subtle);color: var(--bs-primary-text-emphasis);border-radius: 7px;"
                        name="upload_image"
@@ -57,34 +55,17 @@
         <span style="font-size: 27px;margin-top: -22px;">or</span>
         <div class="flex-column justify-content-center"
              style="background: var(--bs-body-bg);width: 90%;height: 54%;margin-right: 5%;margin-left: 5%;margin-bottom: initial;border-color: var(--bs-primary-bg-subtle);">
+            <input class="form-control" type="text" id="car_name"
+                   style="margin-left: 53%;height: 40px;margin-top: -25px;margin-bottom: -15px;width: 35%;border-radius: 7px;border-width: 1px;"
+                   placeholder="Give a Car Name" name="car_name">
             <input class="form-control" type="text"
-             id="license-number"
-             style="width: 35%;
-                    height: 40px;
-                    margin-left: 12%;
-                    border-radius: 7px;
-                    margin-top: -25px;
-                    margin-bottom: -15px;
-                    border-width: 1px;
-                    border-color: var(--bs-emphasis-color);"
-             placeholder="Enter The License Number"
-             name="licenseNumber" required> 
-            <input class="form-control" type="text" 
-             id="vehicle-name"
-             style="width: 35%;
-                    height: 40px;
-                    margin-left: 53%;
-                    border-radius: 7px;
-                    margin-top: -25px;
-                    margin-bottom: -15px;
-                    border-width: 1px;
-                    border-color: var(--bs-emphasis-color);"
-             placeholder="Give a vehicle Name" name="vehicleName" required>
-            
-            <!-- Register submit button -->
-            <input class="btn btn-primary" id="register_vehicle" type="submit"
+                   id="license-number"
+                   style="width: 35%;height: 40px;margin-left: 12%;border-radius: 7px;margin-top: -25px;border-width: 1px;border-color: var(--bs-emphasis-color);"
+                   placeholder="Enter The License Number"
+                   name="licenseNumber">
+            <input class="btn btn-primary" id="register_car" type="submit"
                    style="height: 44px;width: initial;margin-left: 45%;margin-top: 2%;font-size: 16px;"
-                   name="registerVehicle"
+                   name="register_car"
                    value="Register">
         </div>
     </div>
@@ -96,19 +77,19 @@
         <thead style="width: 80%;padding: 0px;">
         <tr style="width: 80%;height: 57.5px;">
             <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">License number</th>
-            <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">vehicle Name</th>
+            <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">Car Name</th>
             <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">Status</th>
             <th style="box-shadow: 0px 0px 5px 0px;border-style: solid;">Remove</th>
         </tr>
         </thead>
         <tbody style="width: 80%;height: initial;">
-        <% for (let i = 0; i < vehicles.length; i++) { %>
+        <% for(let i=0;i<vehicles.length;i++){ %>
         <tr style="margin-right: 19px;margin-top: 0px;margin-left: -2px;">
             <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicles[i].licenseNumber %></td>
             <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicles[i].vehicleName %></td>
             <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicles[i].approvalStatus %></td>
             <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;">
-                <a href="/dashboard/remove-vehicle?licenseNumber=<%= vehicles[i].licenseNumber %>"
+                <a href="/dashboard/removeVehicle?licenseNumber=<%= vehicles[i].licenseNumber %>"
                     style="color: var(--bs-primary-text-emphasis);">Remove</a>
             </td>
         </tr>
@@ -123,7 +104,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="extract-lptext.js"></script>
-    
+  
 
 </body>
 </html>

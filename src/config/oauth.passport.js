@@ -1,6 +1,6 @@
-import passport from 'passport';
-import {Strategy as GoogleStrategy} from 'passport-google-oauth2';
 import dotenv from 'dotenv';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 import * as UserServices from "../services/User.services.js";
 dotenv.config();
 
@@ -10,8 +10,13 @@ const googleStrategy = new GoogleStrategy({
     callbackURL: 'http://localhost:3000/auth/google/callback',
     passReqToCallback: true,
   },
-  (request, accessToken, refreshToken, profile, done) => {
-    return done(null, profile);
+  async (request, accessToken, refreshToken, profile, done) => {
+    try {
+      const user = await UserServices.findUserByEmail(profile.email);
+      return done(null, user);
+    } catch(err) {
+      return done(err, false);
+    }
   }
 );
 

@@ -4,7 +4,7 @@ import userMiddlewares from '../../middlewares/user/user.middlewares.js';
 
 const router = Router();
 
-router.get('/dashboard', userMiddlewares.isloggedIn, userMiddlewares.emailVerificationMiddleware, userControllers.getUserDashboard);
+router.get('/dashboard', userMiddlewares.isloggedIn, userControllers.getUserDashboard);
 router.post('/dashboard/add-vehicle', userMiddlewares.isloggedIn, userControllers.addVehicle);
 router.get('/dashboard/remove-vehicle', userMiddlewares.isloggedIn, userControllers.removeVehicle);
 export default router;

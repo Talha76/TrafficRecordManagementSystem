@@ -6,13 +6,11 @@ const getUserDashboard = async (req, res) => {
   try {
     const user = await User.findUserByEmail(_mail);
     const vehicles = await Vehicle.getVehicleList(
-        {
-          userMail: _mail,
-          approvalStatus: true
-        }
-      );
-
-      console.log(vehicles);
+      {
+        userMail: _mail,
+        approvalStatus: true,
+      }
+    );
     res.render('user/user.dashboard.ejs', {
       "user": user,
       "vehicles": vehicles
@@ -22,43 +20,33 @@ const getUserDashboard = async (req, res) => {
   }
 }
 
-
-// const addVehicle = async (req, res) => {
-//   const { licenseNumber, vehicleName } = req.body;
-//   const _mail = req.user.email;
-//   try {
-//     const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-//     if (vehicle != null) {
-//       res.redirect('/dashboard');
-//     }
-
-//     await Vehicle.addVehicle({
-//       userMail: _mail,
-//       licenseNumber: licenseNumber,
-//       vehicleName: vehicleName,
-//     });
-//     res.redirect('/dashboard');
-//   } catch (err) {
-//     console.error(err);
-
-//     res.redirect('/dashboard');
-//   }
-// };
-
 const addVehicle = async (req, res) => {
-  const { licenseNumber, vehicleName } = req.body;
+
+  const {licenseNumber, vehicleName} = req.body;
   const _mail = req.user.email;
   try {
+    const user = await User.findUserByEmail(_mail);
+    const vehicles = await Vehicle.getVehicleList(
+      {
+        userMail: _mail,
+        approvalStatus: true,
+      }
+    );
     const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
     if (vehicle != null) {
-      req.flash('message', 'Vehicle cannot be added');
-      return res.redirect('/dashboard');
+      // res.render('user/user.dashboard.ejs', {
+      //   'vehicles' : vehicles, 
+      //   'user': user, 
+      //   'message': 'Vehicle already exists'
+      // });
+      res.redirect('/dashboard');
+      return; // Return to prevent further execution
     }
-
+    
     await Vehicle.addVehicle({
       userMail: _mail,
       licenseNumber: licenseNumber,
-      vehicleName: vehicleName,
+      vehicleName: vehicleName
     });
     return res.redirect('/dashboard');
   } catch (err) {
@@ -67,6 +55,8 @@ const addVehicle = async (req, res) => {
     return res.redirect('/dashboard');
   }
 };
+
+
 const removeVehicle = async (req, res) => {
   const {licenseNumber} = req.query;
 
@@ -80,7 +70,6 @@ const removeVehicle = async (req, res) => {
   }
 
 };
-
 
 export default {
   getUserDashboard,
