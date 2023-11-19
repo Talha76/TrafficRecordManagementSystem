@@ -6,9 +6,12 @@ const getUserDashboard = async (req, res) => {
   try {
     const user = await User.findUserByEmail(_mail);
     const vehicles = await Vehicle.getVehicleList({userMail: _mail});
+
+    req.flash('user', user);
+    req.flash('vehicles', vehicles);
     res.render('user/user.dashboard.ejs', {
-      "user": user,
-      "vehicles": vehicles
+      user: req.flash('user'),
+      vehicles: req.flash('vehicles'),
     });
   } catch (err) {
     console.error(err);
@@ -32,8 +35,6 @@ const addVehicle = async (req, res) => {
 
 const removeVehicle = async (req, res) => {
   const {licenseNumber} = req.query;
-
-  console.log('Removing vehicle with License Number:', licenseNumber);
 
   try {
     await Vehicle.removeVehicle(licenseNumber);
