@@ -7,11 +7,9 @@ const getUserDashboard = async (req, res) => {
     const user = await User.findUserByEmail(_mail);
     const vehicles = await Vehicle.getVehicleList({userMail: _mail});
 
-    req.flash('user', user);
-    req.flash('vehicles', vehicles);
     res.render('user/user.dashboard.ejs', {
-      user: req.flash('user'),
-      vehicles: req.flash('vehicles'),
+      user,
+      vehicles
     });
   } catch (err) {
     console.error(err);
