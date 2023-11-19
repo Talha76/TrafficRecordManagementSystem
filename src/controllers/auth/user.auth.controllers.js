@@ -1,46 +1,34 @@
 import passport from "../../config/oauth.passport.js";
 
-// These two are to be variables for the respected routes
-const getScope = passport.authenticate('google', {scope: ['email', 'profile']});
+const getScope = passport.authenticate('google', {
+  scope: ['email', 'profile']}
+);
 
 const getCallback = passport.authenticate('google', {
   successRedirect: '/dashboard',
-  failureRedirect: 'auth/google/failure',
-  successFlash: true,
+  failureRedirect: '/auth/google/failure',
   failureFlash: true
 });
 
 const getLogin = (req, res) => {
-  res.send('<a href="/auth/google">Login with Google</a>');
-};
-
-
-const postLogin = (req, res) => {
-  res.send('login');
-};
-
-const getLogout = (req, res) => {
-  req.logout(function (err) {
-    if (err) {
-      console.error(err);
-    }
-    res.redirect('/');
+  res.render('user/user.login.ejs', {
+    error: req.flash('error')
   });
 };
 
+const getLogout = (req, res) => {
+  req.logout(err => console.error(err));
+  res.redirect('/login');
+};
+
 const getFailure = (req, res) => {
-  req.logout(function (err) {
-    if (err) {
-      console.error(err);
-    }
-    res.send('USER NOT FOUND!!! Go to dashboard and try again <a href="/logout">dashboard</a>');
-  })
-  // res.send('failure <a href="/logout">Logout</a>');
+  req.logout(err => console.trace('Login error:', err));
+  req.flash('error', 'Login error');
+  res.redirect('/login');
 };
 
 export default {
   getLogin,
-  postLogin,
   getScope,
   getCallback,
   getLogout,

@@ -1,7 +1,8 @@
 import passport from 'passport';
 import {Strategy as GoogleStrategy} from 'passport-google-oauth2';
 import dotenv from 'dotenv';
-import * as UserServices from "../services/User.services.js";
+import {findUserByEmail} from "../services/User.services.js";
+
 dotenv.config();
 
 const googleStrategy = new GoogleStrategy({
@@ -9,9 +10,12 @@ const googleStrategy = new GoogleStrategy({
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: 'http://localhost:3000/auth/google/callback',
     passReqToCallback: true,
-  },
-  (request, accessToken, refreshToken, profile, done) => {
-    return done(null, profile);
+  }, async (request, accessToken, refreshToken, profile, done) => {
+    const user = await findUserByEmail(profile.email);
+    if (!user) {
+      return done(null, false, {message: 'User not found'});
+    }
+    return done(null, user);
   }
 );
 
@@ -22,7 +26,7 @@ passport.serializeUser(async (user, done) => {
 });
 
 passport.deserializeUser(async (user, done) => {
-  const newUser = await UserServices.findUserByEmail(user.email);
+  const newUser = await findUserByEmail(user.email);
   done(null, newUser);
 });
 

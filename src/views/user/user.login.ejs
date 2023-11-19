@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Login</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .login-button {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            color: white;
+            background-color: #4285f4;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-underline-mode: none;
+        }
+    </style>
+</head>
+<body>
+    <% if (error.length > 0) %>
+        <div class="alert alert-danger"><%= error %></div>
+    <a href="/auth/google" class="login-button">Login with Google</a>
+</body>
+</html><body>
+</body>
