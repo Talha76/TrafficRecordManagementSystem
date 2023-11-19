@@ -1,4 +1,4 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import userAuthController from '../../controllers/auth/user.auth.controllers.js';
 import {isloggedIn, isNotloggedIn} from '../../middlewares/user/user.middlewares.js';
 

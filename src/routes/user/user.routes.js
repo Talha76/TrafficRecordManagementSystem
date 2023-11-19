@@ -1,4 +1,4 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import userControllers from '../../controllers/user/user.controllers.js';
 import {isloggedIn} from '../../middlewares/user/user.middlewares.js';
 
