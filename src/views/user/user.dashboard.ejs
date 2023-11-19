@@ -37,7 +37,7 @@
         </div>
     </div>
 </nav>
-<form action="/dashboard/add-vehicle" method="post">
+<form action="/dashboard" method="post">
     <div class="flex-column justify-content-between align-items-center"
          style="background: var(--bs-btn-hover-color);width: 50%;margin-left: 25%;margin-right: 25%;margin-top: 5%;border-radius: 25px;box-shadow: 0px 0px 6px;height: 302.688px;">
         <div style="width: 90%;background: var(--bs-body-bg);height: 40%;margin-right: 5%;margin-left: 5%;">
@@ -70,6 +70,7 @@
         </div>
     </div>
 </form>
+
 <div class="table-responsive fw-semibold text-start"
      style="margin-top: 2%;width: 70%;margin-right: 10%;margin-left: 15%;box-shadow: 0px 0px 9px;border-radius: 12px;height: 152px;background: var(--bs-btn-hover-color);">
     <table class="table">
@@ -82,17 +83,17 @@
         </tr>
         </thead>
         <tbody style="width: 80%;height: initial;">
-        <tr style="margin-right: 19px;margin-top: 0px;margin-left: -2px;">
-            <td style="box-shadow: 0px 0px 5px 0px;">Cell 1</td>
-            <td style="box-shadow: 0px 0px 5px 0px;">Cell 1</td>
-            <td style="box-shadow: 0px 0px 5px 0px;">Cell 1</td>
-            <td style="box-shadow: 0px 0px 5px 0px;">
-                <button class="btn btn-primary" id="remove_car" type="button"
-                        style="width: 40%;background: rgb(235,19,5);padding: 6px 12px;padding-right: 35px;margin-right: -31px;"
-                        name="remove_car">Remove
-                </button>
-            </td>
-        </tr>
+        <% for(let i=0;i<vehicles.length;i++){ %>
+            <tr style="margin-right: 19px;margin-top: 0px;margin-left: -2px;">
+                <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicles[i].licenseNumber %></td>
+                <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicles[i].vehicleName %></td>
+                <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicles[i].approvalStatus %></td>
+                <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;">
+                    <a href="/dashboard/remove-vehicle?licenseNumber=<%= vehicles[i].licenseNumber %>"
+                       style="color: var(--bs-primary-text-emphasis);">Remove</a>
+                </td>
+            </tr>
+        <% } %>
         </tbody>
     </table>
 </div>
@@ -103,6 +104,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="extract-lptext.js"></script>
+
 
 </body>
 </html>
