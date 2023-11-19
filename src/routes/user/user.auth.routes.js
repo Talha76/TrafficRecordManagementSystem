@@ -4,7 +4,6 @@ import {isloggedIn, isNotloggedIn} from '../../middlewares/user/user.middlewares
 
 const router = Router();
 
-router.get('/login', isNotloggedIn, userAuthController.getLogin);
 router.get('/logout', isloggedIn, userAuthController.getLogout);
 router.get('/auth/google', userAuthController.getScope);
 router.get('/auth/google/callback', userAuthController.getCallback);
