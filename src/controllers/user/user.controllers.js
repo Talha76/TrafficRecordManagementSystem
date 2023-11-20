@@ -8,7 +8,6 @@ const getUserDashboard = async (req, res) => {
     const vehicles = await Vehicle.getVehicleList(
       {
         userMail: _mail,
-        approvalStatus: true,
       }
     );
 
@@ -22,23 +21,24 @@ const getUserDashboard = async (req, res) => {
 }
 
 const addVehicle = async (req, res) => {
-
   const {licenseNumber, vehicleName} = req.body;
   const _mail = req.user.email;
   try {
-    const user = await User.findUserByEmail(_mail);
-    const vehicles = await Vehicle.getVehicleList(
-      {
-        userMail: _mail,
-        approvalStatus: true,
-      }
-    );
-    const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-    if (vehicle != null) {
-      res.redirect('/dashboard');
-      return; // Return to prevent further execution
+    const vehicles = await Vehicle.getVehicleList({userMail: _mail, approvalStatus: true});
+    if (vehicles.length >= parseInt(process.env.MAX_VEHICLE)) {
+      console.trace(`You can't add more than ${process.env.MAX_VEHICLE} vehicles.`)
+      req.flash('message', `You can't add more than ${process.env.MAX_VEHICLE} vehicles.`);
+      return res.redirect('/dashboard');
     }
-    
+
+    const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
+
+    if (vehicle) {
+      console.trace('This vehicle is already registered.');
+      req.flash('message', `This vehicle is already registered.`);
+      return res.redirect('/dashboard');
+    }
+
     await Vehicle.addVehicle({
       userMail: _mail,
       licenseNumber: licenseNumber,

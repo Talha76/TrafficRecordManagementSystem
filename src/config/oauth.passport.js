@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
-import * as UserServices from "../services/User.services.js";
+import {findUserByEmail} from "../services/User.services.js";
 dotenv.config();
 
 const googleStrategy = new GoogleStrategy({
@@ -12,7 +12,7 @@ const googleStrategy = new GoogleStrategy({
   },
   async (request, accessToken, refreshToken, profile, done) => {
     try {
-      const user = await UserServices.findUserByEmail(profile.email);
+      const user = await findUserByEmail(profile.email);
       return done(null, user);
     } catch(err) {
       return done(err, false);

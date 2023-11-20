@@ -11,8 +11,20 @@ export async function findVehicleByLicenseNumber(licenseNumber) {
     throw new Error('Error: License number must be provided for vehicle lookup');
   }
 
-  const vehicle = await Vehicle.findByPk(licenseNumber);
+  const vehicle = await Vehicle.findOne({
+    where: {
+      licenseNumber: licenseNumber,
+      deletedAt: null
+    }
+  });
   if (vehicle) {
+    if (vehicle.defaultDuration === 0) {
+      vehicle.status = 'Banned';
+    } else if (vehicle.approvalStatus) {
+      vehicle.status = 'Eligible';
+    } else {
+      vehicle.status = 'Pending';
+    }
     return vehicle;
   }
   return null;
@@ -30,8 +42,28 @@ export async function addVehicle({
     throw new Error('Error: License number, vehicle name and user email must be provided for vehicle creation');
   }
 
-  let vehicle = await findVehicleByLicenseNumber(licenseNumber);
-  if (vehicle) {
+  const vehicleCount = await Vehicle.count({
+    where: {
+      userMail: userMail,
+      deletedAt: null
+    }
+  });
+
+  if (vehicleCount >= parseInt(process.env.MAX_VEHICLE)) {
+    throw new Error('Error: Maximum number of vehicles reached');
+  }
+
+  const [vehicle, created] = await Vehicle.findOrCreate({
+    where: {
+      licenseNumber: licenseNumber
+    },
+    defaults: {
+      vehicleName: vehicleName,
+      userMail: userMail,
+    }
+  });
+
+  if (!created) {
     if (vehicle.defaultDuration === 0) {
       throw new Error('Error: Vehicle is banned');
     }
@@ -40,33 +72,13 @@ export async function addVehicle({
     }
   }
 
-  const vehicleCount = await Vehicle.count({
-    where: {
-      userMail: userMail,
-      deletedAt: null
-    }
-  });
-
-  console.trace(vehicleCount.toString(), process.env.MAX_VEHICLE);
-  if (vehicleCount.toString() === process.env.MAX_VEHICLE) {
-    throw new Error('Error: Maximum number of vehicles reached');
-  }
-
-  let created;
-  [vehicle, created] = await Vehicle.findOrCreate({
-    where: {
-      licenseNumber: licenseNumber
-    },
-    defaults: {
-      vehicleName: vehicleName,
-      userMail: userMail,
-      deletedAt: null
-    }
-  });
-  if (created === false) {
+  if (!created) {
     vehicle.vehicleName = vehicleName;
     vehicle.userMail = userMail;
     vehicle.deletedAt = null;
+    if (approvalStatus === undefined) {
+      vehicle.approvalStatus = false;
+    }
   }
   if (defaultDuration !== undefined) {
     vehicle.defaultDuration = defaultDuration;
@@ -74,7 +86,17 @@ export async function addVehicle({
   if (approvalStatus !== undefined) {
     vehicle.approvalStatus = approvalStatus;
   }
-  return await vehicle.save();
+
+  const result = await vehicle.save();
+  if (result.defaultDuration === 0) {
+    result.status = 'Banned';
+  } else if (result.approvalStatus) {
+    result.status = 'Eligible';
+  } else {
+    result.status = 'Pending';
+  }
+
+  return result;
 }
 
 export async function removeVehicle(licenseNumber) {
@@ -92,7 +114,16 @@ export async function removeVehicle(licenseNumber) {
     }
 
     vehicle.deletedAt = new Date();
-    return await vehicle.save();
+    const result = await vehicle.save();
+    if (result.defaultDuration === 0) {
+      result.status = 'Banned';
+    } else if (result.approvalStatus) {
+      result.status = 'Eligible';
+    } else {
+      result.status = 'Pending';
+    }
+
+    return result;
   }
   return null;
 }
@@ -121,7 +152,17 @@ export async function updateVehicle({
   if (vehicleName !== undefined) {
     vehicle.vehicleName = vehicleName;
   }
-  return await vehicle.save();
+
+  const result = await vehicle.save();
+  if (result.defaultDuration === 0) {
+    result.status = 'Banned';
+  } else if (result.approvalStatus) {
+    result.status = 'Eligible';
+  } else {
+    result.status = 'Pending';
+  }
+
+  return result;
 }
 
 export async function getVehicleList({
@@ -156,7 +197,20 @@ export async function getVehicleList({
     queries.approvalStatus = approvalStatus;
   }
 
-  return await Vehicle.findAll({where: queries});
+  const vehicles = await Vehicle.findAll({where: queries});
+  vehicles.forEach(vehicle => {
+    if (vehicle.defaultDuration === 0) {
+      vehicle.status = 'Banned';
+      return;
+    }
+    if (vehicle.approvalStatus) {
+      vehicle.status = 'Eligible';
+    } else {
+      vehicle.status = 'Pending';
+    }
+  });
+
+  return vehicles;
 }
 
 export async function findVehicleLogById(id) {

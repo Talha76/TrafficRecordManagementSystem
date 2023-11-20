@@ -13,7 +13,7 @@ const getCallback = passport.authenticate('google', {
 
 const getLogout = (req, res) => {
   req.logout(err => console.error(err));
-  res.redirect('/login');
+  res.redirect('/');
 };
 
 const getFailure = (req, res) => {
