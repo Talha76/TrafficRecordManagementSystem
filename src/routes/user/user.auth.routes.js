@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import userAuthController from '../../controllers/auth/user.auth.controllers.js';
-import {isloggedIn, isNotloggedIn} from '../../middlewares/user/user.middlewares.js';
+import {isLoggedIn} from '../../middlewares/user/user.middlewares.js';
 
 const router = Router();
 
-router.get('/logout', isloggedIn, userAuthController.getLogout);
+router.get('/logout', isLoggedIn, userAuthController.getLogout);
 router.get('/auth/google', userAuthController.getScope);
 router.get('/auth/google/callback', userAuthController.getCallback);
 router.get('/auth/google/failure', userAuthController.getFailure);
