@@ -3,13 +3,19 @@ import VehicleLog from "../models/VehicleLog.model.js";
 import VehicleAllegation from "../models/VehicleAllegation.model.js";
 import {Op} from "sequelize";
 import dotenv from "dotenv";
+import {
+  BannedVehicleError,
+  MaxVehicleError,
+  NotProvidedError,
+  NullValueError, VehicleAllegationNotFoundError, VehicleAlreadyDeletedError,
+  VehicleAlreadyExistsError, VehicleLogNotFoundError, VehicleNotFoundError
+} from "../utils/errors.js";
 
 dotenv.config();
 
 export async function findVehicleByLicenseNumber(licenseNumber) {
-  if (licenseNumber === undefined || !licenseNumber) {
-    throw new Error('Error: License number must be provided for vehicle lookup');
-  }
+  if (licenseNumber === undefined) throw new NotProvidedError('licenseNumber');
+  if (licenseNumber === null) throw new NullValueError('licenseNumber');
 
   const vehicle = await Vehicle.findOne({
     where: {
@@ -37,10 +43,12 @@ export async function addVehicle({
                                    vehicleName = undefined,
                                    userMail = undefined,
                                  }) {
-  if (licenseNumber === undefined || vehicleName === undefined || userMail === undefined ||
-    !licenseNumber || !vehicleName || !userMail) {
-    throw new Error('Error: License number, vehicle name and user email must be provided for vehicle creation');
-  }
+  if (licenseNumber === undefined) throw new NotProvidedError('licenseNumber');
+  if (vehicleName === undefined) throw new NotProvidedError('vehicleName');
+  if (userMail === undefined) throw new NotProvidedError('userMail');
+  if (licenseNumber === null) throw new NullValueError('licenseNumber');
+  if (vehicleName === null) throw new NullValueError('vehicleName');
+  if (userMail === null) throw new NullValueError('userMail');
 
   const vehicleCount = await Vehicle.count({
     where: {
@@ -50,7 +58,7 @@ export async function addVehicle({
   });
 
   if (vehicleCount >= parseInt(process.env.MAX_VEHICLE)) {
-    throw new Error('Error: Maximum number of vehicles reached');
+    throw new MaxVehicleError();
   }
 
   const [vehicle, created] = await Vehicle.findOrCreate({
@@ -65,10 +73,10 @@ export async function addVehicle({
 
   if (!created) {
     if (vehicle.defaultDuration === 0) {
-      throw new Error('Error: Vehicle is banned');
+      throw new BannedVehicleError();
     }
     if (vehicle.deletedAt === null) {
-      throw new Error('Error: Vehicle already exists');
+      throw new VehicleAlreadyExistsError();
     }
   }
 
@@ -100,32 +108,33 @@ export async function addVehicle({
 }
 
 export async function removeVehicle(licenseNumber) {
-  if (licenseNumber === undefined || !licenseNumber) {
-    throw new Error('Error: License number must be provided for vehicle deletion');
-  }
+  if (licenseNumber === undefined) throw new NotProvidedError('licenseNumber');
+  if (licenseNumber === null) throw new NullValueError('licenseNumber');
 
   const vehicle = await findVehicleByLicenseNumber(licenseNumber);
-  if (vehicle) {
-    if (vehicle.defaultDuration === 0) {
-      throw new Error('Error: Banned vehicles cannot be deleted');
-    }
-    if (vehicle.deletedAt !== null) {
-      throw new Error('Error: Vehicle already deleted');
-    }
 
-    vehicle.deletedAt = new Date();
-    const result = await vehicle.save();
-    if (result.defaultDuration === 0) {
-      result.status = 'Banned';
-    } else if (result.approvalStatus) {
-      result.status = 'Eligible';
-    } else {
-      result.status = 'Pending';
-    }
-
-    return result;
+  if (!vehicle) {
+    return null;
   }
-  return null;
+
+  if (vehicle.defaultDuration === 0) {
+    throw new BannedVehicleError();
+  }
+  if (vehicle.deletedAt !== null) {
+    throw new VehicleAlreadyDeletedError();
+  }
+
+  vehicle.deletedAt = new Date();
+  const result = await vehicle.save();
+  if (result.defaultDuration === 0) {
+    result.status = 'Banned';
+  } else if (result.approvalStatus) {
+    result.status = 'Eligible';
+  } else {
+    result.status = 'Pending';
+  }
+
+  return result;
 }
 
 export async function updateVehicle({
@@ -134,13 +143,12 @@ export async function updateVehicle({
                                       approvalStatus = undefined,
                                       vehicleName = undefined
                                     }) {
-  if (licenseNumber === undefined || !licenseNumber) {
-    throw new Error('Error: License number must be provided for vehicle lookup');
-  }
+  if (licenseNumber === undefined) throw new NotProvidedError('licenseNumber');
+  if (licenseNumber === null) throw new NullValueError('licenseNumber');
 
   const vehicle = await findVehicleByLicenseNumber(licenseNumber);
   if (!vehicle) {
-    throw new Error('Error: Vehicle not found');
+    throw new VehicleNotFoundError();
   }
 
   if (defaultDuration !== undefined) {
@@ -214,9 +222,8 @@ export async function getVehicleList({
 }
 
 export async function findVehicleLogById(id) {
-  if (id === undefined || !id) {
-    throw new Error('Error: ID must be provided for vehicle log lookup');
-  }
+  if (id === undefined) throw new NotProvidedError('id');
+  if (id === null) throw new NullValueError('id');
 
   const log = await VehicleLog.findByPk(id);
   if (log) {
@@ -231,18 +238,18 @@ export async function addVehicleLog({
                                       allowedDuration = undefined,
                                       comment = undefined
                                     }) {
-  if (licenseNumber === undefined || entryTime === undefined ||
-    !licenseNumber || !entryTime) {
-    throw new Error('Error: License number, entry time, and allowed duration must be provided for vehicle log creation');
-  }
+  if (licenseNumber === undefined) throw new NotProvidedError('licenseNumber');
+  if (entryTime === undefined) throw new NotProvidedError('entryTime');
+  if (licenseNumber === null) throw new NullValueError('licenseNumber');
+  if (entryTime === null) throw new NullValueError('entryTime');
 
   const vehicle = await findVehicleByLicenseNumber(licenseNumber);
   if (!vehicle) {
-    throw new Error('Error: Vehicle not found');
+    throw new VehicleNotFoundError();
   }
 
   if (vehicle.defaultDuration === 0) {
-    throw new Error('Error: Banned vehicles cannot be logged');
+    throw new BannedVehicleError();
   }
 
   const log = await VehicleLog.build({
@@ -265,13 +272,12 @@ export async function updateVehicleLog({
                                          allowedDuration = undefined,
                                          comment = undefined
                                        }) {
-  if (id === undefined || !id) {
-    throw new Error('Error: ID must be provided for vehicle log lookup');
-  }
+  if (id === undefined) throw new NotProvidedError('id');
+  if (id === null) throw new NullValueError('id');
 
   const log = await findVehicleLogById(id);
   if (!log) {
-    throw new Error('Error: Vehicle log not found');
+    throw new VehicleLogNotFoundError();
   }
 
   if (entryTime !== undefined && entryTime) {
@@ -355,9 +361,8 @@ export async function getVehicleLogs({
 }
 
 export async function findVehicleAllegationById(id) {
-  if (id === undefined || !id) {
-    throw new Error('Error: ID must be provided for vehicle allegation lookup');
-  }
+  if (id === undefined) throw new NotProvidedError('id');
+  if (id === null) throw new NullValueError('id');
 
   const allegation = await VehicleAllegation.findByPk(id);
   if (allegation) {
@@ -367,13 +372,12 @@ export async function findVehicleAllegationById(id) {
 }
 
 export async function updateVehicleAllegation({id = undefined, comment = undefined}) {
-  if (id === undefined || !id) {
-    throw new Error('Error: ID must be provided for vehicle allegation lookup');
-  }
+  if (id === undefined) throw new NotProvidedError('id');
+  if (id === null) throw new NotProvidedError('id');
 
   const allegation = await findVehicleAllegationById(id);
   if (!allegation) {
-    throw new Error('Error: Vehicle allegation not found');
+    throw new VehicleAllegationNotFoundError();
   }
 
   if (comment !== undefined) {
