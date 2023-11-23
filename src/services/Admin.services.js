@@ -2,8 +2,8 @@ import Admin from "../models/Admin.model.js";
 import {AdminNotFoundError, NotProvidedError, NullValueError} from "../utils/errors.js";
 
 export async function findAdminByEmail(email) {
-  if (email === undefined) throw new NotProvidedError('email');
-  if (email === null) throw new NullValueError('email');
+  if (email === undefined) throw new NotProvidedError("email");
+  if (email === null) throw new NullValueError("email");
 
   const user = await Admin.findByPk(email);
   if (user) {
@@ -13,14 +13,14 @@ export async function findAdminByEmail(email) {
 }
 
 export async function createAdmin(email, name, designation) {
-  if (email === undefined) throw new NotProvidedError('email');
-  if (name === undefined) throw new NotProvidedError('name');
-  if (designation === undefined) throw new NotProvidedError('designation');
-  if (email === null) throw new NullValueError('email');
-  if (name === null) throw new NullValueError('name');
-  if (designation === null) throw new NullValueError('designation');
+  if (email === undefined) throw new NotProvidedError("email");
+  if (name === undefined) throw new NotProvidedError("name");
+  if (designation === undefined) throw new NotProvidedError("designation");
+  if (email === null) throw new NullValueError("email");
+  if (name === null) throw new NullValueError("name");
+  if (designation === null) throw new NullValueError("designation");
 
-  const [admin, created] = await Admin.findOrCreate({
+  const [admin] = await Admin.findOrCreate({
     where: {email: email},
     defaults: {
       name: name,
@@ -32,8 +32,8 @@ export async function createAdmin(email, name, designation) {
 }
 
 export async function updateAdmin(email, {name = undefined, designation = undefined}) {
-  if (email === undefined) throw new NotProvidedError('email');
-  if (email === null) throw new NullValueError('email');
+  if (email === undefined) throw new NotProvidedError("email");
+  if (email === null) throw new NullValueError("email");
 
   const admin = await findAdminByEmail(email);
   if (!admin) {

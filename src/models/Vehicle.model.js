@@ -2,7 +2,7 @@ import {DataTypes} from "sequelize";
 import sequelize from "../config/sequelize.config.js";
 import User from "./User.model.js";
 
-const Vehicle = sequelize.define('Vehicle', {
+const Vehicle = sequelize.define("Vehicle", {
   licenseNumber: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -20,7 +20,7 @@ const Vehicle = sequelize.define('Vehicle', {
     },
     references: {
       model: User,
-      key: 'email'
+      key: "email"
     },
   },
   defaultDuration: {
@@ -45,9 +45,9 @@ const Vehicle = sequelize.define('Vehicle', {
     field: "deleted_at"
   }
 }, {
-  tableName: 'vehicles',
-  createdAt: 'created_at',
-  updatedAt: 'updated_at'
+  tableName: "vehicles",
+  createdAt: "created_at",
+  updatedAt: "updated_at"
 });
 
 export default Vehicle;

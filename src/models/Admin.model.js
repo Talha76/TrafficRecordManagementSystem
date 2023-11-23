@@ -1,7 +1,7 @@
 import {DataTypes} from "sequelize";
 import sequelize from "../config/sequelize.config.js";
 
-const Admin = sequelize.define('Admin', {
+const Admin = sequelize.define("Admin", {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -26,9 +26,9 @@ const Admin = sequelize.define('Admin', {
     }
   }
 }, {
-  tableName: 'admins',
-  createdAt: 'created_at',
-  updatedAt: 'updated_at'
+  tableName: "admins",
+  createdAt: "created_at",
+  updatedAt: "updated_at"
 });
 
 export default Admin;

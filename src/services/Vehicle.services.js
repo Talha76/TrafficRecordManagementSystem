@@ -14,8 +14,8 @@ import {
 dotenv.config();
 
 export async function findVehicleByLicenseNumber(licenseNumber) {
-  if (licenseNumber === undefined) throw new NotProvidedError('licenseNumber');
-  if (licenseNumber === null) throw new NullValueError('licenseNumber');
+  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (licenseNumber === null) throw new NullValueError("licenseNumber");
 
   const vehicle = await Vehicle.findOne({
     where: {
@@ -25,11 +25,11 @@ export async function findVehicleByLicenseNumber(licenseNumber) {
   });
   if (vehicle) {
     if (vehicle.defaultDuration === 0) {
-      vehicle.status = 'Banned';
+      vehicle.status = "Banned";
     } else if (vehicle.approvalStatus) {
-      vehicle.status = 'Eligible';
+      vehicle.status = "Eligible";
     } else {
-      vehicle.status = 'Pending';
+      vehicle.status = "Pending";
     }
     return vehicle;
   }
@@ -43,12 +43,12 @@ export async function addVehicle({
                                    vehicleName = undefined,
                                    userMail = undefined,
                                  }) {
-  if (licenseNumber === undefined) throw new NotProvidedError('licenseNumber');
-  if (vehicleName === undefined) throw new NotProvidedError('vehicleName');
-  if (userMail === undefined) throw new NotProvidedError('userMail');
-  if (licenseNumber === null) throw new NullValueError('licenseNumber');
-  if (vehicleName === null) throw new NullValueError('vehicleName');
-  if (userMail === null) throw new NullValueError('userMail');
+  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (vehicleName === undefined) throw new NotProvidedError("vehicleName");
+  if (userMail === undefined) throw new NotProvidedError("userMail");
+  if (licenseNumber === null) throw new NullValueError("licenseNumber");
+  if (vehicleName === null) throw new NullValueError("vehicleName");
+  if (userMail === null) throw new NullValueError("userMail");
 
   const vehicleCount = await Vehicle.count({
     where: {
@@ -97,19 +97,19 @@ export async function addVehicle({
 
   const result = await vehicle.save();
   if (result.defaultDuration === 0) {
-    result.status = 'Banned';
+    result.status = "Banned";
   } else if (result.approvalStatus) {
-    result.status = 'Eligible';
+    result.status = "Eligible";
   } else {
-    result.status = 'Pending';
+    result.status = "Pending";
   }
 
   return result;
 }
 
 export async function removeVehicle(licenseNumber) {
-  if (licenseNumber === undefined) throw new NotProvidedError('licenseNumber');
-  if (licenseNumber === null) throw new NullValueError('licenseNumber');
+  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (licenseNumber === null) throw new NullValueError("licenseNumber");
 
   const vehicle = await findVehicleByLicenseNumber(licenseNumber);
 
@@ -127,11 +127,11 @@ export async function removeVehicle(licenseNumber) {
   vehicle.deletedAt = new Date();
   const result = await vehicle.save();
   if (result.defaultDuration === 0) {
-    result.status = 'Banned';
+    result.status = "Banned";
   } else if (result.approvalStatus) {
-    result.status = 'Eligible';
+    result.status = "Eligible";
   } else {
-    result.status = 'Pending';
+    result.status = "Pending";
   }
 
   return result;
@@ -143,8 +143,8 @@ export async function updateVehicle({
                                       approvalStatus = undefined,
                                       vehicleName = undefined
                                     }) {
-  if (licenseNumber === undefined) throw new NotProvidedError('licenseNumber');
-  if (licenseNumber === null) throw new NullValueError('licenseNumber');
+  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (licenseNumber === null) throw new NullValueError("licenseNumber");
 
   const vehicle = await findVehicleByLicenseNumber(licenseNumber);
   if (!vehicle) {
@@ -163,11 +163,11 @@ export async function updateVehicle({
 
   const result = await vehicle.save();
   if (result.defaultDuration === 0) {
-    result.status = 'Banned';
+    result.status = "Banned";
   } else if (result.approvalStatus) {
-    result.status = 'Eligible';
+    result.status = "Eligible";
   } else {
-    result.status = 'Pending';
+    result.status = "Pending";
   }
 
   return result;
@@ -191,15 +191,15 @@ export async function getVehicleList({
   } else if (defaultDurationTo !== undefined && defaultDurationTo && defaultDurationFrom !== undefined && defaultDurationFrom) {
     queries.defaultDuration = {
       [Op.between]: [defaultDurationFrom, defaultDurationTo]
-    }
+    };
   } else if (defaultDurationTo !== undefined && defaultDurationTo) {
     queries.defaultDuration = {
       [Op.lte]: defaultDurationTo
-    }
+    };
   } else if (defaultDurationFrom !== undefined && defaultDurationFrom) {
     queries.defaultDuration = {
       [Op.gte]: defaultDurationFrom
-    }
+    };
   }
   if (approvalStatus !== undefined && approvalStatus) {
     queries.approvalStatus = approvalStatus;
@@ -208,13 +208,13 @@ export async function getVehicleList({
   const vehicles = await Vehicle.findAll({where: queries});
   vehicles.forEach(vehicle => {
     if (vehicle.defaultDuration === 0) {
-      vehicle.status = 'Banned';
+      vehicle.status = "Banned";
       return;
     }
     if (vehicle.approvalStatus) {
-      vehicle.status = 'Eligible';
+      vehicle.status = "Eligible";
     } else {
-      vehicle.status = 'Pending';
+      vehicle.status = "Pending";
     }
   });
 
@@ -222,8 +222,8 @@ export async function getVehicleList({
 }
 
 export async function findVehicleLogById(id) {
-  if (id === undefined) throw new NotProvidedError('id');
-  if (id === null) throw new NullValueError('id');
+  if (id === undefined) throw new NotProvidedError("id");
+  if (id === null) throw new NullValueError("id");
 
   const log = await VehicleLog.findByPk(id);
   if (log) {
@@ -238,10 +238,10 @@ export async function addVehicleLog({
                                       allowedDuration = undefined,
                                       comment = undefined
                                     }) {
-  if (licenseNumber === undefined) throw new NotProvidedError('licenseNumber');
-  if (entryTime === undefined) throw new NotProvidedError('entryTime');
-  if (licenseNumber === null) throw new NullValueError('licenseNumber');
-  if (entryTime === null) throw new NullValueError('entryTime');
+  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (entryTime === undefined) throw new NotProvidedError("entryTime");
+  if (licenseNumber === null) throw new NullValueError("licenseNumber");
+  if (entryTime === null) throw new NullValueError("entryTime");
 
   const vehicle = await findVehicleByLicenseNumber(licenseNumber);
   if (!vehicle) {
@@ -272,8 +272,8 @@ export async function updateVehicleLog({
                                          allowedDuration = undefined,
                                          comment = undefined
                                        }) {
-  if (id === undefined) throw new NotProvidedError('id');
-  if (id === null) throw new NullValueError('id');
+  if (id === undefined) throw new NotProvidedError("id");
+  if (id === null) throw new NullValueError("id");
 
   const log = await findVehicleLogById(id);
   if (!log) {
@@ -316,53 +316,53 @@ export async function getVehicleLogs({
   } else if (entryTimeTo !== undefined && entryTimeTo && entryTimeFrom !== undefined && entryTimeFrom) {
     queries.entryTime = {
       [Op.between]: [entryTimeFrom, entryTimeTo]
-    }
+    };
   } else if (entryTimeTo !== undefined && entryTimeTo) {
     queries.entryTime = {
       [Op.lte]: entryTimeTo
-    }
+    };
   } else if (entryTimeFrom !== undefined && entryTimeFrom) {
     queries.entryTime = {
       [Op.gte]: entryTimeFrom
-    }
+    };
   }
   if (exitTimeEqual !== undefined) {
     queries.exitTime = exitTimeEqual;
   } else if (exitTimeTo !== undefined && exitTimeFrom !== undefined) {
     queries.exitTime = {
       [Op.between]: [exitTimeFrom, exitTimeTo]
-    }
+    };
   } else if (exitTimeTo !== undefined) {
     queries.exitTime = {
       [Op.lte]: exitTimeTo
-    }
+    };
   } else if (exitTimeFrom !== undefined) {
     queries.exitTime = {
       [Op.gte]: exitTimeFrom
-    }
+    };
   }
   if (allowedDurationEqual !== undefined && allowedDurationEqual) {
     queries.allowedDuration = allowedDurationEqual;
   } else if (allowedDurationTo !== undefined && allowedDurationTo && allowedDurationFrom !== undefined && allowedDurationFrom) {
     queries.allowedDuration = {
       [Op.between]: [allowedDurationFrom, allowedDurationTo]
-    }
+    };
   } else if (allowedDurationTo !== undefined && allowedDurationTo) {
     queries.allowedDuration = {
       [Op.lte]: allowedDurationTo
-    }
+    };
   } else if (allowedDurationFrom !== undefined && allowedDurationFrom) {
     queries.allowedDuration = {
       [Op.gte]: allowedDurationFrom
-    }
+    };
   }
 
   return await VehicleLog.findAll({where: queries});
 }
 
 export async function findVehicleAllegationById(id) {
-  if (id === undefined) throw new NotProvidedError('id');
-  if (id === null) throw new NullValueError('id');
+  if (id === undefined) throw new NotProvidedError("id");
+  if (id === null) throw new NullValueError("id");
 
   const allegation = await VehicleAllegation.findByPk(id);
   if (allegation) {
@@ -372,8 +372,8 @@ export async function findVehicleAllegationById(id) {
 }
 
 export async function updateVehicleAllegation({id = undefined, comment = undefined}) {
-  if (id === undefined) throw new NotProvidedError('id');
-  if (id === null) throw new NotProvidedError('id');
+  if (id === undefined) throw new NotProvidedError("id");
+  if (id === null) throw new NotProvidedError("id");
 
   const allegation = await findVehicleAllegationById(id);
   if (!allegation) {
@@ -403,15 +403,15 @@ export async function getVehicleAllegations({
   } else if (lateDurationTo !== undefined && lateDurationTo && lateDurationFrom !== undefined && lateDurationFrom) {
     queries.lateDuration = {
       [Op.between]: [lateDurationFrom, lateDurationTo]
-    }
+    };
   } else if (lateDurationTo !== undefined && lateDurationTo) {
     queries.lateDuration = {
       [Op.lte]: lateDurationTo
-    }
+    };
   } else if (lateDurationFrom !== undefined && lateDurationFrom) {
     queries.lateDuration = {
       [Op.gte]: lateDurationFrom
-    }
+    };
   }
 
   return await VehicleAllegation.findAll({where: queries});
