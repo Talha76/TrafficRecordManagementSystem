@@ -102,7 +102,6 @@ dist
 
 # vuepress v2.x temp and cache directory
 .temp
-.cache
 
 # Docusaurus cache and generated files
 .docusaurus
@@ -128,3 +127,18 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# idea files
+.idea
+
+# qodana files
+qodana.yaml
+
+# public css, js scripts
+*assets
+*asset
+*Assets
+*Asset
+*.min*
+
+*models-creation-script.js
