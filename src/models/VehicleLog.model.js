@@ -2,7 +2,7 @@ import sequelize from "../config/sequelize.config.js";
 import {DataTypes} from "sequelize";
 import Vehicle from "./Vehicle.model.js";
 
-const VehicleLog = sequelize.define('VehicleLog', {
+const VehicleLog = sequelize.define("VehicleLog", {
   id: {
     type: DataTypes.UUID,
     allowNull: false,
@@ -17,7 +17,7 @@ const VehicleLog = sequelize.define('VehicleLog', {
     field: "license_number",
     references: {
       model: Vehicle,
-      key: 'license_number'
+      key: "license_number"
     }
   },
   entryTime: {
@@ -38,7 +38,7 @@ const VehicleLog = sequelize.define('VehicleLog', {
     field: "allowed_duration"
   }
 }, {
-  tableName: 'vehicle_logs',
+  tableName: "vehicle_logs",
   timestamps: false,
 });
 

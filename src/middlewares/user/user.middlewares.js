@@ -1,14 +1,20 @@
-import '../../config/oauth.passport.js';
+import "../../config/oauth.passport.js";
 
-const isloggedIn = (req, res, next) => {
-  req.isAuthenticated() === true ? next() : res.sendStatus(401);
-}
+const isLoggedIn = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).render("error/401.ejs", {url: "/"});
+};
 
-const isNotloggedIn = (req, res, next) => {
-  req.isAuthenticated() === false ? next() : res.sendStatus(401);
-}
+const isNotLoggedIn = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/dashboard");
+};
 
 export {
-  isloggedIn,
-  isNotloggedIn,
-}
+  isLoggedIn,
+  isNotLoggedIn,
+};

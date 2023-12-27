@@ -1,7 +1,7 @@
 import {DataTypes} from "sequelize";
 import sequelize from "../config/sequelize.config.js";
 
-const User = sequelize.define('User', {
+const User = sequelize.define("User", {
   id: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
@@ -33,7 +33,7 @@ const User = sequelize.define('User', {
     }
   }
 }, {
-  tableName: 'users',
+  tableName: "users",
   timestamps: false,
 });
 
