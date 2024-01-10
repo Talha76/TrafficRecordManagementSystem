@@ -1,0 +1,22 @@
+{
+  // "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "rules": {
+    "quotes": [
+      "error",
+      "double"
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "linebreak-style": [
+      "warn",
+      "unix"
+    ],
+    "eqeqeq": "error"
+  }
+}

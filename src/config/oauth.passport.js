@@ -1,28 +1,35 @@
-import passport from 'passport';
-import {Strategy as GoogleStrategy} from 'passport-google-oauth2';
-import dotenv from 'dotenv';
-import * as UserServices from "../services/User.services.js";
+import dotenv from "dotenv";
+import passport from "passport";
+import {Strategy as GoogleStrategy} from "passport-google-oauth2";
+import {findUserByEmail} from "../services/User.services.js";
+
 dotenv.config();
 
 const googleStrategy = new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost:3000/auth/google/callback',
+    callbackURL: "/auth/google/callback",
     passReqToCallback: true,
   },
-  (request, accessToken, refreshToken, profile, done) => {
-    return done(null, profile);
+  async (request, accessToken, refreshToken, profile, done) => {
+    try {
+      console.trace(profile.email);
+      const user = await findUserByEmail(profile.email);
+      return done(null, user);
+    } catch (err) {
+      return done(err, false);
+    }
   }
 );
 
-passport.use('google', googleStrategy);
+passport.use(googleStrategy);
 
 passport.serializeUser(async (user, done) => {
   done(null, user);
 });
 
 passport.deserializeUser(async (user, done) => {
-  const newUser = await UserServices.findUserByEmail(user.email);
+  const newUser = await findUserByEmail(user.email);
   done(null, newUser);
 });
 

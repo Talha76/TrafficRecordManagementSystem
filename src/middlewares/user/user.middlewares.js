@@ -1,23 +1,20 @@
-import '../../config/oauth.passport.js';
-import * as User from '../../services/User.services.js';
+import "../../config/oauth.passport.js";
 
-const emailVerificationMiddleware = async (req, res, next) => {
-  const _email = req.user.email;
-  console.log("fetching by mail = " + _email);
-  const user = await User.findUserByEmail(_email);
-  if (user) next();
-  else res.redirect('/auth/google/failure');
-}
+const isLoggedIn = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).render("error/401.ejs", {url: "/"});
+};
 
-const isloggedIn = (req, res, next) => {
-  req.user ? next() : res.sendStatus(401);
-}
-const isNotloggedIn = (req, res, next) => {
-  !req.user ? next() : res.sendStatus(401);
-}
+const isNotLoggedIn = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/dashboard");
+};
 
-export default {
-  isloggedIn,
-  isNotloggedIn,
-  emailVerificationMiddleware
-}
+export {
+  isLoggedIn,
+  isNotLoggedIn,
+};

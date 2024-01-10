@@ -1,7 +1,10 @@
 const getIndex = (req, res) => {
-  res.send('INDEX = <a href="/auth/google">Login with Google</a>');
-}
+  res.render("user/user.login.ejs", {
+    message: req.flash("message"),
+    error: req.flash("error")
+  });
+};
 
 export default {
   getIndex
-}
+};

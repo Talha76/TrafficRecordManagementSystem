@@ -3,42 +3,56 @@ import VehicleLog from "../models/VehicleLog.model.js";
 import VehicleAllegation from "../models/VehicleAllegation.model.js";
 import {Op} from "sequelize";
 import dotenv from "dotenv";
+import {
+  BannedVehicleError,
+  MaxVehicleError,
+  NotProvidedError,
+  NullValueError,
+  VehicleAllegationNotFoundError,
+  VehicleAlreadyDeletedError,
+  VehicleAlreadyExistsError,
+  VehicleLogNotFoundError,
+  VehicleNotFoundError
+} from "../utils/errors.js";
 
 dotenv.config();
 
 export async function findVehicleByLicenseNumber(licenseNumber) {
-  if (licenseNumber === undefined || !licenseNumber) {
-    throw new Error('Error: License number must be provided for vehicle lookup');
-  }
+  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (licenseNumber === null) throw new NullValueError("licenseNumber");
 
-  const vehicle = await Vehicle.findByPk(licenseNumber);
+  const vehicle = await Vehicle.findOne({
+    where: {
+      licenseNumber: licenseNumber,
+      deletedAt: null
+    }
+  });
   if (vehicle) {
+    if (vehicle.defaultDuration === 0) {
+      vehicle.status = "Banned";
+    } else if (vehicle.approvalStatus) {
+      vehicle.status = "Eligible";
+    } else {
+      vehicle.status = "Pending";
+    }
     return vehicle;
   }
   return null;
 }
 
 export async function addVehicle({
-                                   licenseNumber = undefined,
-                                   defaultDuration = undefined,
-                                   approvalStatus = undefined,
-                                   vehicleName = undefined,
-                                   userMail = undefined,
-                                 }) {
-  if (licenseNumber === undefined || vehicleName === undefined || userMail === undefined ||
-    !licenseNumber || !vehicleName || !userMail) {
-    throw new Error('Error: License number, vehicle name and user email must be provided for vehicle creation');
-  }
-
-  let vehicle = await findVehicleByLicenseNumber(licenseNumber);
-  if (vehicle) {
-    if (vehicle.defaultDuration === 0) {
-      throw new Error('Error: Vehicle is banned');
-    }
-    if (vehicle.deletedAt === null) {
-      throw new Error('Error: Vehicle already exists');
-    }
-  }
+  licenseNumber = undefined,
+  defaultDuration = undefined,
+  approvalStatus = undefined,
+  vehicleName = undefined,
+  userMail = undefined,
+}) {
+  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (vehicleName === undefined) throw new NotProvidedError("vehicleName");
+  if (userMail === undefined) throw new NotProvidedError("userMail");
+  if (licenseNumber === null) throw new NullValueError("licenseNumber");
+  if (vehicleName === null) throw new NullValueError("vehicleName");
+  if (userMail === null) throw new NullValueError("userMail");
 
   const vehicleCount = await Vehicle.count({
     where: {
@@ -47,26 +61,36 @@ export async function addVehicle({
     }
   });
 
-  console.trace(vehicleCount.toString(), process.env.MAX_VEHICLE);
-  if (vehicleCount.toString() === process.env.MAX_VEHICLE) {
-    throw new Error('Error: Maximum number of vehicles reached');
+  if (vehicleCount >= parseInt(process.env.MAX_VEHICLE)) {
+    throw new MaxVehicleError();
   }
 
-  let created;
-  [vehicle, created] = await Vehicle.findOrCreate({
+  const [vehicle, created] = await Vehicle.findOrCreate({
     where: {
       licenseNumber: licenseNumber
     },
     defaults: {
       vehicleName: vehicleName,
       userMail: userMail,
-      deletedAt: null
     }
   });
-  if (created === false) {
+
+  if (!created) {
+    if (vehicle.deletedAt === null) {
+      throw new VehicleAlreadyExistsError();
+    }
+    if (vehicle.defaultDuration === 0) {
+      throw new BannedVehicleError();
+    }
+  }
+
+  if (!created) {
     vehicle.vehicleName = vehicleName;
     vehicle.userMail = userMail;
     vehicle.deletedAt = null;
+    if (approvalStatus === undefined) {
+      vehicle.approvalStatus = false;
+    }
   }
   if (defaultDuration !== undefined) {
     vehicle.defaultDuration = defaultDuration;
@@ -74,42 +98,61 @@ export async function addVehicle({
   if (approvalStatus !== undefined) {
     vehicle.approvalStatus = approvalStatus;
   }
-  return await vehicle.save();
+
+  const result = await vehicle.save();
+  if (result.defaultDuration === 0) {
+    result.status = "Banned";
+  } else if (result.approvalStatus) {
+    result.status = "Eligible";
+  } else {
+    result.status = "Pending";
+  }
+
+  return result;
 }
 
 export async function removeVehicle(licenseNumber) {
-  if (licenseNumber === undefined || !licenseNumber) {
-    throw new Error('Error: License number must be provided for vehicle deletion');
-  }
+  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (licenseNumber === null) throw new NullValueError("licenseNumber");
 
   const vehicle = await findVehicleByLicenseNumber(licenseNumber);
-  if (vehicle) {
-    if (vehicle.defaultDuration === 0) {
-      throw new Error('Error: Banned vehicles cannot be deleted');
-    }
-    if (vehicle.deletedAt !== null) {
-      throw new Error('Error: Vehicle already deleted');
-    }
 
-    vehicle.deletedAt = new Date();
-    return await vehicle.save();
+  if (!vehicle) {
+    return null;
   }
-  return null;
+
+  if (vehicle.defaultDuration === 0) {
+    throw new BannedVehicleError();
+  }
+  if (vehicle.deletedAt !== null) {
+    throw new VehicleAlreadyDeletedError();
+  }
+
+  vehicle.deletedAt = new Date();
+  const result = await vehicle.save();
+  if (result.defaultDuration === 0) {
+    result.status = "Banned";
+  } else if (result.approvalStatus) {
+    result.status = "Eligible";
+  } else {
+    result.status = "Pending";
+  }
+
+  return result;
 }
 
 export async function updateVehicle({
-                                      licenseNumber = undefined,
-                                      defaultDuration = undefined,
-                                      approvalStatus = undefined,
-                                      vehicleName = undefined
-                                    }) {
-  if (licenseNumber === undefined || !licenseNumber) {
-    throw new Error('Error: License number must be provided for vehicle lookup');
-  }
+  licenseNumber = undefined,
+  defaultDuration = undefined,
+  approvalStatus = undefined,
+  vehicleName = undefined
+}) {
+  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (licenseNumber === null) throw new NullValueError("licenseNumber");
 
   const vehicle = await findVehicleByLicenseNumber(licenseNumber);
   if (!vehicle) {
-    throw new Error('Error: Vehicle not found');
+    throw new VehicleNotFoundError();
   }
 
   if (defaultDuration !== undefined) {
@@ -121,16 +164,26 @@ export async function updateVehicle({
   if (vehicleName !== undefined) {
     vehicle.vehicleName = vehicleName;
   }
-  return await vehicle.save();
+
+  const result = await vehicle.save();
+  if (result.defaultDuration === 0) {
+    result.status = "Banned";
+  } else if (result.approvalStatus) {
+    result.status = "Eligible";
+  } else {
+    result.status = "Pending";
+  }
+
+  return result;
 }
 
 export async function getVehicleList({
-                                       userMail = undefined,
-                                       defaultDurationEqual = undefined,
-                                       defaultDurationTo = undefined,
-                                       defaultDurationFrom = undefined,
-                                       approvalStatus = undefined,
-                                     }) {
+  userMail = undefined,
+  defaultDurationEqual = undefined,
+  defaultDurationTo = undefined,
+  defaultDurationFrom = undefined,
+  approvalStatus = undefined,
+}) {
   const queries = {
     deletedAt: null
   };
@@ -142,27 +195,39 @@ export async function getVehicleList({
   } else if (defaultDurationTo !== undefined && defaultDurationTo && defaultDurationFrom !== undefined && defaultDurationFrom) {
     queries.defaultDuration = {
       [Op.between]: [defaultDurationFrom, defaultDurationTo]
-    }
+    };
   } else if (defaultDurationTo !== undefined && defaultDurationTo) {
     queries.defaultDuration = {
       [Op.lte]: defaultDurationTo
-    }
+    };
   } else if (defaultDurationFrom !== undefined && defaultDurationFrom) {
     queries.defaultDuration = {
       [Op.gte]: defaultDurationFrom
-    }
+    };
   }
   if (approvalStatus !== undefined && approvalStatus) {
     queries.approvalStatus = approvalStatus;
   }
 
-  return await Vehicle.findAll({where: queries});
+  const vehicles = await Vehicle.findAll({where: queries});
+  vehicles.forEach(vehicle => {
+    if (vehicle.defaultDuration === 0) {
+      vehicle.status = "Banned";
+      return;
+    }
+    if (vehicle.approvalStatus) {
+      vehicle.status = "Eligible";
+    } else {
+      vehicle.status = "Pending";
+    }
+  });
+
+  return vehicles;
 }
 
 export async function findVehicleLogById(id) {
-  if (id === undefined || !id) {
-    throw new Error('Error: ID must be provided for vehicle log lookup');
-  }
+  if (id === undefined) throw new NotProvidedError("id");
+  if (id === null) throw new NullValueError("id");
 
   const log = await VehicleLog.findByPk(id);
   if (log) {
@@ -172,23 +237,23 @@ export async function findVehicleLogById(id) {
 }
 
 export async function addVehicleLog({
-                                      licenseNumber = undefined,
-                                      entryTime = undefined,
-                                      allowedDuration = undefined,
-                                      comment = undefined
-                                    }) {
-  if (licenseNumber === undefined || entryTime === undefined ||
-    !licenseNumber || !entryTime) {
-    throw new Error('Error: License number, entry time, and allowed duration must be provided for vehicle log creation');
-  }
+  licenseNumber = undefined,
+  entryTime = undefined,
+  allowedDuration = undefined,
+  comment = undefined
+}) {
+  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (entryTime === undefined) throw new NotProvidedError("entryTime");
+  if (licenseNumber === null) throw new NullValueError("licenseNumber");
+  if (entryTime === null) throw new NullValueError("entryTime");
 
   const vehicle = await findVehicleByLicenseNumber(licenseNumber);
   if (!vehicle) {
-    throw new Error('Error: Vehicle not found');
+    throw new VehicleNotFoundError();
   }
 
   if (vehicle.defaultDuration === 0) {
-    throw new Error('Error: Banned vehicles cannot be logged');
+    throw new BannedVehicleError();
   }
 
   const log = await VehicleLog.build({
@@ -205,19 +270,18 @@ export async function addVehicleLog({
 }
 
 export async function updateVehicleLog({
-                                         id = undefined,
-                                         entryTime = undefined,
-                                         exitTime = undefined,
-                                         allowedDuration = undefined,
-                                         comment = undefined
-                                       }) {
-  if (id === undefined || !id) {
-    throw new Error('Error: ID must be provided for vehicle log lookup');
-  }
+  id = undefined,
+  entryTime = undefined,
+  exitTime = undefined,
+  allowedDuration = undefined,
+  comment = undefined
+}) {
+  if (id === undefined) throw new NotProvidedError("id");
+  if (id === null) throw new NullValueError("id");
 
   const log = await findVehicleLogById(id);
   if (!log) {
-    throw new Error('Error: Vehicle log not found');
+    throw new VehicleLogNotFoundError();
   }
 
   if (entryTime !== undefined && entryTime) {
@@ -236,17 +300,17 @@ export async function updateVehicleLog({
 }
 
 export async function getVehicleLogs({
-                                       licenseNumber = undefined,
-                                       entryTimeEqual = undefined,
-                                       entryTimeTo = undefined,
-                                       entryTimeFrom = undefined,
-                                       exitTimeEqual = undefined,
-                                       exitTimeTo = undefined,
-                                       exitTimeFrom = undefined,
-                                       allowedDurationEqual = undefined,
-                                       allowedDurationTo = undefined,
-                                       allowedDurationFrom = undefined
-                                     }) {
+  licenseNumber = undefined,
+  entryTimeEqual = undefined,
+  entryTimeTo = undefined,
+  entryTimeFrom = undefined,
+  exitTimeEqual = undefined,
+  exitTimeTo = undefined,
+  exitTimeFrom = undefined,
+  allowedDurationEqual = undefined,
+  allowedDurationTo = undefined,
+  allowedDurationFrom = undefined
+}) {
   const queries = {};
   if (licenseNumber !== undefined && licenseNumber) {
     queries.licenseNumber = licenseNumber;
@@ -256,54 +320,53 @@ export async function getVehicleLogs({
   } else if (entryTimeTo !== undefined && entryTimeTo && entryTimeFrom !== undefined && entryTimeFrom) {
     queries.entryTime = {
       [Op.between]: [entryTimeFrom, entryTimeTo]
-    }
+    };
   } else if (entryTimeTo !== undefined && entryTimeTo) {
     queries.entryTime = {
       [Op.lte]: entryTimeTo
-    }
+    };
   } else if (entryTimeFrom !== undefined && entryTimeFrom) {
     queries.entryTime = {
       [Op.gte]: entryTimeFrom
-    }
+    };
   }
   if (exitTimeEqual !== undefined) {
     queries.exitTime = exitTimeEqual;
   } else if (exitTimeTo !== undefined && exitTimeFrom !== undefined) {
     queries.exitTime = {
       [Op.between]: [exitTimeFrom, exitTimeTo]
-    }
+    };
   } else if (exitTimeTo !== undefined) {
     queries.exitTime = {
       [Op.lte]: exitTimeTo
-    }
+    };
   } else if (exitTimeFrom !== undefined) {
     queries.exitTime = {
       [Op.gte]: exitTimeFrom
-    }
+    };
   }
   if (allowedDurationEqual !== undefined && allowedDurationEqual) {
     queries.allowedDuration = allowedDurationEqual;
   } else if (allowedDurationTo !== undefined && allowedDurationTo && allowedDurationFrom !== undefined && allowedDurationFrom) {
     queries.allowedDuration = {
       [Op.between]: [allowedDurationFrom, allowedDurationTo]
-    }
+    };
   } else if (allowedDurationTo !== undefined && allowedDurationTo) {
     queries.allowedDuration = {
       [Op.lte]: allowedDurationTo
-    }
+    };
   } else if (allowedDurationFrom !== undefined && allowedDurationFrom) {
     queries.allowedDuration = {
       [Op.gte]: allowedDurationFrom
-    }
+    };
   }
 
   return await VehicleLog.findAll({where: queries});
 }
 
 export async function findVehicleAllegationById(id) {
-  if (id === undefined || !id) {
-    throw new Error('Error: ID must be provided for vehicle allegation lookup');
-  }
+  if (id === undefined) throw new NotProvidedError("id");
+  if (id === null) throw new NullValueError("id");
 
   const allegation = await VehicleAllegation.findByPk(id);
   if (allegation) {
@@ -313,13 +376,12 @@ export async function findVehicleAllegationById(id) {
 }
 
 export async function updateVehicleAllegation({id = undefined, comment = undefined}) {
-  if (id === undefined || !id) {
-    throw new Error('Error: ID must be provided for vehicle allegation lookup');
-  }
+  if (id === undefined) throw new NotProvidedError("id");
+  if (id === null) throw new NotProvidedError("id");
 
   const allegation = await findVehicleAllegationById(id);
   if (!allegation) {
-    throw new Error('Error: Vehicle allegation not found');
+    throw new VehicleAllegationNotFoundError();
   }
 
   if (comment !== undefined) {
@@ -329,11 +391,11 @@ export async function updateVehicleAllegation({id = undefined, comment = undefin
 }
 
 export async function getVehicleAllegations({
-                                              licenseNumber = undefined,
-                                              lateDurationEqual = undefined,
-                                              lateDurationTo = undefined,
-                                              lateDurationFrom = undefined
-                                            }) {
+  licenseNumber = undefined,
+  lateDurationEqual = undefined,
+  lateDurationTo = undefined,
+  lateDurationFrom = undefined
+}) {
   let logs = await getVehicleLogs({licenseNumber: licenseNumber});
   const queries = {
     logId: {
@@ -345,15 +407,15 @@ export async function getVehicleAllegations({
   } else if (lateDurationTo !== undefined && lateDurationTo && lateDurationFrom !== undefined && lateDurationFrom) {
     queries.lateDuration = {
       [Op.between]: [lateDurationFrom, lateDurationTo]
-    }
+    };
   } else if (lateDurationTo !== undefined && lateDurationTo) {
     queries.lateDuration = {
       [Op.lte]: lateDurationTo
-    }
+    };
   } else if (lateDurationFrom !== undefined && lateDurationFrom) {
     queries.lateDuration = {
       [Op.gte]: lateDurationFrom
-    }
+    };
   }
 
   return await VehicleAllegation.findAll({where: queries});
