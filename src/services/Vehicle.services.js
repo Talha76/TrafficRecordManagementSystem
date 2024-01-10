@@ -5,6 +5,7 @@ import {Op} from "sequelize";
 import dotenv from "dotenv";
 import {
   BannedVehicleError,
+  CustomError,
   MaxVehicleError,
   NotProvidedError,
   NullValueError,
@@ -126,6 +127,16 @@ export async function removeVehicle(licenseNumber) {
   }
   if (vehicle.deletedAt !== null) {
     throw new VehicleAlreadyDeletedError();
+  }
+
+  const log = await VehicleLog.findOne({
+    where: {
+      licenseNumber: vehicle.licenseNumber,
+      exitTime: null
+    }
+  });
+  if (log) {
+    throw new CustomError("Vehicle is in the parking lot");
   }
 
   vehicle.deletedAt = new Date();
