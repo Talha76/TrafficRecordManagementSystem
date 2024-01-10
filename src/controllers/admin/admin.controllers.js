@@ -21,6 +21,7 @@ const getAdminDashboard = async (req, res) => {
     for (const vehicleLog of vehicleLogs) {
       const { id,licenseNumber, entryTime, comment } = vehicleLog;
       const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
+      console.trace(licenseNumber, vehicle);
       const user = await User.findUserByEmail(vehicle.userMail);
 
       const timeOfEntry = entryTime.toISOString().split('T')[1].split('.')[0];
