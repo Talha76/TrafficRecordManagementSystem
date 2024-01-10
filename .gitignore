@@ -142,3 +142,5 @@ qodana.yaml
 *.min*
 
 *models-creation-script.js
+
+*tmp.js

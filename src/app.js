@@ -5,9 +5,6 @@ import fileUpload from "express-fileupload";
 import session from "express-session";
 import morgan from "morgan";
 import passport from "passport";
-import indexRoutes from "./routes/index.routes.js";
-import userAuthRoutes from "./routes/user/user.auth.routes.js";
-import userRoutes from "./routes/user/user.routes.js";
 
 const app = express();
 
@@ -31,8 +28,13 @@ app.use(express.static("./src/public"));
 
 app.use(fileUpload());
 
+import indexRoutes from './routes/index.routes.js';
+import userAuthRoutes from './routes/user/user.auth.routes.js';
+import userRoutes from './routes/user/user.routes.js';
+import adminRoutes from './routes/admin/admin.routes.js';
 app.use(indexRoutes);
 app.use(userAuthRoutes);
 app.use("/dashboard", userRoutes);
+app.use("/admin", adminRoutes);
 
 export default app;
