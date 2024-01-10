@@ -21,7 +21,6 @@ app.use(bodyParser.json());
 app.use(morgan("dev"));
 app.use(express.static("public")); // Assuming your CSS files are in a folder named 'public'
 
-
 app.use(passport.initialize());
 app.use(passport.session());
 
