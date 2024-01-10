@@ -1,13 +1,14 @@
 import * as User from "../../services/User.services.js";
 import * as Vehicle from "../../services/Vehicle.services.js";
+import {BannedVehicleError, MaxVehicleError, VehicleAlreadyExistsError} from "../../utils/errors.js";
 
 const getUserDashboard = async (req, res) => {
-  let _mail = req.user.email;
   try {
-    const user = await User.findUserByEmail(_mail);
+    const id = req.user.id;
+    const user = await User.findUserById(id);
     const vehicles = await Vehicle.getVehicleList(
       {
-        userMail: _mail,
+        userMail: user.email,
       }
     );
 
@@ -21,34 +22,43 @@ const getUserDashboard = async (req, res) => {
 };
 
 const addVehicle = async (req, res) => {
-  const {licenseNumber, vehicleName} = req.body;
-  const _mail = req.user.email;
   try {
-    const vehicles = await Vehicle.getVehicleList({userMail: _mail, approvalStatus: true});
-    if (vehicles.length >= parseInt(process.env.MAX_VEHICLE)) {
-      console.trace(`You can't add more than ${process.env.MAX_VEHICLE} vehicles.`);
-      req.flash("message", `You can't add more than ${process.env.MAX_VEHICLE} vehicles.`);
-      return res.redirect("/dashboard");
-    }
+    const {licenseNumber, vehicleName} = req.body;
+    const email = req.user.email;
+    // const vehicles = await Vehicle.getVehicleList({userMail: email, approvalStatus: true});
+    // if (vehicles.length >= parseInt(process.env.MAX_VEHICLE)) {
+    //   console.trace(`You can't add more than ${process.env.MAX_VEHICLE} vehicles.`);
+    //   req.flash("message", `You can't add more than ${process.env.MAX_VEHICLE} vehicles.`);
+    //   return res.redirect("/dashboard");
+    // }
+    //
+    // const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
 
-    const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-
-    if (vehicle) {
-      console.trace("This vehicle is already registered.");
-      req.flash("message", "This vehicle is already registered.");
-      return res.redirect("/dashboard");
-    }
+    // if (vehicle) {
+    //   console.trace("This vehicle is already registered.");
+    //   req.flash("message", "This vehicle is already registered.");
+    //   return res.redirect("/dashboard");
+    // }
 
     await Vehicle.addVehicle({
-      userMail: _mail,
+      userMail: email,
       licenseNumber: licenseNumber,
       vehicleName: vehicleName
     });
     return res.redirect("/dashboard");
   } catch (err) {
     console.error(err);
-    req.flash("message", "An error occurred");
-    return res.redirect("/dashboard");
+
+    if (err instanceof MaxVehicleError) {
+      req.flash("error", err.message);
+    } else if (err instanceof VehicleAlreadyExistsError) {
+      req.flash("error", err.message);
+    } else if (err instanceof BannedVehicleError) {
+      req.flash("error", err.message);
+    } else {
+      req.flash("message", "An error occurred");
+    }
+    res.redirect("/dashboard");
   }
 };
 
