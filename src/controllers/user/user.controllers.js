@@ -14,7 +14,8 @@ const getUserDashboard = async (req, res) => {
 
     res.render("user/user.dashboard.ejs", {
       user,
-      vehicles
+      vehicles,
+      error: req.flash("error"),
     });
   } catch (err) {
     console.error(err);
@@ -71,6 +72,8 @@ const removeVehicle = async (req, res) => {
     res.redirect("/dashboard");
   } catch (err) {
     console.error(err);
+    req.flash("error", err.message);
+    res.redirect("/dashboard");
   }
 
 };

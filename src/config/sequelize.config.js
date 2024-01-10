@@ -3,8 +3,6 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// const sequelize = new Sequelize(process.env.POOL_URI);
-//
-// export default sequelize;
+const sequelize = new Sequelize(process.env.POOL_URI);
 
-export default new Sequelize(process.env.POOL_URI);
+export default sequelize;
