@@ -60,18 +60,25 @@
 			background-color: #3367d6;
 			color: black;
 		}
+
+		.error-message {
+			color: #d32f2f;
+			background-color: #ffcdd2;
+			padding: 10px;
+			border-radius: 4px;
+			margin: 15px;
+			text-align: center;
+		}
     </style>
 </head>
 <body>
-<% if (error.length > 0) { %>
-    <div class="alert alert-danger" role="alert">
-        <%= error ;%>
-    </div>
-<% } %>
 <div class="login-container">
     <div class="login-header">
         <h1>Google Login</h1>
     </div>
+    <% if (error.length > 0) { %>
+        <div class="error-message"><%= error; %></div>
+    <% } %>
     <div class="login-content">
         <a href="/auth/google" class="google-login-btn">Login with Google</a>
     </div>
