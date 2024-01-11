@@ -1,5 +1,3 @@
-import "../../config/oauth.passport.js";
-
 const isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();

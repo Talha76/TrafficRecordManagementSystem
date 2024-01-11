@@ -10,7 +10,7 @@
       "double"
     ],
     "semi": [
-      "error",
+      "warn",
       "always"
     ],
     "linebreak-style": [
