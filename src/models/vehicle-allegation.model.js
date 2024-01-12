@@ -1,6 +1,6 @@
 import sequelize from "../config/sequelize.config.js";
 import {DataTypes} from "sequelize";
-import VehicleLog from "./VehicleLog.model.js";
+import VehicleLog from "./vehicle-log.model.js";
 
 const VehicleAllegation = sequelize.define("vehicle_allegation", {
   id: {

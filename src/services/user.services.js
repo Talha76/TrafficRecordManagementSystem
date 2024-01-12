@@ -1,4 +1,4 @@
-import User from "../models/User.model.js";
+import User from "../models/user.model.js";
 import {CustomError, NotProvidedError, NullValueError, UserNotFoundError} from "../utils/errors.js";
 
 export async function findUserById(id) {

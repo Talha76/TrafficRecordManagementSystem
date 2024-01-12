@@ -1,7 +1,6 @@
 import bodyParser from "body-parser";
 import flash from "connect-flash";
 import express from "express";
-import fileUpload from "express-fileupload";
 import session from "express-session";
 import morgan from "morgan";
 import initializePassport from "./config/passport.config.js";
@@ -31,8 +30,6 @@ app.set("view engine", "ejs");
 app.set("views", "./src/views");
 
 app.use(express.static("./src/public"));
-
-app.use(fileUpload());
 
 app.use(indexRoutes);
 app.use(userAuthRoutes);

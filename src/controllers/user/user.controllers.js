@@ -1,5 +1,5 @@
-import * as User from "../../services/User.services.js";
-import * as Vehicle from "../../services/Vehicle.services.js";
+import * as User from "../../services/user.services.js";
+import * as Vehicle from "../../services/vehicle.services.js";
 import {BannedVehicleError, MaxVehicleError, VehicleAlreadyExistsError} from "../../utils/errors.js";
 
 const getUserDashboard = async (req, res) => {

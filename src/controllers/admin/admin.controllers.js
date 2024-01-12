@@ -1,5 +1,5 @@
-import * as Vehicle from "../../services/Vehicle.services.js";
-import * as User from "../../services/User.services.js";
+import * as Vehicle from "../../services/vehicle.services.js";
+import * as User from "../../services/user.services.js";
 
 // YYYY-MM-DD HH:MM:SS
 const getAdminDashboard = async (req, res) => {

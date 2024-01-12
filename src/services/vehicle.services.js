@@ -1,6 +1,6 @@
-import Vehicle from "../models/Vehicle.model.js";
-import VehicleLog from "../models/VehicleLog.model.js";
-import VehicleAllegation from "../models/VehicleAllegation.model.js";
+import Vehicle from "../models/vehicle.model.js";
+import VehicleLog from "../models/vehicle-log.model.js";
+import VehicleAllegation from "../models/vehicle-allegation.model.js";
 import {Op} from "sequelize";
 import dotenv from "dotenv";
 import {

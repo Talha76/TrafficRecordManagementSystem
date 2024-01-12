@@ -1,4 +1,4 @@
-import Admin from "../models/Admin.model.js";
+import Admin from "../models/admin.model.js";
 import {AdminNotFoundError, NotProvidedError, NullValueError} from "../utils/errors.js";
 
 export async function findAdminByEmail(email) {
