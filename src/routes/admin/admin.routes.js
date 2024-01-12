@@ -1,13 +1,14 @@
-import * as addminController from "../../controllers/admin/admin.controllers.js";
-
-
+import * as adminController from "../../controllers/admin/admin.controllers.js";
+import {isLoggedIn} from "../../middlewares/user.middlewares.js";
+import {isAdmin} from "../../middlewares/admin.middlewares.js";
 import {Router} from "express";
 
 const router = Router();
 
-// router.get('/', getIndex);
-router.get("/dashboard", addminController.getAdminDashboard);
-router.post("/dashboard", addminController.postVehicleLogs);
-router.post("/add-comment", addminController.addComment);
+router.get("/dashboard", isLoggedIn, isAdmin, adminController.getAdminDashboard);
+router.post("/dashboard", isLoggedIn, isAdmin, adminController.postVehicleLogs);
+router.post("/add-comment", isLoggedIn, isAdmin, adminController.addComment);
+router.get('/view-vehicle-logs', isLoggedIn, isAdmin, adminController.viewVehicleLogs)
+router.get('/view-vehicle-details', isLoggedIn, isAdmin, adminController.viewVehicleDetails)
 
 export default router;

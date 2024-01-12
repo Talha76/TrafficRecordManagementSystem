@@ -1,6 +1,6 @@
-import Vehicle from "../models/Vehicle.model.js";
-import VehicleLog from "../models/VehicleLog.model.js";
-import VehicleAllegation from "../models/VehicleAllegation.model.js";
+import Vehicle from "../models/vehicle.model.js";
+import VehicleLog from "../models/vehicle-log.model.js";
+import VehicleAllegation from "../models/vehicle-allegation.model.js";
 import {Op} from "sequelize";
 import dotenv from "dotenv";
 import {
@@ -372,7 +372,15 @@ export async function getVehicleLogs({
     };
   }
 
-  return await VehicleLog.findAll({where: queries});
+  const results = await VehicleLog.findAll({where: queries});
+  for (const row of results) {
+    if (row.exitTime) {
+      row.lateDuration = Math.max(0, (row.exitTime - row.entryTime) / 1000 / 60 - row.allowedDuration);
+    } else {
+      row.lateDuration = 0;
+    }
+  }
+  return results;
 }
 
 export async function findVehicleAllegationById(id) {

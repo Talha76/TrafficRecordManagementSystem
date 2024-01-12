@@ -1,5 +1,5 @@
 import {Strategy as GoogleStrategy} from "passport-google-oauth2";
-import {findUserByEmail} from "../../services/User.services.js";
+import {findUserByEmail} from "../../services/user.services.js";
 import dotenv from "dotenv";
 
 dotenv.config();
