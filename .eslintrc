@@ -9,8 +9,13 @@
       "double"
     ],
     "semi": [
-      "error",
+      "warn",
       "always"
-    ]
+    ],
+    "linebreak-style": [
+      "warn",
+      "unix"
+    ],
+    "eqeqeq": "error"
   }
 }

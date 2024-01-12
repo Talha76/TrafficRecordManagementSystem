@@ -1,28 +1,14 @@
-import passport from "../../config/oauth.passport.js";
-
-const getScope = passport.authenticate("google", {
-  scope: ["email", "profile"]}
-);
-
-const getCallback = passport.authenticate("google", {
-  successRedirect: "/dashboard",
-  failureRedirect: "/auth/google/failure",
-  successFlash: true,
-  failureFlash: true
-});
-
 const getLogout = (req, res) => {
-  req.logout(err => console.error(err));
+  req.logout(() => {
+  });
   res.redirect("/");
 };
 
 const getFailure = (req, res) => {
-  res.send("USER NOT FOUND!!! Go to dashboard and try again <a href=\"/\">frontPage</a>");
+  res.send("USER NOT FOUND!!! Go to dashboard and try again <a href=\"/\">frontPage</a><br>Error: " + req.flash("error")[0]);
 };
 
 export default {
-  getScope,
-  getCallback,
   getLogout,
   getFailure
 };
