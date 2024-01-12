@@ -94,8 +94,17 @@ const addComment = async (req, res) => {
   }
 };
 
+const viewVehicleLogs = async (req, res) => {
+  res.render("./admin/admin.view-logs.ejs");
+};
+
+const viewVehicleDetails = async (req, res) => {
+  res.render("./admin/carDetails.ejs");
+};
 
 export {
+  viewVehicleDetails,
+  viewVehicleLogs,
   getAdminDashboard,
   postVehicleLogs,
   addComment
