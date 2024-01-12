@@ -372,7 +372,15 @@ export async function getVehicleLogs({
     };
   }
 
-  return await VehicleLog.findAll({where: queries});
+  const results = await VehicleLog.findAll({where: queries});
+  for (const row of results) {
+    if (row.exitTime) {
+      row.lateDuration = Math.max(0, (row.exitTime - row.entryTime) / 1000 / 60 - row.allowedDuration);
+    } else {
+      row.lateDuration = 0;
+    }
+  }
+  return results;
 }
 
 export async function findVehicleAllegationById(id) {
