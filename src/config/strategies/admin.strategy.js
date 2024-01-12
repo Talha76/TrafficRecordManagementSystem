@@ -4,11 +4,11 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export default function initializeUserStrategy(passport) {
-  passport.use("user", new GoogleStrategy({
+export default function initializeAdminStrategy(passport) {
+  passport.use("admin", new GoogleStrategy({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/auth/google/callback"
+      callbackURL: "/admin/auth/google/callback"
     },
     async (request, accessToken, refreshToken, profile, done) => {
       try {

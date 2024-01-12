@@ -1,6 +1,5 @@
 import * as User from "../../services/user.services.js";
 import * as Vehicle from "../../services/vehicle.services.js";
-import {BannedVehicleError, MaxVehicleError, VehicleAlreadyExistsError} from "../../utils/errors.js";
 
 const getUserDashboard = async (req, res) => {
   try {
@@ -12,10 +11,13 @@ const getUserDashboard = async (req, res) => {
       }
     );
 
+    req.flash("user", user);
+    req.flash("vehicles", vehicles);
     res.render("user/user.dashboard.ejs", {
-      user,
-      vehicles,
+      user: req.flash("user"),
+      vehicles: req.flash("vehicles"),
       error: req.flash("error"),
+      success: req.flash("success")
     });
   } catch (err) {
     console.error(err);
@@ -26,39 +28,17 @@ const addVehicle = async (req, res) => {
   try {
     const {licenseNumber, vehicleName} = req.body;
     const email = req.user.email;
-    // const vehicles = await Vehicle.getVehicleList({userMail: email, approvalStatus: true});
-    // if (vehicles.length >= parseInt(process.env.MAX_VEHICLE)) {
-    //   console.trace(`You can't add more than ${process.env.MAX_VEHICLE} vehicles.`);
-    //   req.flash("message", `You can't add more than ${process.env.MAX_VEHICLE} vehicles.`);
-    //   return res.redirect("/dashboard");
-    // }
-    //
-    // const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-
-    // if (vehicle) {
-    //   console.trace("This vehicle is already registered.");
-    //   req.flash("message", "This vehicle is already registered.");
-    //   return res.redirect("/dashboard");
-    // }
-
     await Vehicle.addVehicle({
       userMail: email,
       licenseNumber: licenseNumber,
       vehicleName: vehicleName
     });
+    req.flash("success", "Vehicle added successfully");
     return res.redirect("/dashboard");
   } catch (err) {
     console.error(err);
 
-    if (err instanceof MaxVehicleError) {
-      req.flash("error", err.message);
-    } else if (err instanceof VehicleAlreadyExistsError) {
-      req.flash("error", err.message);
-    } else if (err instanceof BannedVehicleError) {
-      req.flash("error", err.message);
-    } else {
-      req.flash("message", "An error occurred");
-    }
+    req.flash("error", err.message);
     res.redirect("/dashboard");
   }
 };
@@ -69,6 +49,7 @@ const removeVehicle = async (req, res) => {
 
   try {
     await Vehicle.removeVehicle(licenseNumber);
+    req.flash("success", "Vehicle removed successfully");
     res.redirect("/dashboard");
   } catch (err) {
     console.error(err);
@@ -78,7 +59,11 @@ const removeVehicle = async (req, res) => {
 
 };
 
+async function getUserProfile(req, res) {
+}
+
 export default {
+  getUserProfile,
   getUserDashboard,
   addVehicle,
   removeVehicle

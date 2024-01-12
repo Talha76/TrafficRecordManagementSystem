@@ -8,6 +8,7 @@ import indexRoutes from "./routes/index.routes.js";
 import userAuthRoutes from "./routes/user/user.auth.routes.js";
 import userRoutes from "./routes/user/user.routes.js";
 import adminRoutes from "./routes/admin/admin.routes.js";
+import adminAuthRoutes from "./routes/admin/admin.auth.routes.js";
 
 const app = express();
 
@@ -33,7 +34,8 @@ app.use(express.static("./src/public"));
 
 app.use(indexRoutes);
 app.use(userAuthRoutes);
-app.use("/dashboard", userRoutes);
+app.use(userRoutes);
 app.use("/admin", adminRoutes);
+app.use("/admin", adminAuthRoutes);
 
 export default app;

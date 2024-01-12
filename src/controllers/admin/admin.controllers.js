@@ -1,29 +1,19 @@
 import * as Vehicle from "../../services/vehicle.services.js";
 import * as User from "../../services/user.services.js";
+import {findVehiclesStayingUpto} from "../../services/admin.services.js";
 
 // YYYY-MM-DD HH:MM:SS
 const getAdminDashboard = async (req, res) => {
   try {
-    const currentTime = new Date();
-    currentTime.setHours(currentTime.getHours() + 6);
-
-    const currentDate = new Date();
-    currentDate.setHours(6, 0, 0, 0);
-    const vehicleLogs = await Vehicle.getVehicleLogs(
-      {
-        entryTimeTo: currentTime,
-        exitTimeEqual: null,
-      }
-    );
+    const vehiclesStayingCurrently = await findVehiclesStayingUpto(new Date());
 
     const flashVehicleLogs = [];
-    for (const vehicleLog of vehicleLogs) {
-      const {id, licenseNumber, entryTime, comment} = vehicleLog;
+    for (const {id, licenseNumber, entryTime, comment} of vehiclesStayingCurrently) {
       const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-      console.trace(licenseNumber, vehicle);
       const user = await User.findUserByEmail(vehicle.userMail);
 
-      const timeOfEntry = entryTime.toISOString().split("T")[1].split(".")[0];
+      const timeOfEntry = entryTime.toISOString().split("T")[1].split(".")[0]
+        + " " + entryTime.toISOString().split("T")[0];
 
       flashVehicleLogs.push({
         id,
@@ -35,8 +25,9 @@ const getAdminDashboard = async (req, res) => {
       });
     }
 
+    req.flash("vehicleLogs", flashVehicleLogs);
     res.render("./admin/admin.dashboard.ejs", {
-      "vehicleLogs": flashVehicleLogs
+      vehicleLogs: req.flash("vehicleLogs")
     });
   } catch (err) {
     console.error(err);

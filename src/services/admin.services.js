@@ -1,5 +1,7 @@
 import Admin from "../models/admin.model.js";
 import {AdminNotFoundError, NotProvidedError, NullValueError} from "../utils/errors.js";
+import {Op} from "sequelize";
+import VehicleLog from "../models/vehicle-log.model.js";
 
 export async function findAdminByEmail(email) {
   if (email === undefined) throw new NotProvidedError("email");
@@ -44,4 +46,21 @@ export async function updateAdmin(email, {name = undefined, designation = undefi
   if (designation !== undefined) admin.designation = designation;
 
   return await admin.save();
+}
+
+export async function findVehiclesStayingUpto(currentTime) {
+  if (currentTime === undefined) throw new NotProvidedError("currentTime");
+  if (currentTime === null) throw new NullValueError("currentTime");
+  if (currentTime instanceof String) currentTime = new Date(currentTime);
+
+  currentTime.setHours(currentTime.getHours() + 6);
+
+  return await VehicleLog.findAll({
+    where: {
+      entryTime: {
+        [Op.lte]: currentTime
+      },
+      exitTime: null
+    }
+  });
 }

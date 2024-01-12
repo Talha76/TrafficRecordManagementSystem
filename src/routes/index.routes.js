@@ -1,6 +1,6 @@
 import {Router} from "express";
 import indexControllers from "../controllers/index.controllers.js";
-import {isNotLoggedIn} from "../middlewares/user/user.middlewares.js";
+import {isNotLoggedIn} from "../middlewares/user.middlewares.js";
 
 const route = Router();
 
