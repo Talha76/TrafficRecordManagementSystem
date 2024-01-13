@@ -289,6 +289,40 @@ const unbanVehicle = async (req, res) => {
   }
 };
 
+
+const getApproval = async (req, res) => {
+  const vehicles = await Vehicle.getVehicleList({
+      approvalStatus: false,
+      defaultDurationFrom: 1,
+      deletedAt: null
+  });
+  console.log(vehicles);
+  req.flash("vehicles", vehicles);
+
+  res.render("./admin/admin.approval.ejs", {
+    vehicles: req.flash("vehicles"),
+    error: req.flash("error"),
+  });
+}
+
+const approve = async (req, res) => {
+  const licenseNumber = req.params.licenseNumber;
+  console.log(licenseNumber);
+  const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
+  if (vehicle === null) {
+    return res.redirect("/admin/dashboard");
+  }
+  const vehicleUpdated = await Vehicle.updateVehicle({
+    licenseNumber: licenseNumber,
+    approvalStatus: true
+  });
+  if (vehicleUpdated) {
+    res.redirect("/admin/get-approval");
+  }
+}
+
+
+
 export {
   banVehicle,
   unbanVehicle,
@@ -299,8 +333,6 @@ export {
   getAdminDashboard,
   postVehicleLogs,
   addComment,
-  viewVehicleDetails,
-  viewUserDetails,      
   getApproval,
   approve
 };
