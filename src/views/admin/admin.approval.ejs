@@ -13,14 +13,23 @@
             <th>Action</th>
         </tr>
         <!-- Add dynamic rows here -->
-        <!-- Add dynamic rows here -->
         <% for (let i = 0; i < vehicles.length; i++) { %>
             <tr>
                 <td><%= vehicles[i].licenseNumber %></td>
                 <td><%= vehicles[i].vehicleName %></td>
                 <td><%= vehicles[i].approvalStatus %></td>
-                <td><a href="/admin/approve/<%= vehicles[i].licenseNumber %>">Approve</a></td>
-                <td><a href="/admin/reject/<%= vehicles[i].licenseNumber %>">Reject</a></td>
+                <td>
+                    <form method="POST" action="/admin/approve">
+                        <input type="hidden" name="licenseNumber" value="<%= vehicles[i].licenseNumber %>">
+                        <button type="submit">Approve</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" action="/admin/reject">
+                        <input type="hidden" name="licenseNumber" value="<%= vehicles[i].licenseNumber %>">
+                        <button type="submit">Reject</button>
+                    </form>
+                </td>
             </tr>
         <% } %>
     </table>
