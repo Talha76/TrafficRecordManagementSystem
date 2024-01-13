@@ -9,6 +9,7 @@ router.get("/dashboard", isLoggedIn, isAdmin, adminController.getAdminDashboard)
 router.post("/dashboard", isLoggedIn, isAdmin, adminController.postVehicleLogs);
 router.post("/add-comment", isLoggedIn, isAdmin, adminController.addComment);
 router.get('/view-vehicle-logs', isLoggedIn, isAdmin, adminController.viewVehicleLogs)
-router.get('/view-vehicle-details', isLoggedIn, isAdmin, adminController.viewVehicleDetails)
 
+router.get('/get-approval', adminController.getApproval);
+router.get('/approve/:licenseNumber', adminController.approve);
 export default router;

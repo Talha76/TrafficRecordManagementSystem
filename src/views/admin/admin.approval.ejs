@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Approval</title>
+</head>
+<body>
+    <h1>Admin Approval</h1>
+
+    <table>
+        <tr>
+            <th>Vehicle</th>
+            <th>Approval Status</th>
+            <th>Action</th>
+        </tr>
+        <!-- Add dynamic rows here -->
+        <!-- Add dynamic rows here -->
+        <% for (let i = 0; i < vehicles.length; i++) { %>
+            <tr>
+                <td><%= vehicles[i].licenseNumber %></td>
+                <td><%= vehicles[i].vehicleName %></td>
+                <td><%= vehicles[i].approvalStatus %></td>
+                <td><a href="/admin/approve/<%= vehicles[i].licenseNumber %>">Approve</a></td>
+            </tr>
+        <% } %>
+    </table>
+</body>
+</html>

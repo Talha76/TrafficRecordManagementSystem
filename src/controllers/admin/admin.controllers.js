@@ -98,14 +98,42 @@ const viewVehicleLogs = async (req, res) => {
   res.render("./admin/admin.view-logs.ejs");
 };
 
-const viewVehicleDetails = async (req, res) => {
-  res.render("./admin/carDetails.ejs");
-};
+const getApproval = async (req, res) => {
+  const vehicles = await Vehicle.getVehicleList({
+      approvalStatus: false,
+      defaultDurationFrom: 1
+  });
+  console.log(vehicles);
+  req.flash("vehicles", vehicles);
+
+  res.render("./admin/admin.approval.ejs", {
+    vehicles: req.flash("vehicles"),
+    error: req.flash("error"),
+  });
+}
+
+const approve = async (req, res) => {
+  const licenseNumber = req.params.licenseNumber;
+  console.log(licenseNumber);
+  const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
+  if (vehicle === null) {
+    return res.redirect("/admin/dashboard");
+  }
+  const vehicleUpdated = await Vehicle.updateVehicle({
+    licenseNumber: licenseNumber,
+    approvalStatus: true
+  });
+  if (vehicleUpdated) {
+    res.redirect("/admin/get-approval");
+  }
+}
 
 export {
-  viewVehicleDetails,
+  // viewVehicleDetails,
   viewVehicleLogs,
   getAdminDashboard,
   postVehicleLogs,
-  addComment
+  addComment,
+  getApproval,
+  approve
 };
