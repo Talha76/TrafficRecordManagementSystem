@@ -147,6 +147,18 @@
 				</div>
 			</div>
 		</nav>
+
+
+		<% if (error.length > 0) { %>
+			<div class="alert alert-danger" role="alert" style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;">
+				<strong><%= error; %></strong>
+			</div>
+		<% } if (success.length > 0) { %>
+			<div class="alert alert-success" role="alert" style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;">
+				<strong><%= success; %></strong>
+			</div>
+		<% } %>
+
 		<div
 			class="flex-column"
 			style="
@@ -161,10 +173,12 @@
 				opacity: 1;
 			"
 		>
+
+
 			<div class="input-group">
 				<span
 					class="input-group-text"
-					style="width: 29%; border-radius: 6px 0px 0px 0px"
+					style="width: 29%; border-radius: 12px 0px 0px 0px"
 					>License number :</span
 				><input
 					class="form-control"
@@ -174,9 +188,10 @@
 					style="
 						border-radius: 0px;
 						border-top-left-radius: 0px;
-						border-top-right-radius: 6px;
+						border-top-right-radius: 12px;
 					"
 					name="licenseNumber"
+					value="<%= vehicle.licenseNumber %>"
 				/>
 			</div>
 			<div class="input-group">
@@ -196,6 +211,7 @@
 					readonly=""
 					style="border-radius: 0px"
 					name="vehicleName"
+					value="<%= vehicle.vehicleName %>"
 				/>
 			</div>
 			<div class="input-group">
@@ -207,14 +223,17 @@
 						border-bottom-left-radius: 0px;
 					"
 					>Owner ID :</span
-				><input
+				><a href="/admin/view-user-details/<%= user.id %>"
+					style="color: var(--bs-danger-text-emphasis)">
+					<input
 					class="form-control"
 					type="text"
 					id="ownerId"
 					readonly=""
 					style="border-radius: 0px"
 					name="ownerId"
-				/>
+					value = "<%= user.id %>"
+				/></a>
 			</div>
 			<div class="input-group">
 				<span
@@ -232,6 +251,7 @@
 					readonly=""
 					style="border-radius: 0px"
 					name="ownerName"
+					value="<%= user.name %>"
 				/>
 			</div>
 			<div class="input-group">
@@ -250,6 +270,7 @@
 					readonly=""
 					style="border-radius: 0px"
 					name="contactNumber"
+					value="<%= user.phoneNumber %>"
 				/>
 			</div>
 			<div class="input-group" style="width: 100%">
@@ -274,6 +295,7 @@
 						aria-expanded="true"
 						data-bs-toggle="dropdown"
 						type="button"
+						onclick="return confirm('Are you sure you want to proceed?');"
 						style="
 							width: 100%;
 							background: var(--bs-tertiary-bg);
@@ -283,36 +305,39 @@
 							border-bottom-right-radius: 0px;
 						"
 					>
-						Dropdown
+						<%= vehicle.defaultDuration === 0 ? "Banned" : "Eligible" %>
 					</button>
 					<div
-						class="dropdown-menu show"
+						class="dropdown-menu"
 						data-bs-popper="none"
 						style="border-radius: 0px"
 					>
-						<a class="dropdown-item" href="ban">Banned</a
-						><a class="dropdown-item" href="unban">Eligible</a>
+						<a class="dropdown-item" href="/admin/ban/<%= vehicle.licenseNumber %>">Banned</a
+						><a class="dropdown-item" href="/admin/unban/<%= vehicle.licenseNumber %>">Eligible</a>
 					</div>
 				</div>
 			</div>
-			<form style="width: 100%">
+			<form style="width: 100%" action="/admin/change-duration/<%= vehicle.licenseNumber %>" method="post">
 				<div class="input-group">
 					<span
 						class="input-group-text"
-						style="width: 29%; border-top-left-radius: 0px"
+						style="width: 29%; border-bottom-left-radius: 12px"
 						>Allowed Duration :</span
 					><input
 						class="form-control"
-						type="text"
+						type="number"
 						id="allowedDuration"
 						name="allowedDuration"
+						required
+						value="<%= vehicle.defaultDuration %>"
 					/><button
 						class="btn btn-primary"
-						type="button"
+						type="submit"
+						onclick="return confirm('Are you sure you want to proceed?');"
 						style="
 							background: var(--bs-btn-border-color);
 							width: 9.33%;
-							border-top-right-radius: 0px;
+							border-top-right-radius: 6px;
 						"
 					>
 						Edit
@@ -371,9 +396,12 @@
 							Exit time
 						</th>
 						<th style="box-shadow: 0px 0px 5px 0px">Comment</th>
+						<th style="box-shadow: 0px 0px 5px 0px">Late Duration</th>
 					</tr>
 				</thead>
 				<tbody style="width: 80%; height: initial">
+					<% vehicleLogs.forEach(function(log){ %> <%
+						console.log(log); %>
 					<tr
 						style="
 							margin-right: 19px;
@@ -381,10 +409,12 @@
 							margin-left: -2px;
 						"
 					>
-						<td style="box-shadow: 0px 0px 5px 0px">Cell 1</td>
-						<td style="box-shadow: 0px 0px 5px 0px">Cell 1</td>
-						<td style="box-shadow: 0px 0px 5px 0px">Cell 1</td>
+						<td style="box-shadow: 0px 0px 5px 0px"><%= log.entryTime; %></td>
+						<td style="box-shadow: 0px 0px 5px 0px"><%= log.exitTime; %></td>
+						<td style="box-shadow: 0px 0px 5px 0px"><%= log.comment; %></td>
+						<td style="box-shadow: 0px 0px 5px 0px"><%= Math.floor(log.lateDuration); %></td>
 					</tr>
+					<% }); %>
 				</tbody>
 			</table>
 		</div>
