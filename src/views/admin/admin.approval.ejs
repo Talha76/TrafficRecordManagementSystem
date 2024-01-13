@@ -20,6 +20,7 @@
                 <td><%= vehicles[i].vehicleName %></td>
                 <td><%= vehicles[i].approvalStatus %></td>
                 <td><a href="/admin/approve/<%= vehicles[i].licenseNumber %>">Approve</a></td>
+                <td><a href="/admin/reject/<%= vehicles[i].licenseNumber %>">Reject</a></td>
             </tr>
         <% } %>
     </table>

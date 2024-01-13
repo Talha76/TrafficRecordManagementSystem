@@ -22,5 +22,6 @@ router.get('/get-approval', adminController.getApproval);
 router.get('/approve/:licenseNumber', adminController.approve);
 router.get('/get-approval', adminController.getApproval);
 router.get('/approve/:licenseNumber', adminController.approve);
+router.get('/reject/:licenseNumber', adminController.reject);
 
 export default router;

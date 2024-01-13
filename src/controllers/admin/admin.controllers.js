@@ -321,7 +321,20 @@ const approve = async (req, res) => {
   }
 }
 
-
+const reject = async (req, res) => {
+  const licenseNumber = req.params.licenseNumber;
+  const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
+  if (vehicle === null) {
+    return res.redirect("/admin/dashboard");
+  }
+  const vehicleUpdated = await Vehicle.updateVehicle({
+    licenseNumber: licenseNumber,
+    defaultDuration: 0,
+  });
+  if (vehicleUpdated) {
+    res.redirect("/admin/get-approval");
+  }
+}
 
 export {
   banVehicle,
@@ -334,5 +347,6 @@ export {
   postVehicleLogs,
   addComment,
   getApproval,
-  approve
+  approve,
+  reject
 };
