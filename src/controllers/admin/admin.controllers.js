@@ -1,20 +1,31 @@
 import * as Vehicle from "../../services/vehicle.services.js";
 import * as User from "../../services/user.services.js";
 import {findVehiclesStayingUpto} from "../../services/admin.services.js";
+import {BannedVehicleError} from "../../utils/errors.js";
+import {zip} from "../../utils/utility.js";
 
 // YYYY-MM-DD HH:MM:SS
 const getAdminDashboard = async (req, res) => {
   try {
     const vehiclesStayingCurrently = await findVehiclesStayingUpto(new Date());
 
+    const vehiclePromises = [];
     const flashVehicleLogs = [];
-    for (const {id, licenseNumber, entryTime, comment} of vehiclesStayingCurrently) {
-      const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-      const user = await User.findUserByEmail(vehicle.userMail);
+    for (const {licenseNumber} of vehiclesStayingCurrently) {
+      vehiclePromises.push(Vehicle.findVehicleByLicenseNumber(licenseNumber));
+    }
+    const vehicles = await Promise.all(vehiclePromises);
 
+    const userPromises = [];
+    for (const {userMail} of vehicles) {
+      userPromises.push(User.findUserByEmail(userMail));
+    }
+    const users = await Promise.all(userPromises);
+
+    for (const [user, log] of zip([users, vehiclesStayingCurrently])) {
+      const {id, entryTime, licenseNumber, comment} = log;
       const timeOfEntry = entryTime.toISOString().split("T")[1].split(".")[0]
         + " " + entryTime.toISOString().split("T")[0];
-
       flashVehicleLogs.push({
         id,
         licenseNumber,
@@ -50,7 +61,8 @@ const postVehicleLogs = async (req, res) => {
         exitTimeEqual: null,
       }
     );
-    if (vehicleLogs && vehicleLogs.length > 0 && vehicleLogs[0].id) {
+
+    if (vehicleLogs.length > 0) {
       const currentTime = new Date();
       currentTime.setHours(currentTime.getHours() + 6);
       const exitTime = currentTime;
@@ -58,20 +70,26 @@ const postVehicleLogs = async (req, res) => {
         id: vehicleLogs[0].id,
         exitTime
       });
-      if (vehicleLog) {
-        res.redirect("/admin/dashboard");
-      }
-    } else {
-      const currentTime = new Date();
-      currentTime.setHours(currentTime.getHours() + 6);
-      const entryTime = currentTime;
-      const vehicleLog = await Vehicle.addVehicleLog({licenseNumber, entryTime});
-      if (vehicleLog) {
-        res.redirect("/admin/dashboard");
-      }
+      req.flash("success", "Vehicle Exit Entry Added Successfully");
+      return res.redirect("/admin/dashboard");
     }
+
+    console.trace("here");
+    const currentTime = new Date();
+    currentTime.setHours(currentTime.getHours() + 6);
+    const entryTime = currentTime;
+
+    await Vehicle.addVehicleLog({licenseNumber, entryTime});
+
+    req.flash("success", "Vehicle Entry Added Successfully");
+    res.redirect("/admin/dashboard");
   } catch (err) {
     console.error(err);
+
+    if (err instanceof BannedVehicleError) {
+      req.flash("error", "Banned vehicles can't enter the campus");
+      res.redirect("/admin/dashboard");
+    }
   }
 };
 

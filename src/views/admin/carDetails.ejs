@@ -168,12 +168,16 @@
 </nav>
 
 <% if (error.length > 0) { %>
-    <div class="alert alert-danger" role="alert" style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;">
+    <div class="alert alert-danger" role="alert"
+         style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;display: flex;justify-content: space-between;">
         <strong><%= error; %></strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <% } if (success.length > 0) { %>
-    <div class="alert alert-success" role="alert" style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;">
+    <div class="alert alert-success" role="alert"
+         style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;display: flex;justify-content: space-between;">
         <strong><%= success; %></strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <% } %>
 
@@ -347,6 +351,7 @@
                     id="allowedDuration"
                     name="allowedDuration"
                     required
+                    min="0"
                     value="<%= vehicle.defaultDuration %>"
             />
             <button
