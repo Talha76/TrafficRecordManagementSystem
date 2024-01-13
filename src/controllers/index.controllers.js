@@ -1,6 +1,6 @@
 const getIndex = (req, res) => {
   res.render("user/user.login.ejs", {
-    message: req.flash("message"),
+    success: req.flash("success"),
     error: req.flash("error")
   });
 };
