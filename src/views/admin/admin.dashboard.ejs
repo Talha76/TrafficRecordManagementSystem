@@ -331,14 +331,22 @@
 							margin-left: -2px;
 						"
         >
-            <td style="box-shadow: 0px 0px 5px 0px">
-                <%= log.licenseNumber; %>
-            </td>
+		<td style="box-shadow: 0px 0px 5px 0px">
+			<a href="/admin/view-vehicle-details/<%= log.licenseNumber; %>"
+				style="color: var(--bs-danger-text-emphasis)"
+				>
+				<%= log.licenseNumber; %>
+			</a>
+		</td>
             <td style="box-shadow: 0px 0px 5px 0px">
                 <%= log.entryTime; %>
             </td>
             <td style="box-shadow: 0px 0px 5px 0px">
+				<a href="/admin/view-user-details/<%= log.userId; %>"
+					style="color: var(--bs-danger-text-emphasis)"
+					>
                 <%= log.userId; %>
+				</a>
             </td>
             <td style="box-shadow: 0px 0px 5px 0px">
                 <%= log.phoneNumber; %>

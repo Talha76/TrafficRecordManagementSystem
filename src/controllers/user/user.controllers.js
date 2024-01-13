@@ -8,6 +8,7 @@ const getUserDashboard = async (req, res) => {
     const vehicles = await Vehicle.getVehicleList(
       {
         userMail: user.email,
+        deletedAt: null
       }
     );
 

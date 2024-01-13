@@ -14,36 +14,49 @@ export async function findAdminByEmail(email) {
   return null;
 }
 
-export async function createAdmin(email, name, designation) {
-  if (email === undefined) throw new NotProvidedError("email");
-  if (name === undefined) throw new NotProvidedError("name");
-  if (designation === undefined) throw new NotProvidedError("designation");
-  if (email === null) throw new NullValueError("email");
-  if (name === null) throw new NullValueError("name");
-  if (designation === null) throw new NullValueError("designation");
+/**
+ * Creates a new admin
+ * @param opts - {email: string, name: string, designation: string}
+ * @returns {Promise<Model<any, TModelAttributes>>}
+ */
+export async function createAdmin(opts) {
+  if (typeof opts === "undefined") opts = {};
+  if (typeof opts.email === "undefined") throw new NotProvidedError("email");
+  if (typeof opts.name === "undefined") throw new NotProvidedError("name");
+  if (typeof opts.designation === "undefined") throw new NotProvidedError("designation");
+  if (opts.email === null) throw new NullValueError("email");
+  if (opts.name === null) throw new NullValueError("name");
+  if (opts.designation === null) throw new NullValueError("designation");
 
   const [admin] = await Admin.findOrCreate({
-    where: {email: email},
+    where: {email: opts.email},
     defaults: {
-      name: name,
-      designation: designation
+      name: opts.name,
+      designation: opts.designation
     }
   });
 
   return admin;
 }
 
-export async function updateAdmin(email, {name = undefined, designation = undefined}) {
-  if (email === undefined) throw new NotProvidedError("email");
-  if (email === null) throw new NullValueError("email");
+/**
+ * Updates an existing admin
+ * @param opts - {email(required): string, name: string, designation: string}
+ * @returns {Promise<Model<any, TModelAttributes>>}
+ * @throws AdminNotFoundError
+ */
+export async function updateAdmin(opts) {
+  if (typeof opts === "undefined") opts = {};
+  if (typeof opts.email === "undefined") throw new NotProvidedError("email");
+  if (opts.email === null) throw new NullValueError("email");
 
-  const admin = await findAdminByEmail(email);
+  const admin = await findAdminByEmail(opts.email);
   if (!admin) {
     throw new AdminNotFoundError();
   }
 
-  if (name !== undefined) admin.name = name;
-  if (designation !== undefined) admin.designation = designation;
+  if (typeof opts.name !== "undefined") admin.name = opts.name;
+  if (typeof opts.designation !== "undefined") admin.designation = opts.designation;
 
   return await admin.save();
 }
