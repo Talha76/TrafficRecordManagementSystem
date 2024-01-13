@@ -19,14 +19,11 @@ import {
 dotenv.config();
 
 export async function findVehicleByLicenseNumber(licenseNumber) {
-  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (typeof licenseNumber === "undefined") throw new NotProvidedError("licenseNumber");
   if (licenseNumber === null) throw new NullValueError("licenseNumber");
 
   const vehicle = await Vehicle.findOne({
-    where: {
-      licenseNumber: licenseNumber,
-      deletedAt: null
-    }
+    where: {licenseNumber}
   });
   if (vehicle) {
     if (vehicle.defaultDuration === 0) {
@@ -41,23 +38,18 @@ export async function findVehicleByLicenseNumber(licenseNumber) {
   return null;
 }
 
-export async function addVehicle({
-  licenseNumber = undefined,
-  defaultDuration = undefined,
-  approvalStatus = undefined,
-  vehicleName = undefined,
-  userMail = undefined,
-}) {
-  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
-  if (vehicleName === undefined) throw new NotProvidedError("vehicleName");
-  if (userMail === undefined) throw new NotProvidedError("userMail");
-  if (licenseNumber === null) throw new NullValueError("licenseNumber");
-  if (vehicleName === null) throw new NullValueError("vehicleName");
-  if (userMail === null) throw new NullValueError("userMail");
+export async function addVehicle(opts) {
+  if (typeof opts === "undefined") opts = {};
+  if (typeof opts.licenseNumber === "undefined") throw new NotProvidedError("licenseNumber");
+  if (typeof opts.vehicleName === "undefined") throw new NotProvidedError("vehicleName");
+  if (typeof opts.userMail === "undefined") throw new NotProvidedError("userMail");
+  if (typeof opts.licenseNumber === null) throw new NullValueError("licenseNumber");
+  if (typeof opts.vehicleName === null) throw new NullValueError("vehicleName");
+  if (typeof opts.userMail === null) throw new NullValueError("userMail");
 
   const vehicleCount = await Vehicle.count({
     where: {
-      userMail: userMail,
+      userMail: opts.userMail,
       deletedAt: null
     }
   });
@@ -68,11 +60,11 @@ export async function addVehicle({
 
   const [vehicle, created] = await Vehicle.findOrCreate({
     where: {
-      licenseNumber: licenseNumber
+      licenseNumber: opts.licenseNumber
     },
     defaults: {
-      vehicleName: vehicleName,
-      userMail: userMail,
+      vehicleName: opts.vehicleName,
+      userMail: opts.userMail,
     }
   });
 
@@ -86,18 +78,18 @@ export async function addVehicle({
   }
 
   if (!created) {
-    vehicle.vehicleName = vehicleName;
-    vehicle.userMail = userMail;
+    vehicle.vehicleName = opts.vehicleName;
+    vehicle.userMail = opts.userMail;
     vehicle.deletedAt = null;
-    if (approvalStatus === undefined) {
+    if (typeof opts.approvalStatus === "undefined") {
       vehicle.approvalStatus = false;
     }
   }
-  if (defaultDuration !== undefined) {
-    vehicle.defaultDuration = defaultDuration;
+  if (typeof opts.defaultDuration !== "undefined") {
+    vehicle.defaultDuration = opts.defaultDuration;
   }
-  if (approvalStatus !== undefined) {
-    vehicle.approvalStatus = approvalStatus;
+  if (typeof opts.approvalStatus !== "undefined") {
+    vehicle.approvalStatus = opts.approvalStatus;
   }
 
   const result = await vehicle.save();
@@ -113,7 +105,7 @@ export async function addVehicle({
 }
 
 export async function removeVehicle(licenseNumber) {
-  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (typeof licenseNumber === "undefined") throw new NotProvidedError("licenseNumber");
   if (licenseNumber === null) throw new NullValueError("licenseNumber");
 
   const vehicle = await findVehicleByLicenseNumber(licenseNumber);
@@ -152,28 +144,24 @@ export async function removeVehicle(licenseNumber) {
   return result;
 }
 
-export async function updateVehicle({
-  licenseNumber = undefined,
-  defaultDuration = undefined,
-  approvalStatus = undefined,
-  vehicleName = undefined
-}) {
-  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
-  if (licenseNumber === null) throw new NullValueError("licenseNumber");
+export async function updateVehicle(opts) {
+  if (typeof opts === "undefined") opts = {};
+  if (typeof opts.licenseNumber === "undefined") throw new NotProvidedError("licenseNumber");
+  if (opts.licenseNumber === null) throw new NullValueError("licenseNumber");
 
-  const vehicle = await findVehicleByLicenseNumber(licenseNumber);
+  const vehicle = await findVehicleByLicenseNumber(opts.licenseNumber);
   if (!vehicle) {
     throw new VehicleNotFoundError();
   }
 
-  if (defaultDuration !== undefined) {
-    vehicle.defaultDuration = defaultDuration;
+  if (typeof opts.defaultDuration !== "undefined") {
+    vehicle.defaultDuration = opts.defaultDuration;
   }
-  if (approvalStatus !== undefined) {
-    vehicle.approvalStatus = approvalStatus;
+  if (typeof opts.approvalStatus !== "undefined") {
+    vehicle.approvalStatus = opts.approvalStatus;
   }
-  if (vehicleName !== undefined) {
-    vehicle.vehicleName = vehicleName;
+  if (typeof opts.vehicleName !== "undefined") {
+    vehicle.vehicleName = opts.vehicleName;
   }
 
   const result = await vehicle.save();
@@ -188,36 +176,31 @@ export async function updateVehicle({
   return result;
 }
 
-export async function getVehicleList({
-  userMail = undefined,
-  defaultDurationEqual = undefined,
-  defaultDurationTo = undefined,
-  defaultDurationFrom = undefined,
-  approvalStatus = undefined,
-}) {
+export async function getVehicleList(opts) {
+  if (typeof opts === "undefined") opts = {};
   const queries = {
     deletedAt: null
   };
-  if (userMail !== undefined && userMail) {
-    queries.userMail = userMail;
+  if (typeof opts.userMail !== "undefined" && opts.userMail) {
+    queries.userMail = opts.userMail;
   }
-  if (defaultDurationEqual !== undefined && defaultDurationEqual) {
-    queries.defaultDuration = defaultDurationEqual;
-  } else if (defaultDurationTo !== undefined && defaultDurationTo && defaultDurationFrom !== undefined && defaultDurationFrom) {
+  if (typeof opts.defaultDurationEqual !== "undefined" && opts.defaultDurationEqual) {
+    queries.defaultDuration = opts.defaultDurationEqual;
+  } else if (typeof opts.defaultDurationTo !== "undefined" && opts.defaultDurationTo && typeof opts.defaultDurationFrom !== "undefined" && opts.defaultDurationFrom) {
     queries.defaultDuration = {
-      [Op.between]: [defaultDurationFrom, defaultDurationTo]
+      [Op.between]: [opts.defaultDurationFrom, opts.defaultDurationTo]
     };
-  } else if (defaultDurationTo !== undefined && defaultDurationTo) {
+  } else if (typeof opts.defaultDurationTo !== "undefined" && opts.defaultDurationTo) {
     queries.defaultDuration = {
-      [Op.lte]: defaultDurationTo
+      [Op.lte]: opts.defaultDurationTo
     };
-  } else if (defaultDurationFrom !== undefined && defaultDurationFrom) {
+  } else if (typeof opts.defaultDurationFrom !== "undefined" && opts.defaultDurationFrom) {
     queries.defaultDuration = {
-      [Op.gte]: defaultDurationFrom
+      [Op.gte]: opts.defaultDurationFrom
     };
   }
-  if (approvalStatus !== undefined && approvalStatus) {
-    queries.approvalStatus = approvalStatus;
+  if (typeof opts.approvalStatus !== "undefined" && opts.approvalStatus) {
+    queries.approvalStatus = opts.approvalStatus;
   }
 
   const vehicles = await Vehicle.findAll({where: queries});
@@ -237,7 +220,7 @@ export async function getVehicleList({
 }
 
 export async function findVehicleLogById(id) {
-  if (id === undefined) throw new NotProvidedError("id");
+  if (typeof id === "undefined") throw new NotProvidedError("id");
   if (id === null) throw new NullValueError("id");
 
   const log = await VehicleLog.findByPk(id);
@@ -247,18 +230,14 @@ export async function findVehicleLogById(id) {
   return null;
 }
 
-export async function addVehicleLog({
-  licenseNumber = undefined,
-  entryTime = undefined,
-  allowedDuration = undefined,
-  comment = undefined
-}) {
-  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
-  if (entryTime === undefined) throw new NotProvidedError("entryTime");
-  if (licenseNumber === null) throw new NullValueError("licenseNumber");
-  if (entryTime === null) throw new NullValueError("entryTime");
+export async function addVehicleLog(opts) {
+  if (typeof opts === "undefined") opts = {};
+  if (typeof opts.licenseNumber === "undefined") throw new NotProvidedError("licenseNumber");
+  if (typeof opts.entryTime === "undefined") throw new NotProvidedError("entryTime");
+  if (opts.licenseNumber === null) throw new NullValueError("licenseNumber");
+  if (opts.entryTime === null) throw new NullValueError("entryTime");
 
-  const vehicle = await findVehicleByLicenseNumber(licenseNumber);
+  const vehicle = await findVehicleByLicenseNumber(opts.licenseNumber);
   if (!vehicle) {
     throw new VehicleNotFoundError();
   }
@@ -268,107 +247,92 @@ export async function addVehicleLog({
   }
 
   const log = await VehicleLog.build({
-    licenseNumber: licenseNumber,
-    entryTime: entryTime,
+    licenseNumber: opts.licenseNumber,
+    entryTime: opts.entryTime,
   });
-  if (allowedDuration !== undefined && allowedDuration) {
-    log.allowedDuration = allowedDuration;
+  if (typeof opts.allowedDuration !== "undefined" && opts.allowedDuration) {
+    log.allowedDuration = opts.allowedDuration;
   }
-  if (comment !== undefined && comment) {
-    log.comment = comment;
+  if (typeof opts.comment !== "undefined" && opts.comment) {
+    log.comment = opts.comment;
   }
   return await log.save();
 }
 
-export async function updateVehicleLog({
-  id = undefined,
-  entryTime = undefined,
-  exitTime = undefined,
-  allowedDuration = undefined,
-  comment = undefined
-}) {
-  if (id === undefined) throw new NotProvidedError("id");
-  if (id === null) throw new NullValueError("id");
+export async function updateVehicleLog(opts) {
+  if (typeof opts === "undefined") opts = {};
+  if (typeof opts.id === "undefined") throw new NotProvidedError("id");
+  if (opts.id === null) throw new NullValueError("id");
 
-  const log = await findVehicleLogById(id);
+  const log = await findVehicleLogById(opts.id);
   if (!log) {
     throw new VehicleLogNotFoundError();
   }
 
-  if (entryTime !== undefined && entryTime) {
-    log.entryTime = entryTime;
+  if (typeof opts.entryTime !== "undefined" && opts.entryTime) {
+    log.entryTime = opts.entryTime;
   }
-  if (exitTime !== undefined) {
-    log.exitTime = exitTime;
+  if (typeof opts.exitTime !== "undefined") {
+    log.exitTime = opts.exitTime;
   }
-  if (allowedDuration !== undefined && allowedDuration) {
-    log.allowedDuration = allowedDuration;
+  if (typeof opts.allowedDuration !== "undefined" && opts.allowedDuration) {
+    log.allowedDuration = opts.allowedDuration;
   }
-  if (comment !== undefined) {
-    log.comment = comment;
+  if (typeof opts.comment !== "undefined") {
+    log.comment = opts.comment;
   }
   return await log.save();
 }
 
-export async function getVehicleLogs({
-  licenseNumber = undefined,
-  entryTimeEqual = undefined,
-  entryTimeTo = undefined,
-  entryTimeFrom = undefined,
-  exitTimeEqual = undefined,
-  exitTimeTo = undefined,
-  exitTimeFrom = undefined,
-  allowedDurationEqual = undefined,
-  allowedDurationTo = undefined,
-  allowedDurationFrom = undefined
-}) {
+export async function getVehicleLogs(opts) {
+  if (typeof opts === "undefined") opts = {};
   const queries = {};
-  if (licenseNumber !== undefined && licenseNumber) {
-    queries.licenseNumber = licenseNumber;
+  if (typeof opts.licenseNumber !== "undefined" && opts.licenseNumber) {
+    queries.licenseNumber = opts.licenseNumber;
   }
-  if (entryTimeEqual !== undefined && entryTimeEqual) {
+  if (typeof opts.entryTimeEqual !== "undefined" && opts.entryTimeEqual) {
     queries.entryTime = entryTimeEqual;
-  } else if (entryTimeTo !== undefined && entryTimeTo && entryTimeFrom !== undefined && entryTimeFrom) {
+  } else if (typeof opts.entryTimeTo !== "undefined" && opts.entryTimeTo && typeof opts.entryTimeFrom !== "undefined" && opts.entryTimeFrom) {
     queries.entryTime = {
-      [Op.between]: [entryTimeFrom, entryTimeTo]
+      [Op.between]: [opts.entryTimeFrom, opts.entryTimeTo]
     };
-  } else if (entryTimeTo !== undefined && entryTimeTo) {
+  } else if (typeof opts.entryTimeTo !== "undefined" && opts.entryTimeTo) {
     queries.entryTime = {
-      [Op.lte]: entryTimeTo
+      [Op.lte]: opts.entryTimeTo
     };
-  } else if (entryTimeFrom !== undefined && entryTimeFrom) {
+  } else if (typeof opts.entryTimeFrom !== "undefined" && opts.entryTimeFrom) {
     queries.entryTime = {
-      [Op.gte]: entryTimeFrom
+      [Op.gte]: opts.entryTimeFrom
     };
   }
-  if (exitTimeEqual !== undefined) {
-    queries.exitTime = exitTimeEqual;
-  } else if (exitTimeTo !== undefined && exitTimeFrom !== undefined) {
+  if (typeof opts.exitTimeEqual !== "undefined") {
+    queries.exitTime = opts.exitTimeEqual;
+  } else if (typeof opts.exitTimeTo !== "undefined" && typeof opts.exitTimeFrom !== "undefined") {
     queries.exitTime = {
-      [Op.between]: [exitTimeFrom, exitTimeTo]
+      [Op.between]: [opts.exitTimeFrom, opts.exitTimeTo]
     };
-  } else if (exitTimeTo !== undefined) {
+  } else if (typeof opts.exitTimeTo !== "undefined") {
     queries.exitTime = {
-      [Op.lte]: exitTimeTo
+      [Op.lte]: opts.exitTimeTo
     };
-  } else if (exitTimeFrom !== undefined) {
+  } else if (typeof opts.exitTimeFrom !== "undefined") {
     queries.exitTime = {
-      [Op.gte]: exitTimeFrom
+      [Op.gte]: opts.exitTimeFrom
     };
   }
-  if (allowedDurationEqual !== undefined && allowedDurationEqual) {
-    queries.allowedDuration = allowedDurationEqual;
-  } else if (allowedDurationTo !== undefined && allowedDurationTo && allowedDurationFrom !== undefined && allowedDurationFrom) {
+  if (typeof opts.allowedDurationEqual !== "undefined" && opts.allowedDurationEqual) {
+    queries.allowedDuration = opts.allowedDurationEqual;
+  } else if (typeof opts.allowedDurationTo !== "undefined" && opts.allowedDurationTo && typeof opts.allowedDurationFrom !== "undefined" && opts.allowedDurationFrom) {
     queries.allowedDuration = {
-      [Op.between]: [allowedDurationFrom, allowedDurationTo]
+      [Op.between]: [opts.allowedDurationFrom, opts.allowedDurationTo]
     };
-  } else if (allowedDurationTo !== undefined && allowedDurationTo) {
+  } else if (typeof opts.allowedDurationTo !== "undefined" && opts.allowedDurationTo) {
     queries.allowedDuration = {
-      [Op.lte]: allowedDurationTo
+      [Op.lte]: opts.allowedDurationTo
     };
-  } else if (allowedDurationFrom !== undefined && allowedDurationFrom) {
+  } else if (typeof opts.allowedDurationFrom !== "undefined" && opts.allowedDurationFrom) {
     queries.allowedDuration = {
-      [Op.gte]: allowedDurationFrom
+      [Op.gte]: opts.allowedDurationFrom
     };
   }
 
@@ -384,7 +348,7 @@ export async function getVehicleLogs({
 }
 
 export async function findVehicleAllegationById(id) {
-  if (id === undefined) throw new NotProvidedError("id");
+  if (typeof id === "undefined") throw new NotProvidedError("id");
   if (id === null) throw new NullValueError("id");
 
   const allegation = await VehicleAllegation.findByPk(id);
@@ -394,46 +358,43 @@ export async function findVehicleAllegationById(id) {
   return null;
 }
 
-export async function updateVehicleAllegation({id = undefined, comment = undefined}) {
-  if (id === undefined) throw new NotProvidedError("id");
-  if (id === null) throw new NotProvidedError("id");
+export async function updateVehicleAllegation(opts) {
+  if (typeof opts === "undefined") opts = {};
+  if (typeof opts.id === "undefined") throw new NotProvidedError("id");
+  if (opts.id === null) throw new NotProvidedError("id");
 
-  const allegation = await findVehicleAllegationById(id);
+  const allegation = await findVehicleAllegationById(opts.id);
   if (!allegation) {
     throw new VehicleAllegationNotFoundError();
   }
 
-  if (comment !== undefined) {
-    allegation.comment = comment;
+  if (typeof opts.comment !== "undefined") {
+    allegation.comment = opts.comment;
   }
   return await allegation.save();
 }
 
-export async function getVehicleAllegations({
-  licenseNumber = undefined,
-  lateDurationEqual = undefined,
-  lateDurationTo = undefined,
-  lateDurationFrom = undefined
-}) {
-  let logs = await getVehicleLogs({licenseNumber: licenseNumber});
+export async function getVehicleAllegations(opts) {
+  if (typeof opts === "undefined") opts = {};
+  let logs = await getVehicleLogs({licenseNumber: opts.licenseNumber});
   const queries = {
     logId: {
-      [Op.in]: logs.map(log => log.dataValues.id)
+      [Op.in]: logs.map(log => log.id)
     }
   };
-  if (lateDurationEqual !== undefined && lateDurationEqual) {
-    queries.lateDuration = lateDurationEqual;
-  } else if (lateDurationTo !== undefined && lateDurationTo && lateDurationFrom !== undefined && lateDurationFrom) {
+  if (typeof opts.lateDurationEqual !== "undefined" && opts.lateDurationEqual) {
+    queries.lateDuration = opts.lateDurationEqual;
+  } else if (typeof opts.lateDurationTo !== "undefined" && opts.lateDurationTo && typeof opts.lateDurationFrom !== "undefined" && opts.lateDurationFrom) {
     queries.lateDuration = {
-      [Op.between]: [lateDurationFrom, lateDurationTo]
+      [Op.between]: [opts.lateDurationFrom, opts.lateDurationTo]
     };
-  } else if (lateDurationTo !== undefined && lateDurationTo) {
+  } else if (typeof opts.lateDurationTo !== "undefined" && opts.lateDurationTo) {
     queries.lateDuration = {
-      [Op.lte]: lateDurationTo
+      [Op.lte]: opts.lateDurationTo
     };
-  } else if (lateDurationFrom !== undefined && lateDurationFrom) {
+  } else if (typeof opts.lateDurationFrom !== "undefined" && opts.lateDurationFrom) {
     queries.lateDuration = {
-      [Op.gte]: lateDurationFrom
+      [Op.gte]: opts.lateDurationFrom
     };
   }
 
