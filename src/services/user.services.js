@@ -23,21 +23,27 @@ export async function findUserByEmail(email) {
   return null;
 }
 
-export async function createUser({id, name, email, phoneNumber}) {
-  if (id === undefined) throw new NotProvidedError("id");
-  if (name === undefined) throw new NotProvidedError("Name");
-  if (email === undefined) throw new NotProvidedError("email");
-  if (phoneNumber === undefined) throw new NotProvidedError("phoneNumber");
-  if (id === null) throw new NullValueError("id");
-  if (name === null) throw new NullValueError("Name");
-  if (email === null) throw new NullValueError("email");
+/**
+ * Creates a new user
+ * @param opts - {id: number, name: string, email: string, phoneNumber: string}
+ * @returns {Promise<Model<any, TModelAttributes>>}
+ */
+export async function createUser(opts) {
+  if (typeof opts.id === "undefined") throw new NotProvidedError("id");
+  if (typeof opts.name === "undefined") throw new NotProvidedError("Name");
+  if (typeof opts.email === "undefined") throw new NotProvidedError("email");
+  if (typeof opts.phoneNumber === "undefined") throw new NotProvidedError("phoneNumber");
+  if (opts.id === null) throw new NullValueError("id");
+  if (opts.name === null) throw new NullValueError("name");
+  if (opts.email === null) throw new NullValueError("email");
+  if (opts.phoneNumber === null) throw new NullValueError("phoneNumber");
 
   const [user] = await User.findOrCreate({
-    where: {id: id},
+    where: {id: opts.id},
     defaults: {
-      name: name,
-      email: email,
-      phoneNumber: phoneNumber
+      name: opts.name,
+      email: opts.email,
+      phoneNumber: opts.phoneNumber
     }
   });
 
@@ -45,13 +51,12 @@ export async function createUser({id, name, email, phoneNumber}) {
 }
 
 async function findAvailableUser(id, email) {
-  if (id === undefined && email === undefined) throw new NotProvidedError("id and/or email");
   if (id === null && email === null) throw new CustomError("id and/or email must be not null");
 
   let user;
-  if (id !== undefined) {
+  if (id !== null) {
     user = await User.findByPk(id);
-  } else if (email !== undefined) {
+  } else if (email !== null) {
     user = await User.findOne({where: {email: email}});
   }
   if (!user) {
@@ -60,14 +65,25 @@ async function findAvailableUser(id, email) {
   return user;
 }
 
-export async function updateUser({id = undefined, name = undefined, email = undefined, phoneNumber = undefined}) {
-  if (id === undefined && email === undefined) throw new NotProvidedError("id and/or email");
-  if (id === null && email === null) throw new CustomError("id and/or email must be not null");
+/**
+ * Updates a user
+ * @param opts - {id: number, name(optional): string, email: string, phoneNumber(optional): string}
+ * @desc Either id or mail must be provided. Both cannot be provided
+ * @returns {Promise<Model<any, TModelAttributes>>}
+ */
+export async function updateUser(opts) {
+  if (typeof opts.id === "undefined" && typeof opts.email === "undefined") throw new NotProvidedError("id and/or email");
+  if (opts.id === null && opts.email === null) throw new NullValueError("id and/or email");
 
   try {
-    const user = await findAvailableUser(id, email);
-    if (name !== undefined) user.name = name;
-    if (phoneNumber !== undefined) user.phoneNumber = phoneNumber;
+    let user;
+    if (typeof opts.id !== "undefined") {
+      user = await findAvailableUser(opts.id, null);
+    } else {
+      user = await findAvailableUser(null, opts.email);
+    }
+    if (typeof opts.name !== "undefined") user.name = opts.name;
+    if (typeof opts.phoneNumber !== "undefined") user.phoneNumber = opts.phoneNumber;
     return await user.save();
   } catch (err) {
     console.error(err);

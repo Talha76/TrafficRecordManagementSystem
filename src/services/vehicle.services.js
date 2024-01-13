@@ -13,7 +13,7 @@ import {
   VehicleAlreadyDeletedError,
   VehicleAlreadyExistsError,
   VehicleLogNotFoundError,
-  VehicleNotFoundError
+  VehicleNotFoundError,
 } from "../utils/errors.js";
 
 dotenv.config();
@@ -38,6 +38,12 @@ export async function findVehicleByLicenseNumber(licenseNumber) {
   return null;
 }
 
+/**
+ * Add a vehicle to the database
+ * @param opts - {licenseNumber, vehicleName, userMail, defaultDuration(optional), approvalStatus(optional)}
+ * @returns {Promise<any>}
+ * @throws {MaxVehicleError, VehicleAlreadyExistsError, BannedVehicleError}
+ */
 export async function addVehicle(opts) {
   if (typeof opts === "undefined") opts = {};
   if (typeof opts.licenseNumber === "undefined") throw new NotProvidedError("licenseNumber");
@@ -75,21 +81,20 @@ export async function addVehicle(opts) {
     if (vehicle.defaultDuration === 0) {
       throw new BannedVehicleError();
     }
-  }
-
-  if (!created) {
     vehicle.vehicleName = opts.vehicleName;
     vehicle.userMail = opts.userMail;
-    vehicle.deletedAt = null;
-    if (typeof opts.approvalStatus === "undefined") {
-      vehicle.approvalStatus = false;
-    }
   }
+
+
   if (typeof opts.defaultDuration !== "undefined") {
     vehicle.defaultDuration = opts.defaultDuration;
+  } else {
+    vehicle.defaultDuration = 20;
   }
   if (typeof opts.approvalStatus !== "undefined") {
     vehicle.approvalStatus = opts.approvalStatus;
+  } else {
+    vehicle.approvalStatus = false;
   }
 
   const result = await vehicle.save();
@@ -104,6 +109,12 @@ export async function addVehicle(opts) {
   return result;
 }
 
+/**
+ * Remove a vehicle from the database
+ * @param licenseNumber
+ * @returns {Promise<*|null>}
+ * @throws {VehicleAlreadyDeletedError, BannedVehicleError, customError}
+ */
 export async function removeVehicle(licenseNumber) {
   if (typeof licenseNumber === "undefined") throw new NotProvidedError("licenseNumber");
   if (licenseNumber === null) throw new NullValueError("licenseNumber");
@@ -128,7 +139,7 @@ export async function removeVehicle(licenseNumber) {
     }
   });
   if (log) {
-    throw new CustomError("Vehicle is in the parking lot");
+    throw new CustomError("Vehicle is in the parking lot. Cannot be removed.");
   }
 
   vehicle.deletedAt = new Date();
@@ -144,6 +155,12 @@ export async function removeVehicle(licenseNumber) {
   return result;
 }
 
+/**
+ * Updates Vehicle
+ * @param opts - {licenseNumber, defaultDuration, approvalStatus, vehicleName, userMail}
+ * @returns {Promise<any>}
+ * @throws {VehicleNotFoundError, BannedVehicleError}
+ */
 export async function updateVehicle(opts) {
   if (typeof opts === "undefined") opts = {};
   if (typeof opts.licenseNumber === "undefined") throw new NotProvidedError("licenseNumber");
@@ -163,6 +180,9 @@ export async function updateVehicle(opts) {
   if (typeof opts.vehicleName !== "undefined") {
     vehicle.vehicleName = opts.vehicleName;
   }
+  if (typeof opts.userMail !== "undefined") {
+    vehicle.userMail = opts.userMail;
+  }
 
   const result = await vehicle.save();
   if (result.defaultDuration === 0) {
@@ -176,11 +196,17 @@ export async function updateVehicle(opts) {
   return result;
 }
 
+/**
+ * Get list of vehicles
+ * @param opts - {userMail, defaultDurationEqual, defaultDurationTo, defaultDurationFrom, approvalStatus, deletedAt}(all optional)
+ * @returns {Promise<Model<any, TModelAttributes>[]>}
+ */
 export async function getVehicleList(opts) {
   if (typeof opts === "undefined") opts = {};
-  const queries = {
-    deletedAt: null
-  };
+  const queries = {};
+  if (typeof opts.deletedAt !== "undefined") {
+    queries.deletedAt = opts.deletedAt;
+  }
   if (typeof opts.userMail !== "undefined" && opts.userMail) {
     queries.userMail = opts.userMail;
   }
@@ -230,6 +256,12 @@ export async function findVehicleLogById(id) {
   return null;
 }
 
+/**
+ * Add a vehicle log to the database
+ * @param opts - {licenseNumber, entryTime, allowedDuration(optional), comment(optional)}
+ * @returns {Promise<awaited Model<any, TModelAttributes>>}
+ * @throws {VehicleNotFoundError, BannedVehicleError}
+ */
 export async function addVehicleLog(opts) {
   if (typeof opts === "undefined") opts = {};
   if (typeof opts.licenseNumber === "undefined") throw new NotProvidedError("licenseNumber");
@@ -259,6 +291,12 @@ export async function addVehicleLog(opts) {
   return await log.save();
 }
 
+/**
+ * Updates a vehicle log
+ * @param opts - {id, entryTime, exitTime(optional), allowedDuration(optional), comment(optional)}
+ * @returns {Promise<Model<any, TModelAttributes>>}
+ * @throws {VehicleLogNotFoundError}
+ */
 export async function updateVehicleLog(opts) {
   if (typeof opts === "undefined") opts = {};
   if (typeof opts.id === "undefined") throw new NotProvidedError("id");
@@ -284,6 +322,11 @@ export async function updateVehicleLog(opts) {
   return await log.save();
 }
 
+/**
+ * Get list of vehicle logs
+ * @param opts - {licenseNumber, entryTimeEqual, entryTimeTo, entryTimeFrom, exitTimeEqual, exitTimeTo, exitTimeFrom, allowedDurationEqual, allowedDurationTo, allowedDurationFrom}(all optional)
+ * @returns {Promise<Model<any, TModelAttributes>[]>}
+ */
 export async function getVehicleLogs(opts) {
   if (typeof opts === "undefined") opts = {};
   const queries = {};
@@ -358,6 +401,12 @@ export async function findVehicleAllegationById(id) {
   return null;
 }
 
+/**
+ * Updates a vehicle allegation
+ * @param opts - {id, comment}
+ * @returns {Promise<Model<any, TModelAttributes>>}
+ * @throws {VehicleAllegationNotFoundError}
+ */
 export async function updateVehicleAllegation(opts) {
   if (typeof opts === "undefined") opts = {};
   if (typeof opts.id === "undefined") throw new NotProvidedError("id");
@@ -374,6 +423,11 @@ export async function updateVehicleAllegation(opts) {
   return await allegation.save();
 }
 
+/**
+ * Get list of vehicle allegations
+ * @param opts - {licenseNumber, lateDurationEqual, lateDurationTo, lateDurationFrom}(all optional)
+ * @returns {Promise<any>}
+ */
 export async function getVehicleAllegations(opts) {
   if (typeof opts === "undefined") opts = {};
   let logs = await getVehicleLogs({licenseNumber: opts.licenseNumber});
