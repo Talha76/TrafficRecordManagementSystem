@@ -1,159 +1,178 @@
 <!DOCTYPE html>
 <html data-bs-theme="light" lang="en" style="height: 100%; width: 100%">
-	<head>
-		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
-		/>
-		<title>viewLogsAdmin</title>
-		<link
-			rel="stylesheet"
-			href="/adminViewLogsAssets/bootstrap/css/bootstrap.min.css"
-		/>
-		<link
-			rel="stylesheet"
-			href="/adminViewLogsAssets/css/bs-theme-overrides.css"
-		/>
-		<link
-			rel="stylesheet"
-			href="/adminViewLogsAssets/css/animate.min.css"
-		/>
-		<link
-			rel="stylesheet"
-			href="/adminViewLogsAssets/css/Lightbox-Gallery-No-Gutters-baguetteBox.min.css"
-		/>
-		<link
-			rel="stylesheet"
-			href="/adminViewLogsAssets/css/Navbar-Right-Links-Dark-icons.css"
-		/>
-	</head>
+<head>
+    <meta charset="utf-8"/>
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>viewLogsAdmin</title>
+    <link
+            rel="stylesheet"
+            href="/adminViewLogsAssets/bootstrap/css/bootstrap.min.css"
+    />
+    <link
+            rel="stylesheet"
+            href="/adminViewLogsAssets/css/bs-theme-overrides.css"
+    />
+    <link
+            rel="stylesheet"
+            href="/adminViewLogsAssets/css/animate.min.css"
+    />
+    <link
+            rel="stylesheet"
+            href="/adminViewLogsAssets/css/Lightbox-Gallery-No-Gutters-baguetteBox.min.css"
+    />
+    <link
+            rel="stylesheet"
+            href="/adminViewLogsAssets/css/Navbar-Right-Links-Dark-icons.css"
+    />
+</head>
 
-	<body
-		style="
+<body
+        style="
 			width: 100%;
 			filter: brightness(100%);
 			text-align: center;
 			height: 100%;
 		"
-	>
-		<nav
-			class="navbar navbar-expand-md py-3"
-			style="
+>
+<nav
+        class="navbar navbar-expand-md py-3"
+        style="
 				--bs-body-bg: rgb(109, 24, 106);
 				background: var(--bs-white);
 				border-bottom-color: var(--bs-danger-border-subtle);
 				box-shadow: 8px -6px 20px, 0px 0px 12px var(--bs-border-color);
 				width: 100%;
 			"
-		>
-			<div class="container">
-				<a
-					class="navbar-brand d-flex align-items-center"
-					href="/admin/dashboard"
-					style="color: var(--bs-success-text-emphasis)"
-					><span
-						class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
-						><svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1em"
-							height="1em"
-							fill="currentColor"
-							viewBox="0 0 16 16"
-							class="bi bi-bezier"
-							data-bss-hover-animate="jello"
-						>
+>
+    <div class="container">
+        <a
+                class="navbar-brand d-flex align-items-center"
+                href="/admin/dashboard"
+                style="color: var(--bs-success-text-emphasis)"
+        ><span
+                    class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
+            ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="1em"
+                        height="1em"
+                        fill="currentColor"
+                        viewBox="0 0 16 16"
+                        class="bi bi-bezier"
+                        data-bss-hover-animate="jello"
+                >
 							<path
-								fill-rule="evenodd"
-								d="M0 10.5A1.5 1.5 0 0 1 1.5 9h1A1.5 1.5 0 0 1 4 10.5v1A1.5 1.5 0 0 1 2.5 13h-1A1.5 1.5 0 0 1 0 11.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm10.5.5A1.5 1.5 0 0 1 13.5 9h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM6 4.5A1.5 1.5 0 0 1 7.5 3h1A1.5 1.5 0 0 1 10 4.5v1A1.5 1.5 0 0 1 8.5 7h-1A1.5 1.5 0 0 1 6 5.5zM7.5 4a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"
-							></path>
+                                    fill-rule="evenodd"
+                                    d="M0 10.5A1.5 1.5 0 0 1 1.5 9h1A1.5 1.5 0 0 1 4 10.5v1A1.5 1.5 0 0 1 2.5 13h-1A1.5 1.5 0 0 1 0 11.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm10.5.5A1.5 1.5 0 0 1 13.5 9h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM6 4.5A1.5 1.5 0 0 1 7.5 3h1A1.5 1.5 0 0 1 10 4.5v1A1.5 1.5 0 0 1 8.5 7h-1A1.5 1.5 0 0 1 6 5.5zM7.5 4a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"
+                            ></path>
 							<path
-								d="M6 4.5H1.866a1 1 0 1 0 0 1h2.668A6.517 6.517 0 0 0 1.814 9H2.5c.123 0 .244.015.358.043a5.517 5.517 0 0 1 3.185-3.185A1.503 1.503 0 0 1 6 5.5zm3.957 1.358A1.5 1.5 0 0 0 10 5.5v-1h4.134a1 1 0 1 1 0 1h-2.668a6.517 6.517 0 0 1 2.72 3.5H13.5c-.123 0-.243.015-.358.043a5.517 5.517 0 0 0-3.185-3.185z"
-							></path></svg></span
-					><span
-						data-bss-hover-animate="pulse"
-						style="font-size: 20px; text-align: center"
-						>IUT Traffic Record Management System</span
-					></a
-				><button
-					data-bs-toggle="collapse"
-					class="navbar-toggler"
-					data-bs-target="#navcol-2"
-				>
+                                    d="M6 4.5H1.866a1 1 0 1 0 0 1h2.668A6.517 6.517 0 0 0 1.814 9H2.5c.123 0 .244.015.358.043a5.517 5.517 0 0 1 3.185-3.185A1.503 1.503 0 0 1 6 5.5zm3.957 1.358A1.5 1.5 0 0 0 10 5.5v-1h4.134a1 1 0 1 1 0 1h-2.668a6.517 6.517 0 0 1 2.72 3.5H13.5c-.123 0-.243.015-.358.043a5.517 5.517 0 0 0-3.185-3.185z"
+                            ></path></svg></span
+            ><span
+                    data-bss-hover-animate="pulse"
+                    style="font-size: 20px; text-align: center"
+            >IUT Traffic Record Management System</span
+            ></a
+        >
+        <button
+                data-bs-toggle="collapse"
+                class="navbar-toggler"
+                data-bs-target="#navcol-2"
+        >
 					<span class="visually-hidden">Toggle navigation</span
-					><span class="navbar-toggler-icon"></span>
-				</button>
-				<div
-					class="collapse navbar-collapse"
-					id="navcol-2"
-					style="margin-right: -77px"
-				>
-					<ul class="navbar-nav ms-auto">
-						<li class="nav-item">
-							<a
-								class="nav-link"
-								data-bss-hover-animate="pulse"
-								id="pending_request"
-								href="#"
-								style="
+                    ><span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+                class="collapse navbar-collapse"
+                id="navcol-2"
+                style="margin-right: -77px"
+        >
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a
+                            class="nav-link active"
+                            data-bss-hover-animate="pulse"
+                            id="view_logs"
+                            href="/admin/dashboard"
+                            style="
 									padding-left: 52px;
 									--bs-body-font-size: -14rem;
 									font-size: 20px;
 									text-shadow: 0px 0px 1px;
 									color: var(--bs-emphasis-color);
 								"
-								><span style="color: rgb(10, 54, 34)"
-									>Pending Request</span
-								></a
-							>
-						</li>
-						<li class="nav-item">
-							<a
-								class="nav-link"
-								data-bss-hover-animate="pulse"
-								id="logout"
-								href="#"
-								style="
+                    ><span style="color: rgb(10, 54, 34)"
+                        >Dashboard</span
+                        ></a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a
+                            class="nav-link"
+                            data-bss-hover-animate="pulse"
+                            id="pending_request"
+                            href="#"
+                            style="
 									padding-left: 52px;
 									--bs-body-font-size: -14rem;
 									font-size: 20px;
 									text-shadow: 0px 0px 1px;
 									color: var(--bs-emphasis-color);
 								"
-								><span style="color: rgb(10, 54, 34)"
-									>Logout</span
-								></a
-							>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-		<input
-			type="search"
-			style="width: 35%; margin-top: 2%; height: 35px"
-			placeholder="License Number or Owner ID"
-		/>
-		<div
-			class="input-group"
-			style="width: 35%; margin-left: 32.5%; margin-top: 1%"
-		>
+                    ><span style="color: rgb(10, 54, 34)"
+                        >Pending Request</span
+                        ></a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a
+                            class="nav-link"
+                            data-bss-hover-animate="pulse"
+                            id="logout"
+                            href="/logout"
+                            style="
+									padding-left: 52px;
+									--bs-body-font-size: -14rem;
+									font-size: 20px;
+									text-shadow: 0px 0px 1px;
+									color: var(--bs-emphasis-color);
+								"
+                    ><span style="color: rgb(10, 54, 34)"
+                        >Logout</span
+                        ></a
+                    >
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<input
+        type="search"
+        style="width: 35%; margin-top: 2%; height: 35px"
+        placeholder="License Number or Owner ID"
+/>
+<div
+        class="input-group"
+        style="width: 35%; margin-left: 32.5%; margin-top: 1%"
+>
 			<span class="input-group-text">Entry Time</span
-			><input
-				class="form-control"
-				id="time_from"
-				type="datetime-local"
-				name="time_from"
-			/><input
-				class="form-control"
-				id="time_to"
-				type="datetime-local"
-				name="time_to"
-			/>
-		</div>
-		<div
-			class="table-responsive fw-semibold text-start"
-			style="
+            ><input
+            class="form-control"
+            id="time_from"
+            type="datetime-local"
+            name="time_from"
+    /><input
+            class="form-control"
+            id="time_to"
+            type="datetime-local"
+            name="time_to"
+    />
+</div>
+<div
+        class="table-responsive fw-semibold text-start"
+        style="
 				margin-top: 2%;
 				width: 90%;
 				margin-right: 10%;
@@ -163,101 +182,106 @@
 				height: 60%;
 				background: var(--bs-btn-hover-color);
 			"
-		>
-			<table class="table">
-				<thead style="width: 80%; padding: 0px">
-					<tr style="width: 80%; height: 57.5px">
-						<th
-							style="
+>
+    <table class="table">
+        <thead style="width: 80%; padding: 0px">
+        <tr style="width: 80%; height: 57.5px">
+            <th
+                    style="
 								box-shadow: 0px 0px 5px 0px;
 								border-style: solid;
 								width: 20%;
 							"
-						>
-							License number
-						</th>
-						<th
-							style="
+            >
+                License number
+            </th>
+            <th
+                    style="
 								box-shadow: 0px 0px 5px 0px;
 								border-style: solid;
 								width: 15%;
 							"
-						>
-							Entry time
-						</th>
-						<th
-							style="
+            >
+                Entry time
+            </th>
+            <th
+                    style="
 								box-shadow: 0px 0px 5px 0px;
 								border-style: solid;
 								width: 15%;
 							"
-						>
-							Exit time
-						</th>
-						<th
-							style="
+            >
+                Exit time
+            </th>
+            <th
+                    style="
 								box-shadow: 0px 0px 5px 0px;
 								border-style: solid;
 								width: 12%;
 							"
-						>
-							Contact number
-						</th>
-						<th style="box-shadow: 0px 0px 5px 0px; width: 10%">
-							Owner ID
-						</th>
-						<th style="box-shadow: 0px 0px 5px 0px; width: 15%">
-							Comment
-						</th>
-						<th style="box-shadow: 0px 0px 5px 0px; width: 10%">
-							Late Duration (mnt)
-						</th>
-					</tr>
-				</thead>
-				<tbody style="width: 90%; height: initial">
-					<tr
-						style="
+            >
+                Contact number
+            </th>
+            <th style="box-shadow: 0px 0px 5px 0px; width: 10%">
+                Owner ID
+            </th>
+            <th style="box-shadow: 0px 0px 5px 0px; width: 15%">
+                Comment
+            </th>
+            <th style="box-shadow: 0px 0px 5px 0px; width: 10%">
+                Late Duration (mnt)
+            </th>
+        </tr>
+        </thead>
+        <tbody style="width: 90%; height: initial">
+        <% vehicleLogs.forEach(function(log){ %> <%
+            console.log(log); %>
+        <tr
+                style="
 							margin-right: 19px;
 							margin-top: 0px;
 							margin-left: -2px;
 						"
-					>
-						<td style="box-shadow: 0px 0px 5px 0px; width: 20%">
-							<a
-								href="/admin/view-vehicle-details"
-								style="color: var(--bs-danger-text-emphasis)"
-								>License Number</a
-							>
-						</td>
-						<td style="box-shadow: 0px 0px 5px 0px; width: 15%">
-							Cell 1
-						</td>
-						<td style="box-shadow: 0px 0px 5px 0px; width: 15%">
-							Cell 1
-						</td>
-						<td style="box-shadow: 0px 0px 5px 0px; width: 12%">
-							cell 1
-						</td>
-						<td style="box-shadow: 0px 0px 5px 0px; width: 10%">
-							<a
-								href=""
-								style="color: var(--bs-danger-text-emphasis)"
-								>200042108</a
-							>
-						</td>
-						<td
-							style="box-shadow: 0px 0px 5px 0px; width: 15%"
-						></td>
-						<td
-							style="box-shadow: 0px 0px 5px 0px; width: 10%"
-						></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<script src="/adminViewLogsAssets/bootstrap/js/bootstrap.min.js"></script>
-		<script src="/adminViewLogsAssets/js/bs-init.js"></script>
-		<script src="/adminViewLogsAssets/js/Lightbox-Gallery-No-Gutters-baguetteBox.min.js"></script>
-		<script src="/adminViewLogsAssets/js/Lightbox-Gallery-No-Gutters-Lightbox-Gallery.js"></script>
-	</body>
+        >
+            <td style="box-shadow: 0px 0px 5px 0px; width: 20%">
+                <a
+                        href="/admin/view-vehicle-details/<%= log.licenseNumber; %>"
+                        style="color: var(--bs-danger-text-emphasis)"
+                ><%= log.licenseNumber; %></a
+                >
+            </td>
+            <td style="box-shadow: 0px 0px 5px 0px; width: 15%">
+                <%= log.entryTime; %>
+            </td>
+            <td style="box-shadow: 0px 0px 5px 0px; width: 15%">
+                <%= log.exitTime; %>
+            </td>
+            <td style="box-shadow: 0px 0px 5px 0px; width: 12%">
+                <%= log.phoneNumber; %>
+            </td>
+            <td style="box-shadow: 0px 0px 5px 0px; width: 10%">
+                <a
+                        href="/admin/view-user-details/<%= log.userId %>"
+                        style="color: var(--bs-danger-text-emphasis)"
+                ><%= log.userId; %></a
+                >
+            </td>
+            <td
+                    style="box-shadow: 0px 0px 5px 0px; width: 15%">
+                <%= log.comment; %>
+            </td>
+            <td
+                    style="box-shadow: 0px 0px 5px 0px; width: 10%">
+                <%= Math.floor(log.lateDuration); %>
+            </td>
+        </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>
+<script src="/adminViewLogsAssets/bootstrap/js/bootstrap.min.js"></script>
+<script src="/adminViewLogsAssets/js/bs-init.js"></script>
+<script src="/adminViewLogsAssets/js/Lightbox-Gallery-No-Gutters-baguetteBox.min.js"></script>
+<script src="/adminViewLogsAssets/js/Lightbox-Gallery-No-Gutters-Lightbox-Gallery.js"></script>
+</body>
 </html>
