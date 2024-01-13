@@ -315,13 +315,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/extract-lptext.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/minisearch@6.3.0/dist/umd/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
 <script>
-	const miniSearch = new MiniSearch({
-		fields: ["licenseNumber", "userId"],
-		storeFields: ["licenseNumber", "userId", "entryTime", "phoneNumber", "comment"],
-	});
-
+	let fuse;
 	const vehicleLogs = [];
 
 	document.addEventListener("DOMContentLoaded", () => {
@@ -337,19 +333,23 @@
 			log.comment = cells[5].textContent;
 			vehicleLogs.push(log);
 		}
-		showResults(vehicleLogs)
-		miniSearch.addAll(vehicleLogs);
+
+		fuse = new Fuse(vehicleLogs, {
+			findAllMatches: true,
+			keys: ["userId", "licenseNumber"],
+		})
+		showResults(vehicleLogs);
 	});
 
 	document.querySelector("input[type=search]").addEventListener("input", (event) => {
 		const search = event.target.value;
-		if (search === "") showResults(vehicleLogs);
-		else {
-			const searchOptions = {
-				fuzzy: 3,
-			}
-			const results = miniSearch.search(search, searchOptions);
+		if (search.length > 0) {
+			let results = fuse.search(search);
+			results = results.map(result => result.item);
+			console.log(results);
 			showResults(results);
+		} else {
+			showResults(vehicleLogs);
 		}
 	});
 
@@ -470,6 +470,7 @@
                                 type="number"
                                 id="extend-time"
                                 name="extendTime"
+                                min="0"
                         /><input
                                 class="btn btn-primary"
                                 type="submit"
