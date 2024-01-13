@@ -27,7 +27,9 @@ const getAdminDashboard = async (req, res) => {
 
     req.flash("vehicleLogs", flashVehicleLogs);
     res.render("./admin/admin.dashboard.ejs", {
-      vehicleLogs: req.flash("vehicleLogs")
+      vehicleLogs: req.flash("vehicleLogs"),
+      error: req.flash("error"),
+      success: req.flash("success")
     });
   } catch (err) {
     console.error(err);
@@ -98,7 +100,7 @@ const viewVehicleLogs = async (req, res) => {
   try {
     const vehicleLogs = await Vehicle.getVehicleLogs({});
     const flashVehicleLogs = [];
-    for (const {id, licenseNumber, entryTime, exitTime, comment,lateDuration} of vehicleLogs) {
+    for (const {id, licenseNumber, entryTime, exitTime, comment, lateDuration} of vehicleLogs) {
       const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
       const user = await User.findUserByEmail(vehicle.userMail);
 
@@ -123,23 +125,25 @@ const viewVehicleLogs = async (req, res) => {
     res.render("./admin/admin.view-logs.ejs", {
       vehicleLogs: req.flash("vehicleLogs")
     });
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err);
   }
 
 };
 
 const viewVehicleDetails = async (req, res) => {
-  try{
+  try {
     const licenseNumber = req.params.licenseNumber;
     const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-    console.trace(vehicle)
+    if (!vehicle) {
+      req.flash("error", "Vehicle not found");
+      return res.redirect("/admin/dashboard");
+    }
     const user = await User.findUserByEmail(vehicle.userMail);
-    const vehicleLogs = await Vehicle.getVehicleLogs({licenseNumber})
+    const vehicleLogs = await Vehicle.getVehicleLogs({licenseNumber});
 
     const flashVehicleLogs = [];
-    for (const {entryTime, exitTime, comment,lateDuration} of vehicleLogs) {
+    for (const {entryTime, exitTime, comment, lateDuration} of vehicleLogs) {
       const timeOfEntry = entryTime.toISOString().split("T")[1].split(".")[0]
         + " " + entryTime.toISOString().split("T")[0];
       const timeOfExit = exitTime ? exitTime.toISOString().split("T")[1].split(".")[0]
@@ -164,8 +168,8 @@ const viewVehicleDetails = async (req, res) => {
       success: req.flash("success")
     });
 
-  }catch (err){
-    console.error(err)
+  } catch (err) {
+    console.error(err);
   }
 
 };
@@ -188,7 +192,7 @@ const changeDuration = async (req, res) => {
       req.flash("success", "Vehicle Duration Changed Successfully");
       res.redirect(`/admin/view-vehicle-details/${licenseNumber}`);
     }
-  }catch (err) {
+  } catch (err) {
     console.error(err);
   }
 };
@@ -210,7 +214,7 @@ const banVehicle = async (req, res) => {
       req.flash("success", "Vehicle Banned Successfully");
       res.redirect(`/admin/view-vehicle-details/${licenseNumber}`);
     }
-  }catch (err) {
+  } catch (err) {
     console.error(err);
   }
 };
@@ -230,7 +234,7 @@ const unbanVehicle = async (req, res) => {
       req.flash("success", "Vehicle Unbanned Successfully");
       res.redirect(`/admin/view-vehicle-details/${licenseNumber}`);
     }
-  }catch (err) {
+  } catch (err) {
     console.error(err);
   }
 };
