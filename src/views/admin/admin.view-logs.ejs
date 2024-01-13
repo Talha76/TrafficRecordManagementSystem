@@ -215,6 +215,8 @@
 					</tr>
 				</thead>
 				<tbody style="width: 90%; height: initial">
+				<% vehicleLogs.forEach(function(log){ %> <%
+					console.log(log); %>
 					<tr
 						style="
 							margin-right: 19px;
@@ -224,34 +226,37 @@
 					>
 						<td style="box-shadow: 0px 0px 5px 0px; width: 20%">
 							<a
-								href="/admin/view-vehicle-details"
+								href="/admin/view-vehicle-details/<%= log.licenseNumber; %>"
 								style="color: var(--bs-danger-text-emphasis)"
-								>License Number</a
+								><%= log.licenseNumber; %></a
 							>
 						</td>
 						<td style="box-shadow: 0px 0px 5px 0px; width: 15%">
-							Cell 1
+							<%= log.entryTime; %>
 						</td>
 						<td style="box-shadow: 0px 0px 5px 0px; width: 15%">
-							Cell 1
+							<%= log.exitTime; %>
 						</td>
 						<td style="box-shadow: 0px 0px 5px 0px; width: 12%">
-							cell 1
+							<%= log.phoneNumber; %>
 						</td>
 						<td style="box-shadow: 0px 0px 5px 0px; width: 10%">
 							<a
 								href=""
 								style="color: var(--bs-danger-text-emphasis)"
-								>200042108</a
+								><%= log.userId; %></a
 							>
 						</td>
 						<td
-							style="box-shadow: 0px 0px 5px 0px; width: 15%"
-						></td>
+							style="box-shadow: 0px 0px 5px 0px; width: 15%">
+							<%= log.comment; %>
+					   </td>
 						<td
-							style="box-shadow: 0px 0px 5px 0px; width: 10%"
-						></td>
+							style="box-shadow: 0px 0px 5px 0px; width: 10%">
+							<%= Math.floor(log.lateDuration); %>
+						</td>
 					</tr>
+					<% }); %>
 				</tbody>
 			</table>
 		</div>
