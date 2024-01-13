@@ -193,18 +193,50 @@ const viewVehicleDetails = async (req, res) => {
 };
 
 const viewUserDetails = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await User.findUserById(userId);
+    if (!user) {
+      req.flash("error", "User not found");
+      return res.redirect("/admin/dashboard");
+    }
+    const vehicles = await Vehicle.getVehicleList({userMail: user.email});
+    const flashVehicles = [];
+    for (const {licenseNumber, vehicleName, approvalStatus} of vehicles) {
+      flashVehicles.push({
+        licenseNumber,
+        vehicleName,
+        approvalStatus
+      });
+    }
+    req.flash("vehicles", flashVehicles);
+    req.flash("user", user);
+    res.render("./admin/userDetails.ejs", {
+      vehicles: req.flash("vehicles"),
+      user: req.flash("user")[0],
+      error: req.flash("error"),
+    });
+
+  }catch (err) {
+    console.error(err);
+  }
 };
 const changeDuration = async (req, res) => {
   try {
     const licenseNumber = req.params.licenseNumber;
+    const allowedDuration = req.body.allowedDuration;
     const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
     if (vehicle === null) {
       req.flash("error", "Vehicle not found");
       return res.redirect("/admin/dashboard");
     }
+    if(allowedDuration < 0){
+      req.flash("error", "Duration can't be negative");
+      return res.redirect(`/admin/view-vehicle-details/${licenseNumber}`);
+    }
     const vehicleUpdated = await Vehicle.updateVehicle({
       licenseNumber,
-      defaultDuration: req.body.allowedDuration
+      defaultDuration: allowedDuration
     });
     if (vehicleUpdated) {
       req.flash("success", "Vehicle Duration Changed Successfully");
