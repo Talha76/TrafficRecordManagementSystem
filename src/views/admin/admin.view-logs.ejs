@@ -144,10 +144,29 @@
                         ></a
                     >
                 </li>
+                <li class="nav-item">
+                    <a
+                            class="nav-link"
+                            data-bss-hover-animate="pulse"
+                            id="logout"
+                            href="#"
+                            style="
+									padding-left: 52px;
+									--bs-body-font-size: -14rem;
+									font-size: 20px;
+									text-shadow: 0px 0px 1px;
+									color: var(--bs-emphasis-color);
+								"
+                    ><span style="color: rgb(10, 54, 34)"
+                        ><%= appUser.name; %>(<%= appUser.designation %>)</span
+                        ></a
+                    >
+                </li>
             </ul>
         </div>
     </div>
 </nav>
+
 <input
         type="search"
         style="width: 35%; margin-top: 2%; height: 35px"
@@ -183,6 +202,7 @@
 				background: var(--bs-btn-hover-color);
 			"
 >
+
     <table class="table">
         <thead style="width: 80%; padding: 0px">
         <tr style="width: 80%; height: 57.5px">
