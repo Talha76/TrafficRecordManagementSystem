@@ -19,10 +19,10 @@ router.post("/change-duration/:licenseNumber", isLoggedIn, isAdmin, adminControl
 router.get("/ban/:licenseNumber", isLoggedIn, isAdmin, adminController.banVehicle);
 router.get("/unban/:licenseNumber", isLoggedIn, isAdmin, adminController.unbanVehicle);
 
-router.get("/get-approval", adminController.getApproval);
-router.get("/approve/:licenseNumber", adminController.approve);
-router.get("/get-approval", adminController.getApproval);
-router.post("/approve", adminController.approve);
-router.post("/reject", adminController.reject);
+router.get("/get-approval", isLoggedIn, isAdmin, adminController.getApproval);
+router.get("/approve/:licenseNumber", isLoggedIn, isAdmin, adminController.approve);
+router.get("/get-approval", isLoggedIn, isAdmin, adminController.getApproval);
+router.post("/approve", isLoggedIn, isAdmin, adminController.approve);
+router.post("/reject", isLoggedIn, isAdmin, adminController.reject);
 
 export default router;
