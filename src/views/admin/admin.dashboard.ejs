@@ -485,7 +485,14 @@
                 </form>
             </td>
             <td style="box-shadow: 0px 0px 5px">
-                <form class="flex-column">
+                <form class="flex-column"
+					  action="/admin/extend-duration"
+					  method="POST">
+					<input
+							type="hidden"
+							name="logId"
+							value="${log.id}"
+					/>
                     <div>
                         <input
                                 class="form-control"
