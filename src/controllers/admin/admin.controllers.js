@@ -320,10 +320,24 @@ const getApproval = async (req, res) => {
       deletedAt: null
   });
   console.log(vehicles);
-  req.flash("vehicles", vehicles);
+  const vehicleInfo = [];
+  // need to fetch the user id and names too in the vehicleInfo
+  for (const vehicle of vehicles) {
+    const user = await User.findUserByEmail(vehicle.userMail);
+    vehicleInfo.push({
+      licenseNumber: vehicle.licenseNumber,
+      vehicleName: vehicle.vehicleName,
+      approvalStatus: vehicle.approvalStatus,
+      defaultDuration: vehicle.defaultDuration,
+      userId: user.id,
+      userName: user.name
+    });
+  }
+  console.log(vehicleInfo); 
+  req.flash("vehicleInfo", vehicleInfo);
 
   res.render("./admin/admin.approval.ejs", {
-    vehicles: req.flash("vehicles"),
+    vehicleInfo: req.flash("vehicleInfo"),
     error: req.flash("error"),
   });
 }
