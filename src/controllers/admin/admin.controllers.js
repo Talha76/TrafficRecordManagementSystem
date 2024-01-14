@@ -101,6 +101,7 @@ const addComment = async (req, res) => {
     const {logId, comment} = req.body;
     const vehicleLog = await Vehicle.findVehicleLogById(logId);
     if (vehicleLog === null) {
+      req.flash("error", "Vehicle not found");
       return res.redirect("/admin/dashboard");
     }
     const vehicleLogUpdated = await Vehicle.updateVehicleLog({
@@ -108,6 +109,7 @@ const addComment = async (req, res) => {
       comment
     });
     if (vehicleLogUpdated) {
+      req.flash("success", "Comment added Successfully");
       res.redirect("/admin/dashboard");
     }
 
@@ -115,6 +117,42 @@ const addComment = async (req, res) => {
     console.error(err);
   }
 };
+
+async function extendDuration(req, res) {
+  try{
+    const logId = req.body.logId;
+    const extendedDuration = parseInt(req.body.extendTime);
+    if(extendedDuration < 0){
+      req.flash("error", "Duration can't be negative");
+      return res.redirect("/admin/dashboard");
+    }
+
+    const appUser = req.user;
+    if(appUser.designation !== "sco"){
+      if(extendedDuration > 20){
+        req.flash("error", "Duration can't be more than 20 minutes");
+        return res.redirect("/admin/dashboard");
+      }
+
+    }
+    const vehicleLog = await Vehicle.findVehicleLogById(logId);
+    if (vehicleLog === null) {
+      req.flash("error", "Vehicle not found");
+      return res.redirect("/admin/dashboard");
+    }
+    const newAllowedDuration = vehicleLog.allowedDuration + extendedDuration;
+    const vehicleLogUpdated = await Vehicle.updateVehicleLog({
+      id: vehicleLog.id,
+      allowedDuration: newAllowedDuration
+    });
+    if (vehicleLogUpdated) {
+      req.flash("success",`${extendedDuration} minutes extended Successfully`);
+      res.redirect("/admin/dashboard");
+    }
+  }catch (err) {
+    console.error(err);
+  }
+}
 
 const viewVehicleLogs = async (req, res) => {
   try {
@@ -175,10 +213,8 @@ const viewVehicleDetails = async (req, res) => {
 
     const flashVehicleLogs = [];
     for (const {entryTime, exitTime, comment, lateDuration} of vehicleLogs) {
-      const timeOfEntry = entryTime.toISOString().split("T")[1].split(".")[0]
-        + " " + entryTime.toISOString().split("T")[0];
-      const timeOfExit = exitTime ? exitTime.toISOString().split("T")[1].split(".")[0]
-        + " " + exitTime.toISOString().split("T")[0] : "Not Exited";
+      const timeOfEntry = printableDateTime(entryTime);
+      const timeOfExit = exitTime ? printableDateTime(exitTime) : "Not Exited";
 
       flashVehicleLogs.push({
         entryTime: timeOfEntry,
@@ -313,6 +349,7 @@ const unbanVehicle = async (req, res) => {
 };
 
 export {
+  extendDuration,
   banVehicle,
   unbanVehicle,
   changeDuration,
