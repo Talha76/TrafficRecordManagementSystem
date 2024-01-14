@@ -158,16 +158,14 @@
 									color: var(--bs-emphasis-color);
 								"
                     ><span style="color: rgb(10, 54, 34)"
-                        ><%= user.name; %>(<%= user.designation === "sco" ? "SCO" : "Patrol Team"; %>)</span
+                        ><%= appUser.name; %>(<%= appUser.designation %>)</span
                         ></a
                     >
-                </li
+                </li>
             </ul>
         </div>
     </div>
 </nav>
-
-<input type="hidden" name="role" id="role" value="<%= user.designation %>">
 
 <input
         type="search"
@@ -204,6 +202,7 @@
 				background: var(--bs-btn-hover-color);
 			"
 >
+
     <table class="table">
         <thead style="width: 80%; padding: 0px">
         <tr style="width: 80%; height: 57.5px">

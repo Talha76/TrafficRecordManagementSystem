@@ -36,9 +36,11 @@ const getAdminDashboard = async (req, res) => {
     }
 
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
-    req.flash("user", req.user);
+    const appUser = req.user;
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    req.flash("user", appUser);
     res.render("./admin/admin.dashboard.ejs", {
-      user: req.flash("user")[0],
+      appUser: req.flash("user")[0],
       vehicleLogs: req.flash("vehicleLogs"),
       error: req.flash("error"),
       success: req.flash("success")
@@ -94,7 +96,6 @@ const postVehicleLogs = async (req, res) => {
   }
 };
 
-
 const addComment = async (req, res) => {
   try {
     const {logId, comment} = req.body;
@@ -148,9 +149,11 @@ const viewVehicleLogs = async (req, res) => {
     }
 
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
-    req.flash("user", req.user);
+    const appUser = req.user;
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    req.flash("user", appUser);
     res.render("./admin/admin.view-logs.ejs", {
-      user: req.flash("user")[0],
+      appUser: req.flash("user")[0],
       vehicleLogs: req.flash("vehicleLogs")
     });
   } catch (err) {
