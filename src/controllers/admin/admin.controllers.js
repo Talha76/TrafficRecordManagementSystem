@@ -38,9 +38,9 @@ const getAdminDashboard = async (req, res) => {
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
     const appUser = req.user;
     appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
-    req.flash("user", appUser);
+    req.flash("appUser", appUser);
     res.render("./admin/admin.dashboard.ejs", {
-      appUser: req.flash("user")[0],
+      appUser: req.flash("appUser")[0],
       vehicleLogs: req.flash("vehicleLogs"),
       error: req.flash("error"),
       success: req.flash("success")
@@ -151,9 +151,9 @@ const viewVehicleLogs = async (req, res) => {
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
     const appUser = req.user;
     appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
-    req.flash("user", appUser);
+    req.flash("appUser", appUser);
     res.render("./admin/admin.view-logs.ejs", {
-      appUser: req.flash("user")[0],
+      appUser: req.flash("appUser")[0],
       vehicleLogs: req.flash("vehicleLogs")
     });
   } catch (err) {
@@ -188,6 +188,10 @@ const viewVehicleDetails = async (req, res) => {
       });
     }
 
+    const appUser = req.user;
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    req.flash("appUser", appUser);
+
     req.flash("vehicleLogs", flashVehicleLogs);
     req.flash("vehicle", vehicle);
     req.flash("user", user);
@@ -196,7 +200,8 @@ const viewVehicleDetails = async (req, res) => {
       vehicle: req.flash("vehicle")[0],
       user: req.flash("user")[0],
       error: req.flash("error"),
-      success: req.flash("success")
+      success: req.flash("success"),
+      appUser: req.flash("appUser")[0]
     });
 
   } catch (err) {
@@ -222,12 +227,17 @@ const viewUserDetails = async (req, res) => {
         approvalStatus
       });
     }
+    const appUser = req.user;
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    req.flash("appUser", appUser);
+
     req.flash("vehicles", flashVehicles);
     req.flash("user", user);
     res.render("./admin/userDetails.ejs", {
       vehicles: req.flash("vehicles"),
       user: req.flash("user")[0],
       error: req.flash("error"),
+      appUser: req.flash("appUser")[0],
     });
 
   } catch (err) {
