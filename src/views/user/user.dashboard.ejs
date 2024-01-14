@@ -28,12 +28,15 @@
                     class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navcol-2" style="margin-right: -77px;">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link active" id="logout" href="/profile/<%= user.id; %>"
-                                        style="padding-left: 52px;--bs-body-font-size: -14rem;font-size: 20px;text-shadow: 0px 0px 1px;color: var(--bs-emphasis-color);"
-                                        name="logout"><span style="color: rgb(10, 54, 34);">Profile</span></a></li>
                 <li class="nav-item"><a class="nav-link active" id="logout" href="/logout"
                                         style="padding-left: 52px;--bs-body-font-size: -14rem;font-size: 20px;text-shadow: 0px 0px 1px;color: var(--bs-emphasis-color);"
                                         name="logout"><span style="color: rgb(10, 54, 34);">Logout</span></a></li>
+                <li class="nav-item"></li>
+                <li class="nav-item"><a class="nav-link active" id="logout" href="#"
+                                        style="padding-left: 52px;--bs-body-font-size: -14rem;font-size: 20px;text-shadow: 0px 0px 1px;color: var(--bs-emphasis-color);"
+                                        name="logout"><span
+                                style="color: rgb(10, 54, 34);"><%= user.name; %>(<%= user.designation; %>)</span></a>
+                </li>
                 <li class="nav-item"></li>
             </ul>
         </div>
@@ -102,7 +105,9 @@
         <tbody style="width: 80%;height: initial;">
         <% vehicles.forEach(vehicle => { %>
             <tr style="margin-right: 19px;margin-top: 0px;margin-left: -2px;">
-                <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicle.licenseNumber; %></td>
+                <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><a
+                            href="/view-vehicle-details/<%= vehicle.licenseNumber %>"><%= vehicle.licenseNumber; %></a>
+                </td>
                 <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicle.vehicleName; %></td>
                 <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicle.status; %></td>
                 <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;">

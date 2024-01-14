@@ -22,7 +22,7 @@ const getAdminDashboard = async (req, res) => {
     }
     const users = await Promise.all(userPromises);
 
-    for (const [user, log] of zip([users, vehiclesStayingCurrently])) {
+    for (const [user, vehicle, log] of zip([users, vehicles, vehiclesStayingCurrently])) {
       const {id, entryTime, licenseNumber, comment} = log;
       const timeOfEntry = printableDateTime(entryTime);
       flashVehicleLogs.push({
@@ -31,13 +31,16 @@ const getAdminDashboard = async (req, res) => {
         entryTime: timeOfEntry,
         comment,
         userId: user.id,
-        phoneNumber: user.phoneNumber
+        phoneNumber: user.phoneNumber,
+        extendedDuration: log.allowedDuration - vehicle.defaultDuration
       });
     }
 
+    console.log(flashVehicleLogs);
+
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
     const appUser = req.user;
-    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
     req.flash("appUser", appUser);
     res.render("./admin/admin.dashboard.ejs", {
       appUser: req.flash("appUser")[0],
@@ -99,8 +102,13 @@ const postVehicleLogs = async (req, res) => {
 const addComment = async (req, res) => {
   try {
     const {logId, comment} = req.body;
+    if (comment === "") {
+      req.flash("error", "Comment can't be empty");
+      return res.redirect("/admin/dashboard");
+    }
     const vehicleLog = await Vehicle.findVehicleLogById(logId);
     if (vehicleLog === null) {
+      req.flash("error", "Vehicle not found");
       return res.redirect("/admin/dashboard");
     }
     const vehicleLogUpdated = await Vehicle.updateVehicleLog({
@@ -108,6 +116,7 @@ const addComment = async (req, res) => {
       comment
     });
     if (vehicleLogUpdated) {
+      req.flash("success", "Comment added Successfully");
       res.redirect("/admin/dashboard");
     }
 
@@ -115,6 +124,42 @@ const addComment = async (req, res) => {
     console.error(err);
   }
 };
+
+async function extendDuration(req, res) {
+  try {
+    const logId = req.body.logId;
+    const extendedDuration = parseInt(req.body.extendTime);
+    if (extendedDuration < 0) {
+      req.flash("error", "Duration can't be negative");
+      return res.redirect("/admin/dashboard");
+    }
+
+    const appUser = req.user;
+    if (appUser.designation !== "sco") {
+      if (extendedDuration > 20) {
+        req.flash("error", "Duration can't be more than 20 minutes");
+        return res.redirect("/admin/dashboard");
+      }
+
+    }
+    const vehicleLog = await Vehicle.findVehicleLogById(logId);
+    if (vehicleLog === null) {
+      req.flash("error", "Vehicle not found");
+      return res.redirect("/admin/dashboard");
+    }
+    const newAllowedDuration = vehicleLog.allowedDuration + extendedDuration;
+    const vehicleLogUpdated = await Vehicle.updateVehicleLog({
+      id: vehicleLog.id,
+      allowedDuration: newAllowedDuration
+    });
+    if (vehicleLogUpdated) {
+      req.flash("success", `${extendedDuration} minutes extended Successfully`);
+      res.redirect("/admin/dashboard");
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 const viewVehicleLogs = async (req, res) => {
   try {
@@ -150,7 +195,7 @@ const viewVehicleLogs = async (req, res) => {
 
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
     const appUser = req.user;
-    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
     req.flash("appUser", appUser);
     res.render("./admin/admin.view-logs.ejs", {
       appUser: req.flash("appUser")[0],
@@ -175,10 +220,8 @@ const viewVehicleDetails = async (req, res) => {
 
     const flashVehicleLogs = [];
     for (const {entryTime, exitTime, comment, lateDuration} of vehicleLogs) {
-      const timeOfEntry = entryTime.toISOString().split("T")[1].split(".")[0]
-        + " " + entryTime.toISOString().split("T")[0];
-      const timeOfExit = exitTime ? exitTime.toISOString().split("T")[1].split(".")[0]
-        + " " + exitTime.toISOString().split("T")[0] : "Not Exited";
+      const timeOfEntry = printableDateTime(entryTime);
+      const timeOfExit = exitTime ? printableDateTime(exitTime) : "Not Exited";
 
       flashVehicleLogs.push({
         entryTime: timeOfEntry,
@@ -189,7 +232,7 @@ const viewVehicleDetails = async (req, res) => {
     }
 
     const appUser = req.user;
-    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
     req.flash("appUser", appUser);
 
     req.flash("vehicleLogs", flashVehicleLogs);
@@ -218,17 +261,21 @@ const viewUserDetails = async (req, res) => {
       req.flash("error", "User not found");
       return res.redirect("/admin/dashboard");
     }
-    const vehicles = await Vehicle.getVehicleList({userMail: user.email});
+    const vehicles = await Vehicle.getVehicleList({
+      userMail: user.email,
+      deletedAt: null
+    });
     const flashVehicles = [];
-    for (const {licenseNumber, vehicleName, approvalStatus} of vehicles) {
+    for (const {licenseNumber, vehicleName, approvalStatus, defaultDuration} of vehicles) {
       flashVehicles.push({
         licenseNumber,
         vehicleName,
-        approvalStatus
+        approvalStatus,
+        defaultDuration
       });
     }
     const appUser = req.user;
-    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
     req.flash("appUser", appUser);
 
     req.flash("vehicles", flashVehicles);
@@ -375,6 +422,7 @@ const reject = async (req, res) => {
 };
 
 export {
+  extendDuration,
   banVehicle,
   unbanVehicle,
   changeDuration,

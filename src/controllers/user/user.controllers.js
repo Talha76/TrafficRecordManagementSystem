@@ -1,5 +1,6 @@
 import * as User from "../../services/user.services.js";
 import * as Vehicle from "../../services/vehicle.services.js";
+import {printableDateTime} from "../../utils/utility.js";
 
 const getUserDashboard = async (req, res) => {
   try {
@@ -11,14 +12,16 @@ const getUserDashboard = async (req, res) => {
         deletedAt: null
       }
     );
-    req.flash("user", user);
+    user.designation = "User";
+    console.log(user.dataValues, user.designation);
 
-    if(vehicles.length > 0){
+    req.flash("user", user);
+    if (vehicles.length > 0) {
       req.flash("vehicles", vehicles);
     }
 
     res.render("user/user.dashboard.ejs", {
-      user: req.flash("user"),
+      user: req.flash("user")[0],
       vehicles: req.flash("vehicles"),
       error: req.flash("error"),
       success: req.flash("success")
@@ -63,22 +66,38 @@ const removeVehicle = async (req, res) => {
 
 };
 
-async function viewVehicleLogs (req, res) {
-  try{
-    const vehicles = await Vehicle.getVehicleList({userMail: req.user.email});
-    const logs = [];
+async function viewVehicleDetails(req, res) {
+  try {
+    const {licenseNumber} = req.params;
 
-    for(const vehicle of vehicles){
-      const vehicleLogs = await Vehicle.getVehicleLogs({licenseNumber: vehicle.licenseNumber});
-      logs.push(...vehicleLogs);
+    const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
+    const logs = await Vehicle.getVehicleLogs({licenseNumber});
+
+    const flashLogs = [];
+    for (const {entryTime, exitTime, comment, lateDuration} of logs) {
+      flashLogs.push({
+        entryTime: printableDateTime(entryTime),
+        exitTime: exitTime === null ? "Not Exited" : printableDateTime(exitTime),
+        comment: comment,
+        lateDuration
+      });
     }
-    if(logs.length > 0){
-    req.flash("vehicleLogs", logs);
-    }
-    res.render("admin/admin.view-logs.ejs", {
-      vehicleLogs: req.flash("vehicleLogs")
+
+    if (flashLogs.length > 0) req.flash("vehicleLogs", flashLogs);
+    req.flash("vehicle", vehicle);
+    const user = req.user;
+    user.designation = "User";
+    req.flash("user", user);
+    req.flash("appUser", user);
+    res.render("admin/carDetails.ejs", {
+      vehicleLogs: req.flash("vehicleLogs"),
+      vehicle: req.flash("vehicle")[0],
+      user: req.flash("user")[0],
+      appUser: req.flash("appUser")[0],
+      error: req.flash("error"),
+      success: req.flash("success")
     });
-  }catch(err){
+  } catch (err) {
     console.error(err);
   }
 };
@@ -87,7 +106,7 @@ async function getUserProfile(req, res) {
 }
 
 export default {
-  viewVehicleLogs,
+  viewVehicleDetails,
   getUserProfile,
   getUserDashboard,
   addVehicle,
