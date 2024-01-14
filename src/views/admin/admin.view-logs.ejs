@@ -357,11 +357,11 @@
                 Late Duration (mnt)
             </th>
         </tr>
-        </thead>`;
+        </thead>
+		<tbody style="width: 90%; height: initial">`;
 
 		for (const log of logs) {
-			table.innerHTML += `<tbody style="width: 90%; height: initial">
-        <tr
+			table.innerHTML += `<tr
                 style="
 							margin-right: 19px;
 							margin-top: 0px;
@@ -399,8 +399,7 @@
                     style="box-shadow: 0px 0px 5px 0px; width: 10%">
                 ${Math.floor(log.lateDuration)}
             </td>
-        </tr>
-        </tbody>`;
+        </tr>`;
 		}
 
 		table.innerHTML += "</tbody>";
