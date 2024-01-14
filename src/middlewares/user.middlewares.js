@@ -9,6 +9,9 @@ const isNotLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
     return next();
   }
+  if (typeof req.user.id === "undefined") {
+    return res.redirect("/admin/dashboard");
+  }
   res.redirect("/dashboard");
 };
 

@@ -305,6 +305,7 @@
             <td><%= log.userId %></td>
             <td><%= log.phoneNumber %></td>
             <td><%= log.comment %></td>
+			<td><%= log.extendedDuration %></td>
         </tr>
     <% } %>
     </tbody>
@@ -353,6 +354,7 @@
 			log.userId = cells[3].textContent;
 			log.phoneNumber = cells[4].textContent;
 			log.comment = cells[5].textContent;
+			log.extendedDuration = cells[6].textContent;
 			vehicleLogs.push(log);
 		}
 
@@ -479,13 +481,21 @@
                                 value="submit"
                                 id="submit-comment"
                                 style="margin-left: 2%"
+								onclick="return confirm('Are you sure you want to add the comment?')"
                                 name="submitComment"
                         />
                     </div>
                 </form>
             </td>
             <td style="box-shadow: 0px 0px 5px">
-                <form class="flex-column">
+                <form class="flex-column"
+					  action="/admin/extend-duration"
+					  method="POST">
+					<input
+							type="hidden"
+							name="logId"
+							value="${log.id}"
+					/>
                     <div>
                         <input
                                 class="form-control"
@@ -494,12 +504,14 @@
                                 name="extendTime"
                                 min="0"
                                 max="${maxTime}"
+								value="${log.extendedDuration}"
                         /><input
                                 class="btn btn-primary"
                                 type="submit"
                                 id="submit-time"
                                 style="margin-left: 2%; width: initial"
                                 name="submitTime"
+								onclick="return confirm('Are you sure you want to extend the time?')"
                                 value="Submit"
                         />
                     </div>
