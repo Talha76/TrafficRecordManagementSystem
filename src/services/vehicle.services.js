@@ -25,10 +25,10 @@ export async function findVehicleByLicenseNumber(licenseNumber) {
   const vehicle = await Vehicle.findOne({
     where: {licenseNumber}
   });
-  if (vehicle) {
+  if (vehicle !== null) {
     if (vehicle.defaultDuration === 0) {
       vehicle.status = "Banned";
-    } else if (vehicle.approvalStatus) {
+    } else if (vehicle.approvalStatus === true) {
       vehicle.status = "Eligible";
     } else {
       vehicle.status = "Pending";
@@ -74,7 +74,7 @@ export async function addVehicle(opts) {
     }
   });
 
-  if (!created) {
+  if (created === false) {
     if (vehicle.deletedAt === null) {
       throw new VehicleAlreadyExistsError();
     }
@@ -86,12 +86,12 @@ export async function addVehicle(opts) {
   }
 
 
-  if (typeof opts.defaultDuration !== "undefined") {
+  if (typeof opts.defaultDuration !== "undefined" && opts.defaultDuration !== null) {
     vehicle.defaultDuration = opts.defaultDuration;
   } else {
     vehicle.defaultDuration = 20;
   }
-  if (typeof opts.approvalStatus !== "undefined") {
+  if (typeof opts.approvalStatus !== "undefined" && opts.approvalStatus !== null) {
     vehicle.approvalStatus = opts.approvalStatus;
   } else {
     vehicle.approvalStatus = false;
@@ -100,7 +100,7 @@ export async function addVehicle(opts) {
   const result = await vehicle.save();
   if (result.defaultDuration === 0) {
     result.status = "Banned";
-  } else if (result.approvalStatus) {
+  } else if (result.approvalStatus === true) {
     result.status = "Eligible";
   } else {
     result.status = "Pending";
@@ -121,7 +121,7 @@ export async function removeVehicle(licenseNumber) {
 
   const vehicle = await findVehicleByLicenseNumber(licenseNumber);
 
-  if (!vehicle) {
+  if (vehicle === null) {
     return null;
   }
 
@@ -138,7 +138,7 @@ export async function removeVehicle(licenseNumber) {
       exitTime: null
     }
   });
-  if (log) {
+  if (log !== null) {
     throw new CustomError("Vehicle is in the parking lot. Cannot be removed.");
   }
 
@@ -146,7 +146,7 @@ export async function removeVehicle(licenseNumber) {
   const result = await vehicle.save();
   if (result.defaultDuration === 0) {
     result.status = "Banned";
-  } else if (result.approvalStatus) {
+  } else if (result.approvalStatus === true) {
     result.status = "Eligible";
   } else {
     result.status = "Pending";
@@ -167,27 +167,27 @@ export async function updateVehicle(opts) {
   if (opts.licenseNumber === null) throw new NullValueError("licenseNumber");
 
   const vehicle = await findVehicleByLicenseNumber(opts.licenseNumber);
-  if (!vehicle) {
+  if (vehicle === null) {
     throw new VehicleNotFoundError();
   }
 
-  if (typeof opts.defaultDuration !== "undefined") {
+  if (typeof opts.defaultDuration !== "undefined" && opts.defaultDuration !== null) {
     vehicle.defaultDuration = opts.defaultDuration;
   }
-  if (typeof opts.approvalStatus !== "undefined") {
+  if (typeof opts.approvalStatus !== "undefined" && opts.approvalStatus !== null) {
     vehicle.approvalStatus = opts.approvalStatus;
   }
-  if (typeof opts.vehicleName !== "undefined") {
+  if (typeof opts.vehicleName !== "undefined" && opts.vehicleName !== null) {
     vehicle.vehicleName = opts.vehicleName;
   }
-  if (typeof opts.userMail !== "undefined") {
+  if (typeof opts.userMail !== "undefined" && opts.userMail !== null) {
     vehicle.userMail = opts.userMail;
   }
 
   const result = await vehicle.save();
   if (result.defaultDuration === 0) {
     result.status = "Banned";
-  } else if (result.approvalStatus) {
+  } else if (result.approvalStatus === true) {
     result.status = "Eligible";
   } else {
     result.status = "Pending";
@@ -207,25 +207,25 @@ export async function getVehicleList(opts) {
   if (typeof opts.deletedAt !== "undefined") {
     queries.deletedAt = opts.deletedAt;
   }
-  if (typeof opts.userMail !== "undefined" && opts.userMail) {
+  if (typeof opts.userMail !== "undefined" && opts.userMail !== null) {
     queries.userMail = opts.userMail;
   }
-  if (typeof opts.defaultDurationEqual !== "undefined" && opts.defaultDurationEqual) {
+  if (typeof opts.defaultDurationEqual !== "undefined" && opts.defaultDurationEqual !== null) {
     queries.defaultDuration = opts.defaultDurationEqual;
-  } else if (typeof opts.defaultDurationTo !== "undefined" && opts.defaultDurationTo && typeof opts.defaultDurationFrom !== "undefined" && opts.defaultDurationFrom) {
+  } else if (typeof opts.defaultDurationTo !== "undefined" && opts.defaultDurationTo !== null && typeof opts.defaultDurationFrom !== "undefined" && opts.defaultDurationFrom !== null) {
     queries.defaultDuration = {
       [Op.between]: [opts.defaultDurationFrom, opts.defaultDurationTo]
     };
-  } else if (typeof opts.defaultDurationTo !== "undefined" && opts.defaultDurationTo) {
+  } else if (typeof opts.defaultDurationTo !== "undefined" && opts.defaultDurationTo !== null) {
     queries.defaultDuration = {
       [Op.lte]: opts.defaultDurationTo
     };
-  } else if (typeof opts.defaultDurationFrom !== "undefined" && opts.defaultDurationFrom) {
+  } else if (typeof opts.defaultDurationFrom !== "undefined" && opts.defaultDurationFrom !== null) {
     queries.defaultDuration = {
       [Op.gte]: opts.defaultDurationFrom
     };
   }
-  if (typeof opts.approvalStatus !== "undefined" && opts.approvalStatus) {
+  if (typeof opts.approvalStatus !== "undefined" && opts.approvalStatus !== null) {
     queries.approvalStatus = opts.approvalStatus;
   }
 
@@ -235,7 +235,7 @@ export async function getVehicleList(opts) {
       vehicle.status = "Banned";
       return;
     }
-    if (vehicle.approvalStatus) {
+    if (vehicle.approvalStatus === true) {
       vehicle.status = "Eligible";
     } else {
       vehicle.status = "Pending";
@@ -250,10 +250,14 @@ export async function findVehicleLogById(id) {
   if (id === null) throw new NullValueError("id");
 
   const log = await VehicleLog.findByPk(id);
-  if (log) {
-    return log;
+  if (log === null) {
+    return null;
   }
-  return null;
+
+  const exitTime = log.exitTime === null ? new Date() : log.exitTime;
+  log.lateDuration = Math.max(0, (exitTime - log.entryTime) / 1000 / 60 - log.allowedDuration);
+
+  return log;
 }
 
 /**
@@ -270,7 +274,7 @@ export async function addVehicleLog(opts) {
   if (opts.entryTime === null) throw new NullValueError("entryTime");
 
   const vehicle = await findVehicleByLicenseNumber(opts.licenseNumber);
-  if (!vehicle) {
+  if (vehicle === null) {
     throw new VehicleNotFoundError();
   }
 
@@ -282,10 +286,10 @@ export async function addVehicleLog(opts) {
     licenseNumber: opts.licenseNumber,
     entryTime: opts.entryTime,
   });
-  if (typeof opts.allowedDuration !== "undefined" && opts.allowedDuration) {
+  if (typeof opts.allowedDuration !== "undefined" && opts.allowedDuration !== null) {
     log.allowedDuration = opts.allowedDuration;
   }
-  if (typeof opts.comment !== "undefined" && opts.comment) {
+  if (typeof opts.comment !== "undefined") {
     log.comment = opts.comment;
   }
   return await log.save();
@@ -303,17 +307,17 @@ export async function updateVehicleLog(opts) {
   if (opts.id === null) throw new NullValueError("id");
 
   const log = await findVehicleLogById(opts.id);
-  if (!log) {
+  if (log === null) {
     throw new VehicleLogNotFoundError();
   }
 
-  if (typeof opts.entryTime !== "undefined" && opts.entryTime) {
+  if (typeof opts.entryTime !== "undefined" && opts.entryTime !== null) {
     log.entryTime = opts.entryTime;
   }
   if (typeof opts.exitTime !== "undefined") {
     log.exitTime = opts.exitTime;
   }
-  if (typeof opts.allowedDuration !== "undefined" && opts.allowedDuration) {
+  if (typeof opts.allowedDuration !== "undefined" && opts.allowedDuration !== null) {
     log.allowedDuration = opts.allowedDuration;
   }
   if (typeof opts.comment !== "undefined") {
@@ -330,50 +334,50 @@ export async function updateVehicleLog(opts) {
 export async function getVehicleLogs(opts) {
   if (typeof opts === "undefined") opts = {};
   const queries = {};
-  if (typeof opts.licenseNumber !== "undefined" && opts.licenseNumber) {
+  if (typeof opts.licenseNumber !== "undefined" && opts.licenseNumber !== null) {
     queries.licenseNumber = opts.licenseNumber;
   }
-  if (typeof opts.entryTimeEqual !== "undefined" && opts.entryTimeEqual) {
+  if (typeof opts.entryTimeEqual !== "undefined" && opts.entryTimeEqual !== null) {
     queries.entryTime = entryTimeEqual;
-  } else if (typeof opts.entryTimeTo !== "undefined" && opts.entryTimeTo && typeof opts.entryTimeFrom !== "undefined" && opts.entryTimeFrom) {
+  } else if (typeof opts.entryTimeTo !== "undefined" && opts.entryTimeTo !== null && typeof opts.entryTimeFrom !== "undefined" && opts.entryTimeFrom !== null) {
     queries.entryTime = {
       [Op.between]: [opts.entryTimeFrom, opts.entryTimeTo]
     };
-  } else if (typeof opts.entryTimeTo !== "undefined" && opts.entryTimeTo) {
+  } else if (typeof opts.entryTimeTo !== "undefined" && opts.entryTimeTo !== null) {
     queries.entryTime = {
       [Op.lte]: opts.entryTimeTo
     };
-  } else if (typeof opts.entryTimeFrom !== "undefined" && opts.entryTimeFrom) {
+  } else if (typeof opts.entryTimeFrom !== "undefined" && opts.entryTimeFrom !== null) {
     queries.entryTime = {
       [Op.gte]: opts.entryTimeFrom
     };
   }
   if (typeof opts.exitTimeEqual !== "undefined") {
     queries.exitTime = opts.exitTimeEqual;
-  } else if (typeof opts.exitTimeTo !== "undefined" && typeof opts.exitTimeFrom !== "undefined") {
+  } else if (typeof opts.exitTimeTo !== "undefined" && opts.exitTimeTo !== null && typeof opts.exitTimeFrom !== "undefined" && opts.exitTimeFrom !== null) {
     queries.exitTime = {
       [Op.between]: [opts.exitTimeFrom, opts.exitTimeTo]
     };
-  } else if (typeof opts.exitTimeTo !== "undefined") {
+  } else if (typeof opts.exitTimeTo !== "undefined" && opts.exitTimeTo !== null) {
     queries.exitTime = {
       [Op.lte]: opts.exitTimeTo
     };
-  } else if (typeof opts.exitTimeFrom !== "undefined") {
+  } else if (typeof opts.exitTimeFrom !== "undefined" && opts.exitTimeFrom !== null) {
     queries.exitTime = {
       [Op.gte]: opts.exitTimeFrom
     };
   }
-  if (typeof opts.allowedDurationEqual !== "undefined" && opts.allowedDurationEqual) {
+  if (typeof opts.allowedDurationEqual !== "undefined" && opts.allowedDurationEqual !== null) {
     queries.allowedDuration = opts.allowedDurationEqual;
-  } else if (typeof opts.allowedDurationTo !== "undefined" && opts.allowedDurationTo && typeof opts.allowedDurationFrom !== "undefined" && opts.allowedDurationFrom) {
+  } else if (typeof opts.allowedDurationTo !== "undefined" && opts.allowedDurationTo !== null && typeof opts.allowedDurationFrom !== "undefined" && opts.allowedDurationFrom !== null) {
     queries.allowedDuration = {
       [Op.between]: [opts.allowedDurationFrom, opts.allowedDurationTo]
     };
-  } else if (typeof opts.allowedDurationTo !== "undefined" && opts.allowedDurationTo) {
+  } else if (typeof opts.allowedDurationTo !== "undefined" && opts.allowedDurationTo !== null) {
     queries.allowedDuration = {
       [Op.lte]: opts.allowedDurationTo
     };
-  } else if (typeof opts.allowedDurationFrom !== "undefined" && opts.allowedDurationFrom) {
+  } else if (typeof opts.allowedDurationFrom !== "undefined" && opts.allowedDurationFrom !== null) {
     queries.allowedDuration = {
       [Op.gte]: opts.allowedDurationFrom
     };
@@ -394,11 +398,7 @@ export async function findVehicleAllegationById(id) {
   if (typeof id === "undefined") throw new NotProvidedError("id");
   if (id === null) throw new NullValueError("id");
 
-  const allegation = await VehicleAllegation.findByPk(id);
-  if (allegation) {
-    return allegation;
-  }
-  return null;
+  return await VehicleAllegation.findByPk(id);
 }
 
 /**
@@ -413,7 +413,7 @@ export async function updateVehicleAllegation(opts) {
   if (opts.id === null) throw new NotProvidedError("id");
 
   const allegation = await findVehicleAllegationById(opts.id);
-  if (!allegation) {
+  if (allegation === null) {
     throw new VehicleAllegationNotFoundError();
   }
 
@@ -436,17 +436,17 @@ export async function getVehicleAllegations(opts) {
       [Op.in]: logs.map(log => log.id)
     }
   };
-  if (typeof opts.lateDurationEqual !== "undefined" && opts.lateDurationEqual) {
+  if (typeof opts.lateDurationEqual !== "undefined" && opts.lateDurationEqual !== null) {
     queries.lateDuration = opts.lateDurationEqual;
-  } else if (typeof opts.lateDurationTo !== "undefined" && opts.lateDurationTo && typeof opts.lateDurationFrom !== "undefined" && opts.lateDurationFrom) {
+  } else if (typeof opts.lateDurationTo !== "undefined" && opts.lateDurationTo !== null && typeof opts.lateDurationFrom !== "undefined" && opts.lateDurationFrom !== null) {
     queries.lateDuration = {
       [Op.between]: [opts.lateDurationFrom, opts.lateDurationTo]
     };
-  } else if (typeof opts.lateDurationTo !== "undefined" && opts.lateDurationTo) {
+  } else if (typeof opts.lateDurationTo !== "undefined" && opts.lateDurationTo !== null) {
     queries.lateDuration = {
       [Op.lte]: opts.lateDurationTo
     };
-  } else if (typeof opts.lateDurationFrom !== "undefined" && opts.lateDurationFrom) {
+  } else if (typeof opts.lateDurationFrom !== "undefined" && opts.lateDurationFrom !== null) {
     queries.lateDuration = {
       [Op.gte]: opts.lateDurationFrom
     };

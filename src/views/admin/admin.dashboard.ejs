@@ -149,6 +149,24 @@
                         ></a
                     >
                 </li>
+                <li class="nav-item">
+                    <a
+                            class="nav-link"
+                            data-bss-hover-animate="pulse"
+                            id="logout"
+                            href="#"
+                            style="
+									padding-left: 52px;
+									--bs-body-font-size: -14rem;
+									font-size: 20px;
+									text-shadow: 0px 0px 1px;
+									color: var(--bs-emphasis-color);
+								"
+                    ><span style="color: rgb(10, 54, 34)"
+                        ><%= appUser.name; %>(<%= appUser.designation %>)</span
+                        ></a
+                    >
+                </li>
             </ul>
         </div>
     </div>
@@ -167,6 +185,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <% } %>
+
+<input type="hidden" name="role" id="role" value="<%= appUser.designation %>">
 
 <form action="/admin/dashboard" method="POST">
     <div
@@ -319,6 +339,8 @@
 <script>
 	let fuse;
 	const vehicleLogs = [];
+	const role = document.querySelector("input[name=role]").value;
+	const maxTime = role === "SCO" ? 2880 : 10;
 
 	document.addEventListener("DOMContentLoaded", () => {
 		const table = document.querySelector("table[hidden]");
@@ -471,6 +493,7 @@
                                 id="extend-time"
                                 name="extendTime"
                                 min="0"
+                                max="${maxTime}"
                         /><input
                                 class="btn btn-primary"
                                 type="submit"
