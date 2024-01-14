@@ -36,7 +36,9 @@ const getAdminDashboard = async (req, res) => {
     }
 
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
+    req.flash("user", req.user);
     res.render("./admin/admin.dashboard.ejs", {
+      user: req.flash("user")[0],
       vehicleLogs: req.flash("vehicleLogs"),
       error: req.flash("error"),
       success: req.flash("success")
@@ -146,7 +148,9 @@ const viewVehicleLogs = async (req, res) => {
     }
 
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
+    req.flash("user", req.user);
     res.render("./admin/admin.view-logs.ejs", {
+      user: req.flash("user")[0],
       vehicleLogs: req.flash("vehicleLogs")
     });
   } catch (err) {

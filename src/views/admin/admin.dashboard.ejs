@@ -149,6 +149,24 @@
                         ></a
                     >
                 </li>
+                <li class="nav-item">
+                    <a
+                            class="nav-link"
+                            data-bss-hover-animate="pulse"
+                            id="logout"
+                            href="#"
+                            style="
+									padding-left: 52px;
+									--bs-body-font-size: -14rem;
+									font-size: 20px;
+									text-shadow: 0px 0px 1px;
+									color: var(--bs-emphasis-color);
+								"
+                    ><span style="color: rgb(10, 54, 34)"
+                        ><%= user.name; %>(<%= user.designation === "sco" ? "SCO" : "Patrol Team"; %>)</span
+                        ></a
+                    >
+                </li>
             </ul>
         </div>
     </div>
@@ -167,6 +185,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <% } %>
+
+<input type="hidden" name="role" id="role" value="<%= user.designation %>">
 
 <form action="/admin/dashboard" method="POST">
     <div
@@ -319,6 +339,7 @@
 <script>
 	let fuse;
 	const vehicleLogs = [];
+	const role = document.querySelector("input[name=role]").value;
 
 	document.addEventListener("DOMContentLoaded", () => {
 		const table = document.querySelector("table[hidden]");
@@ -403,6 +424,8 @@
         </thead>
 		<tbody style="width: 80%; height: 90%">`;
 
+		const maxTime = role === "sco" ? 2880 : 10;
+
 		for (const log of logs) {
 			showTable.innerHTML += `
 		<tr
@@ -471,6 +494,7 @@
                                 id="extend-time"
                                 name="extendTime"
                                 min="0"
+                                max="${maxTime}"
                         /><input
                                 class="btn btn-primary"
                                 type="submit"
