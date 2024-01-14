@@ -225,7 +225,7 @@ export async function getVehicleList(opts) {
       [Op.gte]: opts.defaultDurationFrom
     };
   }
-  if (typeof opts.approvalStatus !== "undefined" && opts.approvalStatus) {
+  if (typeof opts.approvalStatus !== "undefined" && opts.approvalStatus !== null) {
     queries.approvalStatus = opts.approvalStatus;
   }
 
