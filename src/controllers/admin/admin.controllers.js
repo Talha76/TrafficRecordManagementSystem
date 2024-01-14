@@ -380,12 +380,18 @@ const getApproval = async (req, res) => {
       userName: user.name
     });
   }
-  console.log(vehicleInfo); 
+
+  const appUser = req.user;
+  appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
+  req.flash("appUser", appUser);
+
+  console.log(vehicleInfo);
   req.flash("vehicleInfo", vehicleInfo);
 
   res.render("./admin/admin.approval.ejs", {
     vehicleInfo: req.flash("vehicleInfo"),
     error: req.flash("error"),
+    appUser: req.flash("appUser")[0]
   });
 };
 
