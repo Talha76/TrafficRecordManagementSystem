@@ -359,6 +359,68 @@ const unbanVehicle = async (req, res) => {
   }
 };
 
+
+const getApproval = async (req, res) => {
+  const vehicles = await Vehicle.getVehicleList({
+      approvalStatus: false,
+      defaultDurationFrom: 1,
+      deletedAt: null
+  });
+  console.log(vehicles);
+  const vehicleInfo = [];
+  // need to fetch the user id and names too in the vehicleInfo
+  for (const vehicle of vehicles) {
+    const user = await User.findUserByEmail(vehicle.userMail);
+    vehicleInfo.push({
+      licenseNumber: vehicle.licenseNumber,
+      vehicleName: vehicle.vehicleName,
+      approvalStatus: vehicle.approvalStatus,
+      defaultDuration: vehicle.defaultDuration,
+      userId: user.id,
+      userName: user.name
+    });
+  }
+  console.log(vehicleInfo); 
+  req.flash("vehicleInfo", vehicleInfo);
+
+  res.render("./admin/admin.approval.ejs", {
+    vehicleInfo: req.flash("vehicleInfo"),
+    error: req.flash("error"),
+  });
+};
+
+
+const approve = async (req, res) => {
+  const licenseNumber = req.body.licenseNumber;
+  console.log(licenseNumber);
+  const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
+  if (vehicle === null) {
+    return res.redirect("/admin/dashboard");
+  }
+  const vehicleUpdated = await Vehicle.updateVehicle({
+    licenseNumber: licenseNumber,
+    approvalStatus: true
+  });
+  if (vehicleUpdated) {
+    res.redirect("/admin/get-approval");
+  }
+};
+
+const reject = async (req, res) => {
+  const licenseNumber = req.body.licenseNumber;
+  const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
+  if (vehicle === null) {
+    return res.redirect("/admin/dashboard");
+  }
+  const vehicleUpdated = await Vehicle.updateVehicle({
+    licenseNumber: licenseNumber,
+    defaultDuration: 0,
+  });
+  if (vehicleUpdated) {
+    res.redirect("/admin/get-approval");
+  }
+};
+
 export {
   extendDuration,
   banVehicle,
@@ -369,5 +431,8 @@ export {
   viewVehicleLogs,
   getAdminDashboard,
   postVehicleLogs,
-  addComment
+  addComment,
+  getApproval,
+  approve,
+  reject
 };

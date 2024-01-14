@@ -5,9 +5,11 @@ import {Router} from "express";
 
 const router = Router();
 
+router.get("/", isLoggedIn, isAdmin, adminController.getAdminDashboard);
 router.get("/dashboard", isLoggedIn, isAdmin, adminController.getAdminDashboard);
 router.post("/dashboard", isLoggedIn, isAdmin, adminController.postVehicleLogs);
 router.post("/add-comment", isLoggedIn, isAdmin, adminController.addComment);
+router.get("/view-vehicle-details", isLoggedIn, isAdmin, adminController.viewVehicleDetails);
 router.post("/extend-duration", isLoggedIn, isAdmin, adminController.extendDuration);
 router.get("/view-vehicle-logs", isLoggedIn, isAdmin, adminController.viewVehicleLogs);
 
@@ -17,5 +19,10 @@ router.post("/change-duration/:licenseNumber", isLoggedIn, isAdmin, adminControl
 router.get("/ban/:licenseNumber", isLoggedIn, isAdmin, adminController.banVehicle);
 router.get("/unban/:licenseNumber", isLoggedIn, isAdmin, adminController.unbanVehicle);
 
+router.get("/get-approval", isLoggedIn, isAdmin, adminController.getApproval);
+router.get("/approve/:licenseNumber", isLoggedIn, isAdmin, adminController.approve);
+router.get("/get-approval", isLoggedIn, isAdmin, adminController.getApproval);
+router.post("/approve", isLoggedIn, isAdmin, adminController.approve);
+router.post("/reject", isLoggedIn, isAdmin, adminController.reject);
 
 export default router;
