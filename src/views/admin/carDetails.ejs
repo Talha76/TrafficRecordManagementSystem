@@ -162,7 +162,7 @@
                         ></a
                     >
                 </li>
-				<li class="nav-item">
+                <li class="nav-item">
                     <a
                             class="nav-link"
                             data-bss-hover-animate="pulse"
@@ -418,8 +418,88 @@
 				background: var(--bs-btn-hover-color);
 			"
 >
-    <table class="table">
-        <thead style="width: 80%; padding: 0px">
+    <table hidden>
+        <tbody>
+        <% for (const log of vehicleLogs) { %>
+            <tr>
+                <td><%= log.entryTime %></td>
+                <td><%= log.exitTime %></td>
+                <td><%= log.comment %></td>
+                <td><%= Math.floor(log.lateDuration) %></td>
+            </tr>
+		<% } %>
+        </tbody>
+    </table>
+    <table class="table"></table>
+</div>
+<script src="/carDetailsAssets/bootstrap/js/bootstrap.min.js"></script>
+<script src="/carDetailsAssets/js/bs-init.js"></script>
+<script src="/carDetailsAssets/js/Lightbox-Gallery-No-Gutters-baguetteBox.min.js"></script>
+<script src="/carDetailsAssets/js/Lightbox-Gallery-No-Gutters-Lightbox-Gallery.js"></script>
+<script>
+	const vehicleLogs = [];
+	document.addEventListener("DOMContentLoaded", () => {
+		const table = document.querySelector("table[hidden]");
+		for (const row of table.rows) {
+			const cell = row.cells;
+			vehicleLogs.push({
+				entryTime: extractDateTime(cell[0].innerText),
+				exitTime: cell[1].innerText,
+				comment: cell[2].innerText,
+				lateDuration: parseInt(cell[3].innerText),
+			});
+		}
+		console.log(vehicleLogs);
+		showResults(vehicleLogs);
+	});
+
+	document.querySelector("#time_from").addEventListener("change", (e) => {
+		const fromText = e.target.value.length > 0 ? e.target.value : "1970-01-01T00:00";
+		const toText = document.querySelector("#time_to").value.length > 0 ? document.querySelector("#time_to").value : "2100-01-01T00:00";
+		const timeFrom = new Date(fromText);
+		const timeTo = new Date(toText);
+
+		const result = vehicleLogs.filter((log) => {
+			return log.entryTime >= timeFrom && log.entryTime <= timeTo;
+		});
+		showResults(result);
+	});
+
+	document.querySelector("#time_to").addEventListener("change", (e) => {
+		const toText = e.target.value.length > 0 ? e.target.value : "2100-01-01T00:00";
+		const fromText = document.querySelector("#time_from").value.length > 0 ? document.querySelector("#time_from").value : "1970-01-01T00:00";
+		const timeFrom = new Date(fromText);
+		const timeTo = new Date(toText);
+
+		const result = vehicleLogs.filter((log) => {
+			return log.entryTime >= timeFrom && log.entryTime <= timeTo;
+		});
+		showResults(result);
+	});
+
+	/**
+	 * Extract date and time from a date time string
+	 * @param dateTime - Format: DD/MM/YYYY, HH:MM:SS
+	 * @returns Date
+	 */
+	 function extractDateTime(dateTime) {
+		const [date, month, year, time] = dateTime.split(/[\/,]/);
+		const [hour, minute, second] = time.split(/:/);
+		return new Date(year, month - 1, date, hour, minute, second);
+	}
+
+	/**
+	 * Extract string from date object
+	 * @param dateTime - Date object
+	 * @returns String
+	 */
+	 function extractStringFromDateTime(dateTime) {
+		return dateTime.toLocaleString("en-GB");
+	}
+
+	function showResults(logs) {
+		const table = document.querySelector("table.table");
+		table.innerHTML = `<thead style="width: 80%; padding: 0px">
         <tr style="width: 80%; height: 57.5px">
             <th
                     style="
@@ -441,28 +521,26 @@
             <th style="box-shadow: 0px 0px 5px 0px">Late Duration</th>
         </tr>
         </thead>
-        <tbody style="width: 80%; height: initial">
-        <% vehicleLogs.forEach(function(log){ %> <%
-            console.log(log); %>
-        <tr
-                style="
-							margin-right: 19px;
-							margin-top: 0px;
-							margin-left: -2px;
-						"
-        >
-            <td style="box-shadow: 0px 0px 5px 0px"><%= log.entryTime; %></td>
-            <td style="box-shadow: 0px 0px 5px 0px"><%= log.exitTime; %></td>
-            <td style="box-shadow: 0px 0px 5px 0px"><%= log.comment; %></td>
-            <td style="box-shadow: 0px 0px 5px 0px"><%= Math.floor(log.lateDuration); %></td>
-        </tr>
-        <% }); %>
-        </tbody>
-    </table>
-</div>
-<script src="/carDetailsAssets/bootstrap/js/bootstrap.min.js"></script>
-<script src="/carDetailsAssets/js/bs-init.js"></script>
-<script src="/carDetailsAssets/js/Lightbox-Gallery-No-Gutters-baguetteBox.min.js"></script>
-<script src="/carDetailsAssets/js/Lightbox-Gallery-No-Gutters-Lightbox-Gallery.js"></script>
+		<tbody style="width: 80%; height: initial">`;
+
+		for (const log of logs) {
+			table.innerHTML += `
+				<tr
+						style="
+									margin-right: 19px;
+									margin-top: 0px;
+									margin-left: -2px;
+								"
+				>
+					<td style="box-shadow: 0px 0px 5px 0px">${extractStringFromDateTime(log.entryTime)}</td>
+					<td style="box-shadow: 0px 0px 5px 0px">${log.exitTime}</td>
+					<td style="box-shadow: 0px 0px 5px 0px">${log.comment}</td>
+					<td style="box-shadow: 0px 0px 5px 0px">${Math.floor(log.lateDuration)}</td>
+				</tr>`
+		}
+
+		table.innerHTML += `</tbody>`;
+	}
+</script>
 </body>
 </html>
