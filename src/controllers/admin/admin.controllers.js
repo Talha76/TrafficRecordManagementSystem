@@ -37,7 +37,7 @@ const getAdminDashboard = async (req, res) => {
 
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
     const appUser = req.user;
-    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
     req.flash("appUser", appUser);
     res.render("./admin/admin.dashboard.ejs", {
       appUser: req.flash("appUser")[0],
@@ -188,7 +188,7 @@ const viewVehicleLogs = async (req, res) => {
 
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
     const appUser = req.user;
-    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
     req.flash("appUser", appUser);
     res.render("./admin/admin.view-logs.ejs", {
       appUser: req.flash("appUser")[0],
@@ -225,7 +225,7 @@ const viewVehicleDetails = async (req, res) => {
     }
 
     const appUser = req.user;
-    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
     req.flash("appUser", appUser);
 
     req.flash("vehicleLogs", flashVehicleLogs);
@@ -264,7 +264,7 @@ const viewUserDetails = async (req, res) => {
       });
     }
     const appUser = req.user;
-    appUser.designation = appUser.designation === "sco" ? "SCO" : "Patrol Team";
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
     req.flash("appUser", appUser);
 
     req.flash("vehicles", flashVehicles);
