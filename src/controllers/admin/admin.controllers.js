@@ -102,6 +102,10 @@ const postVehicleLogs = async (req, res) => {
 const addComment = async (req, res) => {
   try {
     const {logId, comment} = req.body;
+    if (comment === "") {
+      req.flash("error", "Comment can't be empty");
+      return res.redirect("/admin/dashboard");
+    }
     const vehicleLog = await Vehicle.findVehicleLogById(logId);
     if (vehicleLog === null) {
       req.flash("error", "Vehicle not found");
