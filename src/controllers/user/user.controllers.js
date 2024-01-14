@@ -72,7 +72,9 @@ async function viewVehicleLogs (req, res) {
       const vehicleLogs = await Vehicle.getVehicleLogs({licenseNumber: vehicle.licenseNumber});
       logs.push(...vehicleLogs);
     }
+    if(logs.length > 0){
     req.flash("vehicleLogs", logs);
+    }
     res.render("admin/admin.view-logs.ejs", {
       vehicleLogs: req.flash("vehicleLogs")
     });
