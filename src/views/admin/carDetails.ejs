@@ -95,7 +95,7 @@
                             class="nav-link active"
                             data-bss-hover-animate="pulse"
                             id="view_logs"
-                            href="/admin/dashboard"
+                            href="/<%= appUser.designation === "User" ? "" : "admin/"; %>dashboard"
                             style="
 									padding-left: 52px;
 									--bs-body-font-size: -14rem;
@@ -108,42 +108,44 @@
                         ></a
                     >
                 </li>
-                <li class="nav-item">
-                    <a
-                            class="nav-link active"
-                            data-bss-hover-animate="pulse"
-                            id="view_logs"
-                            href="/admin/view-vehicle-logs"
-                            style="
+                <% if (appUser.designation !== "User") { %>
+                    <li class="nav-item">
+                        <a
+                                class="nav-link active"
+                                data-bss-hover-animate="pulse"
+                                id="view_logs"
+                                href="/admin/view-vehicle-logs"
+                                style="
 									padding-left: 52px;
 									--bs-body-font-size: -14rem;
 									font-size: 20px;
 									text-shadow: 0px 0px 1px;
 									color: var(--bs-emphasis-color);
 								"
-                    ><span style="color: rgb(10, 54, 34)"
-                        >View Logs</span
-                        ></a
-                    >
-                </li>
-                <li class="nav-item">
-                    <a
-                            class="nav-link"
-                            data-bss-hover-animate="pulse"
-                            id="pending_request"
-                            href="#"
-                            style="
+                        ><span style="color: rgb(10, 54, 34)"
+                            >View Logs</span
+                            ></a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                                class="nav-link"
+                                data-bss-hover-animate="pulse"
+                                id="pending_request"
+                                href="#"
+                                style="
 									padding-left: 52px;
 									--bs-body-font-size: -14rem;
 									font-size: 20px;
 									text-shadow: 0px 0px 1px;
 									color: var(--bs-emphasis-color);
 								"
-                    ><span style="color: rgb(10, 54, 34)"
-                        >Pending Request</span
-                        ></a
-                    >
-                </li>
+                        ><span style="color: rgb(10, 54, 34)"
+                            >Pending Request</span
+                            ></a
+                        >
+                    </li>
+                <% } %>
                 <li class="nav-item">
                     <a
                             class="nav-link"
@@ -254,7 +256,8 @@
                 value="<%= vehicle.vehicleName %>"
         />
     </div>
-    <div class="input-group">
+    <% if (appUser.designation !== "User") { %>
+        <div class="input-group">
 				<span
                         class="input-group-text"
                         style="
@@ -265,16 +268,17 @@
                 >Owner ID :</span
                 ><a href="/admin/view-user-details/<%= user.id %>"
                     style="color: var(--bs-danger-text-emphasis)">
-            <input
-                    class="form-control"
-                    type="text"
-                    id="ownerId"
-                    readonly=""
-                    style="border-radius: 0px"
-                    name="ownerId"
-                    value="<%= user.id %>"
-            /></a>
-    </div>
+                <input
+                        class="form-control"
+                        type="text"
+                        id="ownerId"
+                        readonly=""
+                        style="border-radius: 0px"
+                        name="ownerId"
+                        value="<%= user.id %>"
+                /></a>
+        </div>
+    <% } %>
     <div class="input-group">
 				<span
                         class="input-group-text"
@@ -335,7 +339,9 @@
                     aria-expanded="true"
                     data-bs-toggle="dropdown"
                     type="button"
+            <% if (appUser.designation !== "User") { %>
                     onclick="return confirm('Are you sure you want to proceed?');"
+                    <% } %>
                     style="
 							width: 100%;
 							background: var(--bs-tertiary-bg);
@@ -347,14 +353,16 @@
             >
                 <%= vehicle.defaultDuration === 0 ? "Banned" : "Eligible" %>
             </button>
-            <div
-                    class="dropdown-menu"
-                    data-bs-popper="none"
-                    style="border-radius: 0px"
-            >
-                <a class="dropdown-item" href="/admin/ban/<%= vehicle.licenseNumber %>">Banned</a
-                ><a class="dropdown-item" href="/admin/unban/<%= vehicle.licenseNumber %>">Eligible</a>
-            </div>
+            <% if (user.designation !== "User") { %>
+                <div
+                        class="dropdown-menu"
+                        data-bs-popper="none"
+                        style="border-radius: 0px"
+                >
+                    <a class="dropdown-item" href="/admin/ban/<%= vehicle.licenseNumber %>">Banned</a
+                    ><a class="dropdown-item" href="/admin/unban/<%= vehicle.licenseNumber %>">Eligible</a>
+                </div>
+            <% } %>
         </div>
     </div>
     <form style="width: 100%" action="/admin/change-duration/<%= vehicle.licenseNumber %>" method="post">
@@ -371,19 +379,24 @@
                     required
                     min="0"
                     value="<%= vehicle.defaultDuration %>"
+            <% if (user.designation === "User") { %>
+                    readonly
+                    <% } %>
             />
-            <button
-                    class="btn btn-primary"
-                    type="submit"
-                    onclick="return confirm('Are you sure you want to proceed?');"
-                    style="
+            <% if (user.designation !== "User") { %>
+                <button
+                        class="btn btn-primary"
+                        type="submit"
+                        onclick="return confirm('Are you sure you want to proceed?');"
+                        style="
 							background: var(--bs-btn-border-color);
 							width: 9.33%;
 							border-top-right-radius: 6px;
 						"
-            >
-                Edit
-            </button>
+                >
+                    Edit
+                </button>
+            <% } %>
         </div>
     </form>
 </div>
@@ -427,7 +440,7 @@
                 <td><%= log.comment %></td>
                 <td><%= Math.floor(log.lateDuration) %></td>
             </tr>
-		<% } %>
+        <% } %>
         </tbody>
     </table>
     <table class="table"></table>
@@ -482,7 +495,7 @@
 	 * @param dateTime - Format: DD/MM/YYYY, HH:MM:SS
 	 * @returns Date
 	 */
-	 function extractDateTime(dateTime) {
+	function extractDateTime(dateTime) {
 		const [date, month, year, time] = dateTime.split(/[\/,]/);
 		const [hour, minute, second] = time.split(/:/);
 		return new Date(year, month - 1, date, hour, minute, second);
@@ -493,7 +506,7 @@
 	 * @param dateTime - Date object
 	 * @returns String
 	 */
-	 function extractStringFromDateTime(dateTime) {
+	function extractStringFromDateTime(dateTime) {
 		return dateTime.toLocaleString("en-GB");
 	}
 

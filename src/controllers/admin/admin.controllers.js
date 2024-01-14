@@ -126,17 +126,17 @@ const addComment = async (req, res) => {
 };
 
 async function extendDuration(req, res) {
-  try{
+  try {
     const logId = req.body.logId;
     const extendedDuration = parseInt(req.body.extendTime);
-    if(extendedDuration < 0){
+    if (extendedDuration < 0) {
       req.flash("error", "Duration can't be negative");
       return res.redirect("/admin/dashboard");
     }
 
     const appUser = req.user;
-    if(appUser.designation !== "sco"){
-      if(extendedDuration > 20){
+    if (appUser.designation !== "sco") {
+      if (extendedDuration > 20) {
         req.flash("error", "Duration can't be more than 20 minutes");
         return res.redirect("/admin/dashboard");
       }
@@ -153,10 +153,10 @@ async function extendDuration(req, res) {
       allowedDuration: newAllowedDuration
     });
     if (vehicleLogUpdated) {
-      req.flash("success",`${extendedDuration} minutes extended Successfully`);
+      req.flash("success", `${extendedDuration} minutes extended Successfully`);
       res.redirect("/admin/dashboard");
     }
-  }catch (err) {
+  } catch (err) {
     console.error(err);
   }
 }
@@ -261,13 +261,17 @@ const viewUserDetails = async (req, res) => {
       req.flash("error", "User not found");
       return res.redirect("/admin/dashboard");
     }
-    const vehicles = await Vehicle.getVehicleList({userMail: user.email});
+    const vehicles = await Vehicle.getVehicleList({
+      userMail: user.email,
+      deletedAt: null
+    });
     const flashVehicles = [];
-    for (const {licenseNumber, vehicleName, approvalStatus} of vehicles) {
+    for (const {licenseNumber, vehicleName, approvalStatus, defaultDuration} of vehicles) {
       flashVehicles.push({
         licenseNumber,
         vehicleName,
-        approvalStatus
+        approvalStatus,
+        defaultDuration
       });
     }
     const appUser = req.user;
