@@ -305,6 +305,7 @@
             <td><%= log.userId %></td>
             <td><%= log.phoneNumber %></td>
             <td><%= log.comment %></td>
+			<td><%= log.extendedDuration %></td>
         </tr>
     <% } %>
     </tbody>
@@ -353,6 +354,7 @@
 			log.userId = cells[3].textContent;
 			log.phoneNumber = cells[4].textContent;
 			log.comment = cells[5].textContent;
+			log.extendedDuration = cells[6].textContent;
 			vehicleLogs.push(log);
 		}
 
@@ -501,6 +503,7 @@
                                 name="extendTime"
                                 min="0"
                                 max="${maxTime}"
+								value="${log.extendedDuration}"
                         /><input
                                 class="btn btn-primary"
                                 type="submit"

@@ -22,7 +22,7 @@ const getAdminDashboard = async (req, res) => {
     }
     const users = await Promise.all(userPromises);
 
-    for (const [user, log] of zip([users, vehiclesStayingCurrently])) {
+    for (const [user, vehicle, log] of zip([users, vehicles, vehiclesStayingCurrently])) {
       const {id, entryTime, licenseNumber, comment} = log;
       const timeOfEntry = printableDateTime(entryTime);
       flashVehicleLogs.push({
@@ -31,9 +31,12 @@ const getAdminDashboard = async (req, res) => {
         entryTime: timeOfEntry,
         comment,
         userId: user.id,
-        phoneNumber: user.phoneNumber
+        phoneNumber: user.phoneNumber,
+        extendedDuration: log.allowedDuration - vehicle.defaultDuration
       });
     }
+
+    console.log(flashVehicleLogs);
 
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
     const appUser = req.user;
