@@ -5,6 +5,7 @@ import {Router} from "express";
 
 const router = Router();
 
+router.get("/", isLoggedIn, isAdmin, adminController.getAdminDashboard);
 router.get("/dashboard", isLoggedIn, isAdmin, adminController.getAdminDashboard);
 router.post("/dashboard", isLoggedIn, isAdmin, adminController.postVehicleLogs);
 router.post("/add-comment", isLoggedIn, isAdmin, adminController.addComment);
