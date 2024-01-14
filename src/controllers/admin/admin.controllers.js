@@ -340,38 +340,8 @@ const getApproval = async (req, res) => {
     vehicleInfo: req.flash("vehicleInfo"),
     error: req.flash("error"),
   });
-}
+};
 
-// const approve = async (req, res) => {
-//   const licenseNumber = req.params.licenseNumber;
-//   console.log(licenseNumber);
-//   const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-//   if (vehicle === null) {
-//     return res.redirect("/admin/dashboard");
-//   }
-//   const vehicleUpdated = await Vehicle.updateVehicle({
-//     licenseNumber: licenseNumber,
-//     approvalStatus: true
-//   });
-//   if (vehicleUpdated) {
-//     res.redirect("/admin/get-approval");
-//   }
-// }
-
-// const reject = async (req, res) => {
-//   const licenseNumber = req.params.licenseNumber;
-//   const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-//   if (vehicle === null) {
-//     return res.redirect("/admin/dashboard");
-//   }
-//   const vehicleUpdated = await Vehicle.updateVehicle({
-//     licenseNumber: licenseNumber,
-//     defaultDuration: 0,
-//   });
-//   if (vehicleUpdated) {
-//     res.redirect("/admin/get-approval");
-//   }
-// }
 
 const approve = async (req, res) => {
   const licenseNumber = req.body.licenseNumber;
@@ -387,7 +357,7 @@ const approve = async (req, res) => {
   if (vehicleUpdated) {
     res.redirect("/admin/get-approval");
   }
-}
+};
 
 const reject = async (req, res) => {
   const licenseNumber = req.body.licenseNumber;
@@ -402,7 +372,7 @@ const reject = async (req, res) => {
   if (vehicleUpdated) {
     res.redirect("/admin/get-approval");
   }
-}
+};
 
 export {
   banVehicle,
