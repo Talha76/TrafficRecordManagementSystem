@@ -11,9 +11,12 @@ const getUserDashboard = async (req, res) => {
         deletedAt: null
       }
     );
-
     req.flash("user", user);
-    req.flash("vehicles", vehicles);
+
+    if(vehicles.length > 0){
+      req.flash("vehicles", vehicles);
+    }
+
     res.render("user/user.dashboard.ejs", {
       user: req.flash("user"),
       vehicles: req.flash("vehicles"),
@@ -60,10 +63,31 @@ const removeVehicle = async (req, res) => {
 
 };
 
+async function viewVehicleLogs (req, res) {
+  try{
+    const vehicles = await Vehicle.getVehicleList({userMail: req.user.email});
+    const logs = [];
+
+    for(const vehicle of vehicles){
+      const vehicleLogs = await Vehicle.getVehicleLogs({licenseNumber: vehicle.licenseNumber});
+      logs.push(...vehicleLogs);
+    }
+    if(logs.length > 0){
+    req.flash("vehicleLogs", logs);
+    }
+    res.render("admin/admin.view-logs.ejs", {
+      vehicleLogs: req.flash("vehicleLogs")
+    });
+  }catch(err){
+    console.error(err);
+  }
+};
+
 async function getUserProfile(req, res) {
 }
 
 export default {
+  viewVehicleLogs,
   getUserProfile,
   getUserDashboard,
   addVehicle,
