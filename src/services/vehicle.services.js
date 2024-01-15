@@ -388,7 +388,7 @@ export async function getVehicleLogs(opts) {
     if (row.exitTime) {
       row.lateDuration = Math.max(0, (row.exitTime - row.entryTime) / 1000 / 60 - row.allowedDuration);
     } else {
-      row.lateDuration = 0;
+      row.lateDuration = Math.max(0, (new Date() - row.entryTime) / 1000 / 60 - row.allowedDuration);
     }
   }
   return results;
