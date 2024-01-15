@@ -462,7 +462,20 @@ const reject = async (req, res) => {
   }
 };
 
+
+async function getGenerateReport(req, res) {
+  res.render("./admin/reportGEneration.ejs", {
+    error: req.flash("error"),
+    success: req.flash("success"),
+  });
+}
+
+async function generateReport(req, res) {
+  res.json(req.body);
+}
 export {
+  generateReport,
+  getGenerateReport,
   extendDuration,
   banVehicle,
   unbanVehicle,
