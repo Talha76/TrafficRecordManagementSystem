@@ -353,7 +353,7 @@
                                 style="box-shadow: 0px 0px 5px 0px"
                                 name="licenseNumber"
                             >
-                                <a href="/view-vehicle-details/<%= vehicleInfo[i].licenseNumber %>"
+                                <a href="/admin/view-vehicle-details/<%= vehicleInfo[i].licenseNumber %>"
                                     ><%= vehicleInfo[i].licenseNumber %></a
                                 >
                             </td>
@@ -409,7 +409,7 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="/adminApprovalAssets/js/script.min.js"></script>
-        
+
 
         <script>
             document.getElementById('formCheck-2').addEventListener('change', function() {
@@ -419,11 +419,11 @@
                     checkboxes[i].checked = this.checked;
                 }
             });
-            
-            // if all selected manually, check the "select all" checkbox 
+
+            // if all selected manually, check the "select all" checkbox
             var checkboxes = document.getElementsByName('formCheck');
             for (var i = 0; i < checkboxes.length; i++) { // loop through checkboxes
-                // so what is happening here is that, when a checkbox is checked, 
+                // so what is happening here is that, when a checkbox is checked,
                 // it will check if all the checkboxes are checked or not
                 checkboxes[i].addEventListener('change', function() {
                     var allChecked = true;
@@ -465,7 +465,7 @@
             //         }
             //         else {
             //             console.log('License number not approved');
-            //         }   
+            //         }
             //     }
             //     xhr.send(JSON.stringify({licenseNumbers: licenseNumbers}));
             // }
@@ -494,7 +494,7 @@
                 // xhr.send(JSON.stringify({licenseNumbers: licenseNumbers}));
             // }
         </script>
-        
+
     </body>
-    
+
 </html>
