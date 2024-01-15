@@ -102,19 +102,8 @@ async function viewVehicleDetails(req, res) {
   }
 };
 
-async function getUserProfile(req, res) {
-  try {
-    const {userId} = req.params;
-    const user = await User.findUserById(userId);
-    res.send(user);
-  } catch (err) {
-    console.error(err);
-  }
-}
-
 export default {
   viewVehicleDetails,
-  getUserProfile,
   getUserDashboard,
   addVehicle,
   removeVehicle

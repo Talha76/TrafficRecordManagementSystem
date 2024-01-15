@@ -5,3 +5,11 @@ export function isAdmin(req, res, next) {
   }
   res.status(401).render("error/401.ejs", {url: "/"});
 }
+
+export function isStudent(req, res, next) {
+  const user = req.user;
+  if (typeof user.designation !== "undefined") {
+    res.status(401).render("error/401.ejs", {url: "/"});
+  }
+  return next();
+}

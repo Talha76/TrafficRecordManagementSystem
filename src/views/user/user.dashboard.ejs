@@ -75,16 +75,17 @@
         <span style="font-size: 27px;margin-top: -22px;">or</span>
         <div class="flex-column justify-content-center"
              style="background: var(--bs-body-bg);width: 90%;height: 54%;margin-right: 5%;margin-left: 5%;margin-bottom: initial;border-color: var(--bs-primary-bg-subtle);">
-            <input class="form-control" type="text" id="vehicle_name"
-                   style="margin-left: 53%;height: 40px;margin-top: -25px;margin-bottom: -15px;width: 35%;border-radius: 7px;border-width: 1px;"
-                   placeholder="Give a Car Name" name="vehicleName">
-            <input class="form-control" type="text"
+			 <input class="form-control" type="text"
                    id="license-number"
                    style="width: 35%;height: 40px;margin-left: 12%;border-radius: 7px;margin-top: -25px;border-width: 1px;border-color: var(--bs-emphasis-color);"
                    placeholder="Enter The License Number"
-                   name="licenseNumber">
+                   name="licenseNumber" required>
+            <input class="form-control" type="text" id="vehicle_name"
+                   style="border-color: black;margin-left: 53%;height: 40px;margin-top: -40px;margin-bottom: -15px;width: 35%;border-radius: 7px;border-width: 1px;"
+                   placeholder="Give a Car Name" name="vehicleName" required>
+
             <input class="btn btn-primary" id="register_car" type="submit"
-                   style="height: 44px;width: initial;margin-left: 45%;margin-top: 2%;font-size: 16px;"
+                   style="height: 44px;width: initial;margin-left: 45%;margin-top: 5%;font-size: 16px;"
                    name="register_car"
                    value="Register">
         </div>
@@ -112,7 +113,7 @@
                 <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;"><%= vehicle.status; %></td>
                 <td style="box-shadow: 0px 0px 5px 0px;border-style: solid;">
                     <a href="/remove-vehicle?licenseNumber=<%= vehicle.licenseNumber; %>"
-                       style="color: var(--bs-primary-text-emphasis);">Remove</a>
+                       style="color: var(--bs-primary-text-emphasis);" name="remove">Remove</a>
                 </td>
             </tr>
         <% }); %>
@@ -126,6 +127,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/extract-lptext.js"></script>
+<script>
+	document.querySelectorAll("a[name=remove]").forEach(item => {
+		item.addEventListener('click', event => {
+			if (!confirm('Are you sure you want to remove this vehicle?')) {
+				event.preventDefault();
+			}
+		})
+	});
+</script>
 
 </body>
 </html>
