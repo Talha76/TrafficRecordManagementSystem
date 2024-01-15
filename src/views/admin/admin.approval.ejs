@@ -1,435 +1,500 @@
 <!DOCTYPE html>
 <html data-bs-theme="light" lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
-		/>
-		<title>adminApproval</title>
-		<link
-			rel="stylesheet"
-			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-		/>
-		<link rel="stylesheet" href="/adminApprovalAssets/css/styles.min.css" />
-		<link
-			rel="stylesheet"
-			href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"
-		/>
-	</head>
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+        />
+        <title>adminApproval</title>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        />
+        <link rel="stylesheet" href="/adminApprovalAssets/css/styles.min.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"
+        />
+    </head>
 
-	<body
-		style="
-			width: 100%;
-			filter: brightness(100%);
-			text-align: center;
-			height: 100%;
-		"
-		href="/"
-	>
-		<nav
-			class="navbar navbar-expand-md py-3"
-			style="
-				--bs-body-bg: rgb(109, 24, 106);
-				background: var(--bs-white);
-				border-bottom-color: var(--bs-danger-border-subtle);
-				box-shadow: 8px -6px 20px, 0px 0px 12px var(--bs-border-color);
-				width: 100%;
-			"
-		>
-			<div class="container">
-				<a
-					class="navbar-brand d-flex align-items-center"
-					href="#"
-					style="color: var(--bs-success-text-emphasis)"
-					><span
-						class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
-						style="background: rgb(27, 66, 123)"
-						href="/"
-						><svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="1em"
-							height="1em"
-							fill="currentColor"
-							viewBox="0 0 16 16"
-							class="bi bi-bezier"
-							data-bss-hover-animate="jello"
-							style="font-size: 16px"
-						>
-							<path
-								fill-rule="evenodd"
-								d="M0 10.5A1.5 1.5 0 0 1 1.5 9h1A1.5 1.5 0 0 1 4 10.5v1A1.5 1.5 0 0 1 2.5 13h-1A1.5 1.5 0 0 1 0 11.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm10.5.5A1.5 1.5 0 0 1 13.5 9h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM6 4.5A1.5 1.5 0 0 1 7.5 3h1A1.5 1.5 0 0 1 10 4.5v1A1.5 1.5 0 0 1 8.5 7h-1A1.5 1.5 0 0 1 6 5.5zM7.5 4a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"
-							></path>
-							<path
-								d="M6 4.5H1.866a1 1 0 1 0 0 1h2.668A6.517 6.517 0 0 0 1.814 9H2.5c.123 0 .244.015.358.043a5.517 5.517 0 0 1 3.185-3.185A1.503 1.503 0 0 1 6 5.5zm3.957 1.358A1.5 1.5 0 0 0 10 5.5v-1h4.134a1 1 0 1 1 0 1h-2.668a6.517 6.517 0 0 1 2.72 3.5H13.5c-.123 0-.243.015-.358.043a5.517 5.517 0 0 0-3.185-3.185z"
-							></path></svg></span
-					><span
-						data-bss-hover-animate="pulse"
-						style="font-size: 20px; text-align: center"
-						>IUT Traffic Record Management System</span
-					></a
-				><button
-					data-bs-toggle="collapse"
-					class="navbar-toggler"
-					data-bs-target="#navcol-2"
-				>
-					<span class="visually-hidden">Toggle navigation</span
-					><span class="navbar-toggler-icon"></span>
-				</button>
-				<div
-					class="collapse navbar-collapse"
-					id="navcol-2"
-					style="margin-right: -77px"
-				>
-					<ul class="navbar-nav ms-auto">
-						<li class="nav-item">
-							<a
-								class="nav-link active"
-								data-bss-hover-animate="pulse"
-								id="view_logs"
-								href="/admin/view-vehicle-logs"
-								style="
-									padding-left: 52px;
-									--bs-body-font-size: -14rem;
-									font-size: 20px;
-									text-shadow: 0px 0px 1px;
-									color: var(--bs-emphasis-color);
-								"
-								><span style="color: rgb(10, 54, 34)"
-									>View Logs</span
-								></a
-							>
-						</li>
-						<% if (appUser.designation === "SCO") { %>
-							<li class="nav-item">
-								<a
-										class="nav-link"
-										data-bss-hover-animate="pulse"
-										id="pending_request"
-										href="/admin/get-approval"
-										style="
-											padding-left: 52px;
-											--bs-body-font-size: -14rem;
-											font-size: 20px;
-											text-shadow: 0px 0px 1px;
-											color: var(--bs-emphasis-color);
-										"
-								><span style="color: rgb(10, 54, 34)"
-									>Pending Request</span
-									></a
-								>
-							</li>
-							<% } %>
-						<li class="nav-item">
-							<a
-								class="nav-link"
-								data-bss-hover-animate="pulse"
-								id="logout"
-								href="/logout"
-								style="
-									padding-left: 52px;
-									--bs-body-font-size: -14rem;
-									font-size: 20px;
-									text-shadow: 0px 0px 1px;
-									color: var(--bs-emphasis-color);
-								"
-								><span style="color: rgb(10, 54, 34)"
-									>Logout</span
-								></a
-							>
-						</li>
-						<li class="nav-item">
-							<a
-									class="nav-link"
-									data-bss-hover-animate="pulse"
-									id="logout"
-									href="#"
-									style="
-											padding-left: 52px;
-											--bs-body-font-size: -14rem;
-											font-size: 20px;
-											text-shadow: 0px 0px 1px;
-											color: var(--bs-emphasis-color);
-										"
-							><span style="color: rgb(10, 54, 34)"
-								><%= appUser.name; %>(<%= appUser.designation %>)</span
-								></a
-							>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-		<div style="display: block; margin: 0px; margin-top: 30px">
-			<div style="display: flex">
-				<input
-					type="search"
-					style="
-						margin-right: 0px;
-						margin-left: 504px;
-						width: 350px;
-						height: 35.9091px;
-					"
-					placeholder="Search by License Number"
-				/><input
-					class="btn btn-primary"
-					type="submit"
-					value="search"
-					style="margin-left: 10px"
-				/>
-			</div>
-			<div style="margin-right: 0px">
+    <body
+        style="
+            width: 100%;
+            filter: brightness(100%);
+            text-align: center;
+            height: 100%;
+        "
+        href="/"
+    >
+        <nav
+            class="navbar navbar-expand-md py-3"
+            style="
+                --bs-body-bg: rgb(109, 24, 106);
+                background: var(--bs-white);
+                border-bottom-color: var(--bs-danger-border-subtle);
+                box-shadow: 8px -6px 20px, 0px 0px 12px var(--bs-border-color);
+                width: 100%;
+            "
+        >
+            <div class="container">
+                <a
+                    class="navbar-brand d-flex align-items-center"
+                    href="#"
+                    style="color: var(--bs-success-text-emphasis)"
+                    ><span
+                        class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
+                        style="background: rgb(27, 66, 123)"
+                        href="/"
+                        ><svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="1em"
+                            height="1em"
+                            fill="currentColor"
+                            viewBox="0 0 16 16"
+                            class="bi bi-bezier"
+                            data-bss-hover-animate="jello"
+                            style="font-size: 16px"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M0 10.5A1.5 1.5 0 0 1 1.5 9h1A1.5 1.5 0 0 1 4 10.5v1A1.5 1.5 0 0 1 2.5 13h-1A1.5 1.5 0 0 1 0 11.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm10.5.5A1.5 1.5 0 0 1 13.5 9h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM6 4.5A1.5 1.5 0 0 1 7.5 3h1A1.5 1.5 0 0 1 10 4.5v1A1.5 1.5 0 0 1 8.5 7h-1A1.5 1.5 0 0 1 6 5.5zM7.5 4a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"
+                            ></path>
+                            <path
+                                d="M6 4.5H1.866a1 1 0 1 0 0 1h2.668A6.517 6.517 0 0 0 1.814 9H2.5c.123 0 .244.015.358.043a5.517 5.517 0 0 1 3.185-3.185A1.503 1.503 0 0 1 6 5.5zm3.957 1.358A1.5 1.5 0 0 0 10 5.5v-1h4.134a1 1 0 1 1 0 1h-2.668a6.517 6.517 0 0 1 2.72 3.5H13.5c-.123 0-.243.015-.358.043a5.517 5.517 0 0 0-3.185-3.185z"
+                            ></path></svg></span
+                    ><span
+                        data-bss-hover-animate="pulse"
+                        style="font-size: 20px; text-align: center"
+                        >IUT Traffic Record Management System</span
+                    ></a
+                ><button
+                    data-bs-toggle="collapse"
+                    class="navbar-toggler"
+                    data-bs-target="#navcol-2"
+                >
+                    <span class="visually-hidden">Toggle navigation</span
+                    ><span class="navbar-toggler-icon"></span>
+                </button>
+                <div
+                    class="collapse navbar-collapse"
+                    id="navcol-2"
+                    style="margin-right: -77px"
+                >
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link active"
+                                data-bss-hover-animate="pulse"
+                                id="view_logs"
+                                href="/admin/view-vehicle-logs"
+                                style="
+                                    padding-left: 52px;
+                                    --bs-body-font-size: -14rem;
+                                    font-size: 20px;
+                                    text-shadow: 0px 0px 1px;
+                                    color: var(--bs-emphasis-color);
+                                "
+                                ><span style="color: rgb(10, 54, 34)"
+                                    >View Logs</span
+                                ></a
+                            >
+                        </li>
+                        <% if (appUser.designation === "SCO") { %>
+                            <li class="nav-item">
+                                <a
+                                        class="nav-link"
+                                        data-bss-hover-animate="pulse"
+                                        id="pending_request"
+                                        href="/admin/get-approval"
+                                        style="
+                                            padding-left: 52px;
+                                            --bs-body-font-size: -14rem;
+                                            font-size: 20px;
+                                            text-shadow: 0px 0px 1px;
+                                            color: var(--bs-emphasis-color);
+                                        "
+                                ><span style="color: rgb(10, 54, 34)"
+                                    >Pending Request</span
+                                    ></a
+                                >
+                            </li>
+                            <% } %>
+                        <li class="nav-item">
+                            <a
+                                class="nav-link"
+                                data-bss-hover-animate="pulse"
+                                id="logout"
+                                href="/logout"
+                                style="
+                                    padding-left: 52px;
+                                    --bs-body-font-size: -14rem;
+                                    font-size: 20px;
+                                    text-shadow: 0px 0px 1px;
+                                    color: var(--bs-emphasis-color);
+                                "
+                                ><span style="color: rgb(10, 54, 34)"
+                                    >Logout</span
+                                ></a
+                            >
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                    class="nav-link"
+                                    data-bss-hover-animate="pulse"
+                                    id="logout"
+                                    href="#"
+                                    style="
+                                            padding-left: 52px;
+                                            --bs-body-font-size: -14rem;
+                                            font-size: 20px;
+                                            text-shadow: 0px 0px 1px;
+                                            color: var(--bs-emphasis-color);
+                                        "
+                            ><span style="color: rgb(10, 54, 34)"
+                                ><%= appUser.name; %>(<%= appUser.designation %>)</span
+                                ></a
+                            >
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div style="display: block; margin: 0px; margin-top: 30px">
+            <div style="display: flex">
+                <input
+                    type="search"
+                    style="
+                        margin-right: 0px;
+                        margin-left: 504px;
+                        width: 350px;
+                        height: 35.9091px;
+                    "
+                    placeholder="Search by License Number"
+                /><input
+                    class="btn btn-primary"
+                    type="submit"
+                    value="search"
+                    style="margin-left: 10px"
+                />
+            </div>
+            <div style="margin-right: 0px">
 
-				<button
-					class="btn btn-primary"
-					id="approve"
-					type="button"
-					style="
-						margin-top: 20px;
-						margin-left: 100px;
-						background: rgb(27, 66, 123);
-						font-weight: bold;
-					"
-					name="approve"
-				>
-					Approve</button
-				><button
-					class="btn btn-primary"
-					id="reject"
-					type="button"
-					style="
-						margin-top: 20px;
-						margin-left: 10px;
-						background: rgb(27, 66, 123);
-						font-weight: bold;
-					"
-					name="reject"
-				>
-					Reject
-				</button>
-			</div>
+                <button
+                    class="btn btn-primary"
+                    id="approveSelected"
+                    type="button"
+                    style="
+                        margin-top: 20px;
+                        margin-left: 100px;
+                        background: rgb(27, 66, 123);
+                        font-weight: bold;
+                    "
+                    name="approveSelected"
+                    onclick="approveSelected()"
+                >
+                    Approve Selected</button
+                ><button
+                    class="btn btn-primary"
+                    id="rejectSelected"
+                    type="button"
+                    style="
+                        margin-top: 20px;
+                        margin-left: 10px;
+                        background: rgb(27, 66, 123);
+                        font-weight: bold;
+                    "
+                    name="rejectSelected"
+                    onclick="rejectSelected()"
+                >
+                    Reject Selected
+                </button>
+            </div>
+            <div
+                class="table-responsive fw-semibold text-start"
+                style="
+                    margin-top: 2%;
+                    width: 90%;
+                    margin-right: 10%;
+                    margin-left: 5%;
+                    box-shadow: 0px 0px 9px;
+                    border-radius: 12px;
+                    height: 90%;
+                    background: var(--bs-btn-hover-color);
+                "
+            >
+                <table class="table">
+                    <thead style="width: 80%; padding: 0px">
+                        <tr style="width: 80%; height: 57.5px">
+                            <th
+                                style="
+                                    box-shadow: 0px 0px 5px 0px;
+                                    border-style: solid;
+                                    width: 20%;
+                                "
+                            >
+                            <div
+                            class="form-check"
+                            style="
+                                margin: 0px;
+                                margin-left: 5px;
+                                margin-right: 0px;
+                                margin-top: 3px;
+                            "
+                        >
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="formCheck-2"
+                                style="font-size: 20px; border: 1px solid black;"
+                            /><label
+                                class="form-check-label"
+                                for="formCheck-2"
+                                style="height: 23px; font-size: 21px"
+                                >Select All</label
+                            >
+                        </div>
+                            </th>
+                            <th
+                                style="
+                                    box-shadow: 0px 0px 5px 0px;
+                                    border-style: solid;
+                                    width: 20%;
+                                "
+                            >
+                                Owner Name
+                            </th>
+                            <th
+                                style="
+                                    box-shadow: 0px 0px 5px 0px;
+                                    border-style: solid;
+                                    width: 15%;
+                                "
+                            >
+                                Owner ID
+                            </th>
+                            <th
+                                style="
+                                    box-shadow: 0px 0px 5px 0px;
+                                    border-style: solid;
+                                    width: 15%;
+                                "
+                            >
+                                License Number
+                            </th>
+                            <th
+                                style="
+                                    box-shadow: 0px 0px 5px 0px;
+                                    border-style: solid;
+                                    width: 15%;
+                                "
+                            >
+                                Vehicle Name
+                            </th>
+                            <th
+                                style="
+                                    box-shadow: 0px 0px 5px 0px;
+                                    width: 20%;
+                                    text-align: center;
+                                "
+                            >
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
 
-			<div
-				class="table-responsive fw-semibold text-start"
-				style="
-					margin-top: 2%;
-					width: 90%;
-					margin-right: 10%;
-					margin-left: 5%;
-					box-shadow: 0px 0px 9px;
-					border-radius: 12px;
-					height: 90%;
-					background: var(--bs-btn-hover-color);
-				"
-			>
-				<table class="table">
-					<thead style="width: 80%; padding: 0px">
-						<tr style="width: 80%; height: 57.5px">
-							<th
-								style="
-									box-shadow: 0px 0px 5px 0px;
-									border-style: solid;
-									width: 20%;
-								"
-							>
-							<div
-							class="form-check"
-							style="
-								margin: 0px;
-								margin-left: 5px;
-								margin-right: 0px;
-								margin-top: 3px;
-							"
-						>
-							<input
-								class="form-check-input"
-								type="checkbox"
-								id="formCheck-2"
-								style="font-size: 20px; border: 1px solid black;"
-							/><label
-								class="form-check-label"
-								for="formCheck-2"
-								style="height: 23px; font-size: 21px"
-								>Select All</label
-							>
-						</div>
-							</th>
-							<th
-								style="
-									box-shadow: 0px 0px 5px 0px;
-									border-style: solid;
-									width: 20%;
-								"
-							>
-								Owner Name
-							</th>
-							<th
-								style="
-									box-shadow: 0px 0px 5px 0px;
-									border-style: solid;
-									width: 15%;
-								"
-							>
-								Owner ID
-							</th>
-							<th
-								style="
-									box-shadow: 0px 0px 5px 0px;
-									border-style: solid;
-									width: 15%;
-								"
-							>
-								License Number
-							</th>
-							<th
-								style="
-									box-shadow: 0px 0px 5px 0px;
-									border-style: solid;
-									width: 15%;
-								"
-							>
-								Vehicle Name
-							</th>
-							<th
-								style="
-									box-shadow: 0px 0px 5px 0px;
-									width: 20%;
-									text-align: center;
-								"
-							>
-								Action
-							</th>
-						</tr>
-					</thead>
+                    <tbody style="width: 80%; height: initial">
+                        <% for (let i = 0; i < vehicleInfo.length; i++) { %>
+                        <tr
+                            style="
+                                margin-right: 19px;
+                                margin-top: 0px;
+                                margin-left: -2px;
+                            "
+                        >
+                            <td style="box-shadow: 0px 0px 5px 0px">
+                                <div class="form-check">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="formCheck-<%= i+1 %>"
+                                        name="formCheck"
+                                        style="font-size: 15px; border: 1px solid black;
+                                               margin-top: 10px;
+                                              "
+                                    /><label
+                                        class="form-check-label"
+                                        style="
+                                                margin-left: 5px;
+                                                margin-top: 2px;
+                                                font-size: 20px;
+                                              "
+                                        for="formCheck-<%= i+1 %>"
+                                        ><%= i+1 %></label
+                                    >
+                                </div>
+                            </td>
+                            <td
+                                id="ownerName"
+                                style="box-shadow: 0px 0px 5px 0px"
+                                name="userName"
+                            >
+                                <%= vehicleInfo[i].userName %>
+                            </td>
+                            <td
+                                id="ownerId"
+                                style="box-shadow: 0px 0px 5px 0px"
+                                name="userId"
+                            >
+                                <a href="/admin/view-user-details/<%= vehicleInfo[i].userId %>"><%= vehicleInfo[i].userId %></a>
+                            </td>
+                            <td
+                                id="licenseNumber"
+                                style="box-shadow: 0px 0px 5px 0px"
+                                name="licenseNumber"
+                            >
+                                <a href="/view-vehicle-details/<%= vehicleInfo[i].licenseNumber %>"
+                                    ><%= vehicleInfo[i].licenseNumber %></a
+                                >
+                            </td>
+                            <td
+                                id="vehicleName"
+                                style="box-shadow: 0px 0px 5px 0px"
+                                value="vehicleName"
+                            >
+                                <%= vehicleInfo[i].vehicleName %>
+                            </td>
+                            <td
+                                style="
+                                    box-shadow: 0px 0px 5px 0px;
+                                    text-align: center;
+                                    display: inline-flex;
+                                "
+                            >
+                                <form method="POST" action="/admin/approve">
+                                    <input
+                                        class="form-control"
+                                        type="hidden"
+                                        id="licenseNumber"
+                                        value="<%= vehicleInfo[i].licenseNumber %>"
+                                        name="licenseNumber"
+                                    /><button
+                                        class="btn btn-primary"
+                                        type="submit"
+                                    >
+                                        Approve
+                                    </button>
+                                </form>
+                                <form method="POST" action="/admin/reject">
+                                    <input
+                                        class="form-control"
+                                        type="hidden"
+                                        id="licenseNumber"
+                                        value="<%= vehicleInfo[i].licenseNumber %>"
+                                        name="licenseNumber"
+                                    /><button
+                                        class="btn btn-primary"
+                                        type="submit"
+                                        style="margin-left: 20px"
+                                    >
+                                        Reject
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/adminApprovalAssets/js/script.min.js"></script>
+        
 
-					<tbody style="width: 80%; height: initial">
-						<% for (let i = 0; i < vehicleInfo.length; i++) { %>
-						<tr
-							style="
-								margin-right: 19px;
-								margin-top: 0px;
-								margin-left: -2px;
-							"
-						>
-							<td style="box-shadow: 0px 0px 5px 0px">
-								<div class="form-check">
-									<input
-										class="form-check-input"
-										type="checkbox"
-										id="formCheck-<%= i+1 %>"
-										name="formCheck"
-										style="font-size: 15px; border: 1px solid black;
-											   margin-top: 10px;
-											  "
-									/><label
-										class="form-check-label"
-										style="
-												margin-left: 5px;
-												margin-top: 2px;
-												font-size: 20px;
-											  "
-										for="formCheck-<%= i+1 %>"
-										><%= i+1 %></label
-									>
-								</div>
-							</td>
-							<td
-								id="ownerName"
-								style="box-shadow: 0px 0px 5px 0px"
-								name="userName"
-							>
-								<%= vehicleInfo[i].userName %>
-							</td>
-							<td
-								id="ownerId"
-								style="box-shadow: 0px 0px 5px 0px"
-								name="userId"
-							>
-								<a href="#"><%= vehicleInfo[i].userId %></a>
-							</td>
-							<td
-								id="licenseNumber"
-								style="box-shadow: 0px 0px 5px 0px"
-								name="licenseNumber"
-							>
-								<a href="#"
-									><%= vehicleInfo[i].licenseNumber %></a
-								>
-							</td>
-							<td
-								id="vehicleName"
-								style="box-shadow: 0px 0px 5px 0px"
-								value="vehicleName"
-							>
-								<%= vehicleInfo[i].vehicleName %>
-							</td>
-							<td
-								style="
-									box-shadow: 0px 0px 5px 0px;
-									text-align: center;
-									display: inline-flex;
-								"
-							>
-								<form method="POST" action="/admin/approve">
-									<input
-										class="form-control"
-										type="hidden"
-										id="licenseNumber"
-										value="<%= vehicleInfo[i].licenseNumber %>"
-										name="licenseNumber"
-									/><button
-										class="btn btn-primary"
-										type="submit"
-									>
-										Approve
-									</button>
-								</form>
-								<form method="POST" action="/admin/reject">
-									<input
-										class="form-control"
-										type="hidden"
-										id="licenseNumber"
-										value="<%= vehicleInfo[i].licenseNumber %>"
-										name="licenseNumber"
-									/><button
-										class="btn btn-primary"
-										type="submit"
-										style="margin-left: 20px"
-									>
-										Reject
-									</button>
-								</form>
-							</td>
-						</tr>
-						<% } %>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-		<script src="/adminApprovalAssets/js/script.min.js"></script>
-		<script>
-			document.getElementById('formCheck-2').addEventListener('change', function() {
-				var checkboxes = document.getElementsByClassName('form-check-input');
-				for (var i = 0; i < checkboxes.length; i++) {
-					checkboxes[i].checked = this.checked;
-				}
-			});
+        <script>
+            document.getElementById('formCheck-2').addEventListener('change', function() {
+                // Select all
+                var checkboxes = document.getElementsByClassName('form-check-input');
+                for (var i = 0; i < checkboxes.length; i++) {
+                    checkboxes[i].checked = this.checked;
+                }
+            });
+            
+            // if all selected manually, check the "select all" checkbox 
+            var checkboxes = document.getElementsByName('formCheck');
+            for (var i = 0; i < checkboxes.length; i++) { // loop through checkboxes
+                // so what is happening here is that, when a checkbox is checked, 
+                // it will check if all the checkboxes are checked or not
+                checkboxes[i].addEventListener('change', function() {
+                    var allChecked = true;
+                    for (var j = 0; j < checkboxes.length; j++) {
+                        if (!checkboxes[j].checked) {
+                            allChecked = false;
+                            break;
+                        }
+                    }
+                    console.log(allChecked);
+                    // if all checked, check the "select all" checkbox
+                    document.getElementById('formCheck-2').checked = allChecked;
+                });
+            }
 
-			var checkboxes = document.getElementsByName('formCheck');
-			for (var i = 0; i < checkboxes.length; i++) {
-				checkboxes[i].addEventListener('change', function() {
-					var allChecked = true;
-					for (var j = 0; j < checkboxes.length; j++) {
-						if (!checkboxes[j].checked) {
-							allChecked = false;
-							break;
-						}
-					}
-					console.log(allChecked);
-					document.getElementById('formCheck-2').checked = allChecked;
-				});
-			}
-		</script>
-	</body>
+            // function approveSelected() {
+            //     // get all the checked checkboxes
+            //     var checkboxes = document.getElementsByName('formCheck');
+            //     // get the license numbers of the checked checkboxes
+            //     var licenseNumbers = [];
+            //     // loop through the checkboxes
+            //     for (var i = 0; i < checkboxes.length; i++) {
+            //         // if the checkbox is checked, get the license number
+            //         if (checkboxes[i].checked) {
+            //             var licenseNumber = document.getElementById('licenseNumber').innerHTML;
+            //             licenseNumbers.push(licenseNumber);
+            //         }
+            //     }
+            //     console.log(licenseNumbers);
+            //     // send the license numbers to the server
+            //     var xhr = new XMLHttpRequest();
+            //     xhr.open('POST', '/admin/approve');
+            //     // set the content type to json
+            //     xhr.setRequestHeader('Content-Type', 'application/json');
+            //     xhr.onload = function() {
+            //         // if the response is 200, then the license number is approved
+            //         if (xhr.status === 200) {
+            //             console.log('License number approved');
+            //         }
+            //         else {
+            //             console.log('License number not approved');
+            //         }   
+            //     }
+            //     xhr.send(JSON.stringify({licenseNumbers: licenseNumbers}));
+            // }
+
+            // function rejectSelected() {
+                // var checkboxes = document.getElementsByName('formCheck');
+                // var licenseNumbers = [];
+                // for (var i = 0; i < checkboxes.length; i++) {
+                //     if (checkboxes[i].checked) {
+                //         var licenseNumber = document.getElementById('licenseNumber').innerHTML;
+                //         licenseNumbers.push(licenseNumber);
+                //     }
+                // }
+                // console.log(licenseNumbers);
+                // var xhr = new XMLHttpRequest();
+                // xhr.open('POST', '/admin/reject');
+                // xhr.setRequestHeader('Content-Type', 'application/json');
+                // xhr.onload = function() {
+                //     if (xhr.status === 200) {
+                //         console.log('License number rejected');
+                //     }
+                //     else {
+                //         console.log('License number not rejected');
+                //     }
+                // }
+                // xhr.send(JSON.stringify({licenseNumbers: licenseNumbers}));
+            // }
+        </script>
+        
+    </body>
+    
 </html>
