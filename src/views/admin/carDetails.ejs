@@ -127,26 +127,26 @@
                             ></a
                         >
                     </li>
-					<% if (appUser.designation === "SCO") { %>
-                    <li class="nav-item">
-                        <a
-                                class="nav-link"
-                                data-bss-hover-animate="pulse"
-                                id="pending_request"
-                                href="/admin/get-approval"
-                                style="
+                    <% if (appUser.designation === "SCO") { %>
+                        <li class="nav-item">
+                            <a
+                                    class="nav-link"
+                                    data-bss-hover-animate="pulse"
+                                    id="pending_request"
+                                    href="/admin/get-approval"
+                                    style="
 									padding-left: 52px;
 									--bs-body-font-size: -14rem;
 									font-size: 20px;
 									text-shadow: 0px 0px 1px;
 									color: var(--bs-emphasis-color);
 								"
-                        ><span style="color: rgb(10, 54, 34)"
-                            >Pending Request</span
-                            ></a
-                        >
-                    </li>
-					<% } %>
+                            ><span style="color: rgb(10, 54, 34)"
+                                >Pending Request</span
+                                ></a
+                            >
+                        </li>
+                    <% } %>
                 <% } %>
                 <li class="nav-item">
                     <a
@@ -341,7 +341,7 @@
                     aria-expanded="true"
                     data-bs-toggle="dropdown"
                     type="button"
-            <% if (appUser.designation !== "User") { %>
+            <% if (appUser.designation === "SCO") { %>
                     onclick="return confirm('Are you sure you want to proceed?');"
                     <% } %>
                     style="
@@ -355,7 +355,7 @@
             >
                 <%= vehicle.defaultDuration === 0 ? "Banned" : "Eligible" %>
             </button>
-            <% if (user.designation !== "User") { %>
+            <% if (appUser.designation === "SCO") { %>
                 <div
                         class="dropdown-menu"
                         data-bs-popper="none"
@@ -381,11 +381,11 @@
                     required
                     min="0"
                     value="<%= vehicle.defaultDuration %>"
-            <% if (user.designation === "User") { %>
+            <% if (appUser.designation !== "SCO") { %>
                     readonly
                     <% } %>
             />
-            <% if (user.designation !== "User") { %>
+            <% if (appUser.designation === "SCO") { %>
                 <button
                         class="btn btn-primary"
                         type="submit"
@@ -551,7 +551,7 @@
 					<td style="box-shadow: 0px 0px 5px 0px">${log.exitTime}</td>
 					<td style="box-shadow: 0px 0px 5px 0px">${log.comment}</td>
 					<td style="box-shadow: 0px 0px 5px 0px">${Math.floor(log.lateDuration)}</td>
-				</tr>`
+				</tr>`;
 		}
 
 		table.innerHTML += `</tbody>`;

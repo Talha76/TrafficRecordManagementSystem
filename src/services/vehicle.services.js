@@ -402,6 +402,34 @@ export async function findVehicleAllegationById(id) {
 }
 
 /**
+ * Add a vehicle allegation to the database
+ * @param opts - {logId, lateDuration, comment(optional)}
+ * @returns {Promise<awaited Model<any, TModelAttributes> | Promise<{hasteFS: IHasteFS, moduleMap: IModuleMap}>>}
+ * @throws {VehicleLogNotFoundError}
+ */
+export async function addVehicleAllegation(opts) {
+  if (typeof opts === "undefined") opts = {};
+  if (typeof opts.lateDuration === "undefined") throw new NotProvidedError("lateDuration");
+  if (opts.lateDuration === null) throw new NullValueError("lateDuration");
+  if (typeof opts.logId === "undefined") throw new NotProvidedError("logId");
+  if (opts.logId === null) throw new NullValueError("logId");
+
+  const log = await findVehicleLogById(opts.logId);
+  if (log === null) {
+    throw new VehicleLogNotFoundError();
+  }
+
+  const allegation = await VehicleAllegation.build({
+    logId: opts.logId,
+    lateDuration: opts.lateDuration,
+  });
+  if (typeof opts.comment !== "undefined") {
+    allegation.comment = opts.comment;
+  }
+  return await allegation.save();
+}
+
+/**
  * Updates a vehicle allegation
  * @param opts - {id, comment}
  * @returns {Promise<Model<any, TModelAttributes>>}
