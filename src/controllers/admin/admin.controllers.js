@@ -1,8 +1,8 @@
 import * as Vehicle from "../../services/vehicle.services.js";
 import * as User from "../../services/user.services.js";
-import {findVehiclesStayingUpto} from "../../services/admin.services.js";
-import {BannedVehicleError} from "../../utils/errors.js";
-import {printableDateTime, zip} from "../../utils/utility.js";
+import { findVehiclesStayingUpto } from "../../services/admin.services.js";
+import { BannedVehicleError } from "../../utils/errors.js";
+import { printableDateTime, zip } from "../../utils/utility.js";
 
 // YYYY-MM-DD HH:MM:SS
 const getAdminDashboard = async (req, res) => {
@@ -11,19 +11,23 @@ const getAdminDashboard = async (req, res) => {
 
     const vehiclePromises = [];
     const flashVehicleLogs = [];
-    for (const {licenseNumber} of vehiclesStayingCurrently) {
+    for (const { licenseNumber } of vehiclesStayingCurrently) {
       vehiclePromises.push(Vehicle.findVehicleByLicenseNumber(licenseNumber));
     }
     const vehicles = await Promise.all(vehiclePromises);
 
     const userPromises = [];
-    for (const {userMail} of vehicles) {
+    for (const { userMail } of vehicles) {
       userPromises.push(User.findUserByEmail(userMail));
     }
     const users = await Promise.all(userPromises);
 
-    for (const [user, vehicle, log] of zip([users, vehicles, vehiclesStayingCurrently])) {
-      const {id, entryTime, licenseNumber, comment} = log;
+    for (const [user, vehicle, log] of zip([
+      users,
+      vehicles,
+      vehiclesStayingCurrently,
+    ])) {
+      const { id, entryTime, licenseNumber, comment } = log;
       const timeOfEntry = printableDateTime(entryTime);
       flashVehicleLogs.push({
         id,
@@ -32,7 +36,7 @@ const getAdminDashboard = async (req, res) => {
         comment,
         userId: user.id,
         phoneNumber: user.phoneNumber,
-        extendedDuration: log.allowedDuration - vehicle.defaultDuration
+        extendedDuration: log.allowedDuration - vehicle.defaultDuration,
       });
     }
 
@@ -46,7 +50,7 @@ const getAdminDashboard = async (req, res) => {
       appUser: req.flash("appUser")[0],
       vehicleLogs: req.flash("vehicleLogs"),
       error: req.flash("error"),
-      success: req.flash("success")
+      success: req.flash("success"),
     });
   } catch (err) {
     console.error(err);
@@ -55,37 +59,65 @@ const getAdminDashboard = async (req, res) => {
 
 const postVehicleLogs = async (req, res) => {
   try {
+    const currentTime = new Date();
     const licenseNumber = req.body.licenseNumber;
     const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
     if (vehicle === null) {
+      req.flash("error", "Vehicle not found");
       return res.redirect("/admin/dashboard");
     }
-
-    const vehicleLogs = await Vehicle.getVehicleLogs(
-      {
-        licenseNumber: licenseNumber,
-        exitTimeEqual: null,
-      }
-    );
-
+    const vehicleLogs = await Vehicle.getVehicleLogs({
+      licenseNumber: licenseNumber,
+      exitTimeEqual: null,
+    });
     if (vehicleLogs.length > 0) {
-      const currentTime = new Date();
       currentTime.setHours(currentTime.getHours() + 6);
+      const stayDuration = Math.floor(
+        (currentTime - vehicleLogs[0].entryTime) / 60000
+      );
+      const lateDuration = stayDuration - vehicleLogs[0].allowedDuration;
       const exitTime = currentTime;
       const vehicleLog = await Vehicle.updateVehicleLog({
         id: vehicleLogs[0].id,
-        exitTime
+        exitTime,
       });
+      if (lateDuration > 0) {
+        const allegation = await Vehicle.addVehicleAllegation({
+          logId: vehicleLogs[0].id,
+          lateDuration,
+        });
+      }
+      if (lateDuration > parseInt(process.env.MAX_TOLERABLE_LATEDURATION)) {
+        const vehicleUpdated = await Vehicle.updateVehicle({
+          licenseNumber,
+          defaultDuration: 0,
+        });
+
+        if (vehicleUpdated) {
+          req.flash("vehicle", vehicleUpdated);
+          req.flash("error", `Exceeded ${Math.floor(parseInt(process.env.MAX_TOLERABLE_LATEDURATION) / 60)} hours,Vehicle Banned automatically`);
+        }
+      }
+      const VehicleAllegation = await Vehicle.getVehicleAllegations({
+        licenseNumber: licenseNumber,
+      });
+      if (VehicleAllegation.length > parseInt(process.env.MAX_TOLERABLE_ALLEGATION)) {
+        const vehicleUpdated = await Vehicle.updateVehicle({
+          licenseNumber,
+          defaultDuration: 0,
+        });
+        if (vehicleUpdated) {
+          req.flash("vehicle", vehicleUpdated);
+          req.flash("error", `Vehicle Banned due to Allegations more than ${process.env.MAX_TOLERABLE_ALLEGATION} times`);
+        }
+      }
       req.flash("success", "Vehicle Exit Entry Added Successfully");
       return res.redirect("/admin/dashboard");
     }
-
-    console.trace("here");
-    const currentTime = new Date();
     currentTime.setHours(currentTime.getHours() + 6);
     const entryTime = currentTime;
 
-    await Vehicle.addVehicleLog({licenseNumber, entryTime});
+    await Vehicle.addVehicleLog({ licenseNumber, entryTime });
 
     req.flash("success", "Vehicle Entry Added Successfully");
     res.redirect("/admin/dashboard");
@@ -101,7 +133,7 @@ const postVehicleLogs = async (req, res) => {
 
 const addComment = async (req, res) => {
   try {
-    const {logId, comment} = req.body;
+    const { logId, comment } = req.body;
     if (comment === "") {
       req.flash("error", "Comment can't be empty");
       return res.redirect("/admin/dashboard");
@@ -113,13 +145,12 @@ const addComment = async (req, res) => {
     }
     const vehicleLogUpdated = await Vehicle.updateVehicleLog({
       id: vehicleLog.id,
-      comment
+      comment,
     });
     if (vehicleLogUpdated) {
       req.flash("success", "Comment added Successfully");
       res.redirect("/admin/dashboard");
     }
-
   } catch (err) {
     console.error(err);
   }
@@ -140,7 +171,6 @@ async function extendDuration(req, res) {
         req.flash("error", "Duration can't be more than 20 minutes");
         return res.redirect("/admin/dashboard");
       }
-
     }
     const vehicleLog = await Vehicle.findVehicleLogById(logId);
     if (vehicleLog === null) {
@@ -150,7 +180,7 @@ async function extendDuration(req, res) {
     const newAllowedDuration = vehicleLog.allowedDuration + extendedDuration;
     const vehicleLogUpdated = await Vehicle.updateVehicleLog({
       id: vehicleLog.id,
-      allowedDuration: newAllowedDuration
+      allowedDuration: newAllowedDuration,
     });
     if (vehicleLogUpdated) {
       req.flash("success", `${extendedDuration} minutes extended Successfully`);
@@ -165,13 +195,13 @@ const viewVehicleLogs = async (req, res) => {
   try {
     const vehicleLogs = await Vehicle.getVehicleLogs();
     const vehiclePromises = [];
-    for (const {licenseNumber} of vehicleLogs) {
+    for (const { licenseNumber } of vehicleLogs) {
       vehiclePromises.push(Vehicle.findVehicleByLicenseNumber(licenseNumber));
     }
     const vehicles = await Promise.all(vehiclePromises);
 
     const userPromises = [];
-    for (const {userMail} of vehicles) {
+    for (const { userMail } of vehicles) {
       userPromises.push(User.findUserByEmail(userMail));
     }
     const users = await Promise.all(userPromises);
@@ -179,7 +209,9 @@ const viewVehicleLogs = async (req, res) => {
     const flashVehicleLogs = [];
     for (const [user, log] of zip([users, vehicleLogs])) {
       const timeOfEntry = printableDateTime(log.entryTime);
-      const timeOfExit = log.exitTime ? printableDateTime(log.exitTime) : "Not Exited";
+      const timeOfExit = log.exitTime
+        ? printableDateTime(log.exitTime)
+        : "Not Exited";
 
       flashVehicleLogs.push({
         id: log.id,
@@ -189,7 +221,7 @@ const viewVehicleLogs = async (req, res) => {
         comment: log.comment,
         userId: user.id,
         phoneNumber: user.phoneNumber,
-        lateDuration: log.lateDuration
+        lateDuration: log.lateDuration,
       });
     }
 
@@ -199,12 +231,11 @@ const viewVehicleLogs = async (req, res) => {
     req.flash("appUser", appUser);
     res.render("./admin/admin.view-logs.ejs", {
       appUser: req.flash("appUser")[0],
-      vehicleLogs: req.flash("vehicleLogs")
+      vehicleLogs: req.flash("vehicleLogs"),
     });
   } catch (err) {
     console.error(err);
   }
-
 };
 
 const viewVehicleDetails = async (req, res) => {
@@ -216,10 +247,10 @@ const viewVehicleDetails = async (req, res) => {
       return res.redirect("/admin/dashboard");
     }
     const user = await User.findUserByEmail(vehicle.userMail);
-    const vehicleLogs = await Vehicle.getVehicleLogs({licenseNumber});
+    const vehicleLogs = await Vehicle.getVehicleLogs({ licenseNumber });
 
     const flashVehicleLogs = [];
-    for (const {entryTime, exitTime, comment, lateDuration} of vehicleLogs) {
+    for (const { entryTime, exitTime, comment, lateDuration } of vehicleLogs) {
       const timeOfEntry = printableDateTime(entryTime);
       const timeOfExit = exitTime ? printableDateTime(exitTime) : "Not Exited";
 
@@ -227,7 +258,7 @@ const viewVehicleDetails = async (req, res) => {
         entryTime: timeOfEntry,
         exitTime: timeOfExit,
         comment,
-        lateDuration
+        lateDuration,
       });
     }
 
@@ -244,13 +275,11 @@ const viewVehicleDetails = async (req, res) => {
       user: req.flash("user")[0],
       error: req.flash("error"),
       success: req.flash("success"),
-      appUser: req.flash("appUser")[0]
+      appUser: req.flash("appUser")[0],
     });
-
   } catch (err) {
     console.error(err);
   }
-
 };
 
 const viewUserDetails = async (req, res) => {
@@ -263,15 +292,20 @@ const viewUserDetails = async (req, res) => {
     }
     const vehicles = await Vehicle.getVehicleList({
       userMail: user.email,
-      deletedAt: null
+      deletedAt: null,
     });
     const flashVehicles = [];
-    for (const {licenseNumber, vehicleName, approvalStatus, defaultDuration} of vehicles) {
+    for (const {
+      licenseNumber,
+      vehicleName,
+      approvalStatus,
+      defaultDuration,
+    } of vehicles) {
       flashVehicles.push({
         licenseNumber,
         vehicleName,
         approvalStatus,
-        defaultDuration
+        defaultDuration,
       });
     }
     const appUser = req.user;
@@ -286,7 +320,6 @@ const viewUserDetails = async (req, res) => {
       error: req.flash("error"),
       appUser: req.flash("appUser")[0],
     });
-
   } catch (err) {
     console.error(err);
   }
@@ -306,7 +339,7 @@ const changeDuration = async (req, res) => {
     }
     const vehicleUpdated = await Vehicle.updateVehicle({
       licenseNumber,
-      defaultDuration: allowedDuration
+      defaultDuration: allowedDuration,
     });
     if (vehicleUpdated) {
       req.flash("success", "Vehicle Duration Changed Successfully");
@@ -327,7 +360,7 @@ const banVehicle = async (req, res) => {
     }
     const vehicleUpdated = await Vehicle.updateVehicle({
       licenseNumber,
-      defaultDuration: 0
+      defaultDuration: 0,
     });
     if (vehicleUpdated) {
       req.flash("vehicle", vehicleUpdated);
@@ -348,7 +381,7 @@ const unbanVehicle = async (req, res) => {
     }
     const vehicleUpdated = await Vehicle.updateVehicle({
       licenseNumber,
-      defaultDuration: 20
+      defaultDuration: 20,
     });
     if (vehicleUpdated) {
       req.flash("success", "Vehicle Unbanned Successfully");
@@ -359,12 +392,11 @@ const unbanVehicle = async (req, res) => {
   }
 };
 
-
 const getApproval = async (req, res) => {
   const vehicles = await Vehicle.getVehicleList({
-      approvalStatus: false,
-      defaultDurationFrom: 1,
-      deletedAt: null
+    approvalStatus: false,
+    defaultDurationFrom: 1,
+    deletedAt: null,
   });
   console.log(vehicles);
   const vehicleInfo = [];
@@ -377,7 +409,7 @@ const getApproval = async (req, res) => {
       approvalStatus: vehicle.approvalStatus,
       defaultDuration: vehicle.defaultDuration,
       userId: user.id,
-      userName: user.name
+      userName: user.name,
     });
   }
 
@@ -391,10 +423,9 @@ const getApproval = async (req, res) => {
   res.render("./admin/admin.approval.ejs", {
     vehicleInfo: req.flash("vehicleInfo"),
     error: req.flash("error"),
-    appUser: req.flash("appUser")[0]
+    appUser: req.flash("appUser")[0],
   });
 };
-
 
 const approve = async (req, res) => {
   const licenseNumber = req.body.licenseNumber;
@@ -405,7 +436,7 @@ const approve = async (req, res) => {
   }
   const vehicleUpdated = await Vehicle.updateVehicle({
     licenseNumber: licenseNumber,
-    approvalStatus: true
+    approvalStatus: true,
   });
   if (vehicleUpdated) {
     res.redirect("/admin/get-approval");
@@ -440,5 +471,5 @@ export {
   addComment,
   getApproval,
   approve,
-  reject
+  reject,
 };
