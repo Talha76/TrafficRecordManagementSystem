@@ -19,7 +19,7 @@ const VehicleAllegation = sequelize.define("vehicle_allegation", {
     }
   },
   lateDuration: {
-    type: DataTypes.SMALLINT.UNSIGNED,
+    type: DataTypes.INTEGER,
     allowNull: false,
     field: "late_duration"
   },

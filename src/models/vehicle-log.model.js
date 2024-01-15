@@ -32,7 +32,7 @@ const VehicleLog = sequelize.define("VehicleLog", {
   },
   comment: DataTypes.STRING,
   allowedDuration: {
-    type: DataTypes.SMALLINT.UNSIGNED,
+    type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 20,
     field: "allowed_duration"

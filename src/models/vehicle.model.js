@@ -24,7 +24,7 @@ const Vehicle = sequelize.define("Vehicle", {
     },
   },
   defaultDuration: {
-    type: DataTypes.SMALLINT.UNSIGNED,
+    type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 20,
     field: "default_duration"
