@@ -1,8 +1,9 @@
 import * as Vehicle from "../../services/vehicle.services.js";
 import * as User from "../../services/user.services.js";
-import { findVehiclesStayingUpto } from "../../services/admin.services.js";
-import { BannedVehicleError } from "../../utils/errors.js";
-import { printableDateTime, zip } from "../../utils/utility.js";
+import {findVehiclesStayingUpto} from "../../services/admin.services.js";
+import {BannedVehicleError} from "../../utils/errors.js";
+import {printableDateTime, zip} from "../../utils/utility.js";
+import {sendBanEmail, sendLateWarningEmail} from "../../services/mail.services.js";
 
 // YYYY-MM-DD HH:MM:SS
 const getAdminDashboard = async (req, res) => {
@@ -11,13 +12,13 @@ const getAdminDashboard = async (req, res) => {
 
     const vehiclePromises = [];
     const flashVehicleLogs = [];
-    for (const { licenseNumber } of vehiclesStayingCurrently) {
+    for (const {licenseNumber} of vehiclesStayingCurrently) {
       vehiclePromises.push(Vehicle.findVehicleByLicenseNumber(licenseNumber));
     }
     const vehicles = await Promise.all(vehiclePromises);
 
     const userPromises = [];
-    for (const { userMail } of vehicles) {
+    for (const {userMail} of vehicles) {
       userPromises.push(User.findUserByEmail(userMail));
     }
     const users = await Promise.all(userPromises);
@@ -27,7 +28,7 @@ const getAdminDashboard = async (req, res) => {
       vehicles,
       vehiclesStayingCurrently,
     ])) {
-      const { id, entryTime, licenseNumber, comment } = log;
+      const {id, entryTime, licenseNumber, comment} = log;
       const timeOfEntry = printableDateTime(entryTime);
       flashVehicleLogs.push({
         id,
@@ -86,12 +87,14 @@ const postVehicleLogs = async (req, res) => {
           logId: vehicleLogs[0].id,
           lateDuration,
         });
+        await sendLateWarningEmail(vehicle, vehicleLogs[0].allowedDuration);
       }
       if (lateDuration > parseInt(process.env.MAX_TOLERABLE_LATEDURATION)) {
         const vehicleUpdated = await Vehicle.updateVehicle({
           licenseNumber,
           defaultDuration: 0,
         });
+        await sendBanEmail(vehicle);
 
         if (vehicleUpdated) {
           req.flash("vehicle", vehicleUpdated);
@@ -106,6 +109,7 @@ const postVehicleLogs = async (req, res) => {
           licenseNumber,
           defaultDuration: 0,
         });
+        await sendBanEmail(vehicle);
         if (vehicleUpdated) {
           req.flash("vehicle", vehicleUpdated);
           req.flash("error", `Vehicle Banned due to Allegations more than ${process.env.MAX_TOLERABLE_ALLEGATION} times`);
@@ -117,7 +121,7 @@ const postVehicleLogs = async (req, res) => {
     currentTime.setHours(currentTime.getHours() + 6);
     const entryTime = currentTime;
 
-    await Vehicle.addVehicleLog({ licenseNumber, entryTime });
+    await Vehicle.addVehicleLog({licenseNumber, entryTime});
 
     req.flash("success", "Vehicle Entry Added Successfully");
     res.redirect("/admin/dashboard");
@@ -133,7 +137,7 @@ const postVehicleLogs = async (req, res) => {
 
 const addComment = async (req, res) => {
   try {
-    const { logId, comment } = req.body;
+    const {logId, comment} = req.body;
     if (comment === "") {
       req.flash("error", "Comment can't be empty");
       return res.redirect("/admin/dashboard");
@@ -195,13 +199,13 @@ const viewVehicleLogs = async (req, res) => {
   try {
     const vehicleLogs = await Vehicle.getVehicleLogs();
     const vehiclePromises = [];
-    for (const { licenseNumber } of vehicleLogs) {
+    for (const {licenseNumber} of vehicleLogs) {
       vehiclePromises.push(Vehicle.findVehicleByLicenseNumber(licenseNumber));
     }
     const vehicles = await Promise.all(vehiclePromises);
 
     const userPromises = [];
-    for (const { userMail } of vehicles) {
+    for (const {userMail} of vehicles) {
       userPromises.push(User.findUserByEmail(userMail));
     }
     const users = await Promise.all(userPromises);
@@ -247,10 +251,10 @@ const viewVehicleDetails = async (req, res) => {
       return res.redirect("/admin/dashboard");
     }
     const user = await User.findUserByEmail(vehicle.userMail);
-    const vehicleLogs = await Vehicle.getVehicleLogs({ licenseNumber });
+    const vehicleLogs = await Vehicle.getVehicleLogs({licenseNumber});
 
     const flashVehicleLogs = [];
-    for (const { entryTime, exitTime, comment, lateDuration } of vehicleLogs) {
+    for (const {entryTime, exitTime, comment, lateDuration} of vehicleLogs) {
       const timeOfEntry = printableDateTime(entryTime);
       const timeOfExit = exitTime ? printableDateTime(exitTime) : "Not Exited";
 
