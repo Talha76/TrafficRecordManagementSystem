@@ -134,13 +134,6 @@ dist
 # qodana files
 qodana.yaml
 
-# public css, js scripts
-*assets
-*asset
-*Assets
-*Asset
-*.min*
-
 *models-creation-script.js
 
 *tmp.js
