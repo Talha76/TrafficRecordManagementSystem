@@ -442,32 +442,47 @@ async function generateReport(req, res) {
   res.json(req.body);
 }
 
-const approveAll = async (req, res) => {
-
-  try {
-    console.log("+++++++++++++++++++++++++++++++");
-    console.log(req);
-    // res.redirect("/admin/get-approval");
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-const rejectAll = async (req, res) => {
-  try {
-    console.log("------------------------");
-    console.log(req.body);
-    // res.redirect("/admin/get-approval");
-  } catch (err) {
-    console.error(err);
-  }
-}
-
 
 const postApproval = async (req, res) => {
+  const action = req.body.action;
+
   console.log("post approval");
+  console.log(action);
   console.log(req.body);
-}
+  
+  let licenseNumbers = req.body.formCheck;
+  console.log(licenseNumbers);
+
+  try{
+    if(action === "approve") {
+      for(let i=0; i<licenseNumbers.length; i++) {
+        const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumbers[i]);
+        if (vehicle === null) {
+          return res.redirect("/admin/dashboard");
+        }
+        await Vehicle.updateVehicle({
+          licenseNumber: licenseNumbers[i],
+          approvalStatus: true,
+        });
+      }
+    } else {
+      for(let i=0; i<licenseNumbers.length; i++) {
+        const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumbers[i]);
+        if (vehicle === null) {
+          return res.redirect("/admin/dashboard");
+        }
+        await Vehicle.updateVehicle({
+          licenseNumber: licenseNumbers[i],
+          defaultDuration: 0,
+        });
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
+  res.redirect("/admin/get-approval");
+};
 export {
   generateReport,
   getGenerateReport,
@@ -482,7 +497,5 @@ export {
   postVehicleLogs,
   addComment,
   getApproval,
-  approve,
-  reject,
   postApproval
 };
