@@ -136,4 +136,11 @@ qodana.yaml
 
 *models-creation-script.js
 
-*tmp.js
+tmp.js
+
+# Latex output files
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.pdf
