@@ -26,4 +26,7 @@ router.post("/reject", isLoggedIn, isAdmin, adminController.reject);
 router.get("/generate-report", isLoggedIn, isAdmin,isSCO,adminController.getGenerateReport);
 router.post("/generate-report", isLoggedIn, isAdmin,isSCO, adminController.generateReport);
 
+router.post("/get-approval", isLoggedIn, isAdmin, adminController.postApproval);
+// router.post("/approveall", isLoggedIn, isAdmin, adminController.approveAll);
+// router.post("/rejectall", isLoggedIn, isAdmin, adminController.rejectAll);
 export default router;

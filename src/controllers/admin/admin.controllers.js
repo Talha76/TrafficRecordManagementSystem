@@ -366,7 +366,7 @@ const getApproval = async (req, res) => {
     defaultDurationFrom: 1,
     deletedAt: null,
   });
-  console.log(vehicles);
+  // console.log(vehicles);
   const vehicleInfo = [];
   // need to fetch the user id and names too in the vehicleInfo
   for (const vehicle of vehicles) {
@@ -385,7 +385,7 @@ const getApproval = async (req, res) => {
   appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
   req.flash("appUser", appUser);
 
-  console.log(vehicleInfo);
+  // console.log(vehicleInfo);
   req.flash("vehicleInfo", vehicleInfo);
 
   res.render("./admin/admin.approval.ejs", {
@@ -395,6 +395,7 @@ const getApproval = async (req, res) => {
     appUser: req.flash("appUser")[0],
   });
 };
+
 
 const approve = async (req, res) => {
   const licenseNumber = req.body.licenseNumber;
@@ -440,6 +441,33 @@ async function getGenerateReport(req, res) {
 async function generateReport(req, res) {
   res.json(req.body);
 }
+
+const approveAll = async (req, res) => {
+
+  try {
+    console.log("+++++++++++++++++++++++++++++++");
+    console.log(req);
+    // res.redirect("/admin/get-approval");
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const rejectAll = async (req, res) => {
+  try {
+    console.log("------------------------");
+    console.log(req.body);
+    // res.redirect("/admin/get-approval");
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+const postApproval = async (req, res) => {
+  console.log("post approval");
+  console.log(req.body);
+}
 export {
   generateReport,
   getGenerateReport,
@@ -456,4 +484,5 @@ export {
   getApproval,
   approve,
   reject,
+  postApproval
 };
