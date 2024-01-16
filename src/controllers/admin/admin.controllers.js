@@ -431,16 +431,58 @@ const reject = async (req, res) => {
 
 
 async function getGenerateReport(req, res) {
-  res.render("./admin/reportGEneration.ejs", {
-    error: req.flash("error"),
-    success: req.flash("success"),
-  });
+  try {
+    const appUser = req.user;
+    appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
+    req.flash("appUser", appUser);
+    res.render("./admin/reportGEneration.ejs", {
+      error: req.flash("error"),
+      success: req.flash("success"),
+      appUser: req.flash("appUser")[0],
+    });
+  } catch (err) {
+    console.error(err);
+
+    req.flash("error", err.message);
+    return res.redirect("/admin/dashboard");
+  }
 }
 
 async function generateReport(req, res) {
   res.json(req.body);
 }
+
+async function getUserVehicleList(req, res) {
+  const vehicles = await Vehicle.getVehicleList({
+    deletedAt: null,
+  });
+  const flashVehicles = [];
+  for (const {
+    licenseNumber,
+    userMail,
+    defaultDuration
+  } of vehicles) {
+    const user = await User.findUserByEmail(userMail);
+    flashVehicles.push({
+      licenseNumber,
+      userId: user.id,
+      banStatus: defaultDuration === 0 ? "Banned" : "Eligible",
+    });
+  }
+  const appUser = req.user;
+  appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
+  req.flash("appUser", appUser);
+
+  req.flash("vehicles", flashVehicles);
+  res.render("./admin/user-vehicle-list.ejs", {
+    vehicles: req.flash("vehicles"),
+    error: req.flash("error"),
+    success: req.flash("success"),
+    appUser: req.flash("appUser")[0],
+  });
+}
 export {
+  getUserVehicleList,
   generateReport,
   getGenerateReport,
   extendDuration,
