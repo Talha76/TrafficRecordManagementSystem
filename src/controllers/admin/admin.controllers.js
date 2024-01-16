@@ -456,7 +456,29 @@ async function getGenerateReport(req, res) {
 }
 
 async function generateReport(req, res) {
-  res.json(req.body);
+
+  const { licenseNumber,userId,carType,from,to } = req.body;
+  console.trace(licenseNumber,userId,carType,from,to);
+  try{
+  if(licenseNumber === "" && userId === "" && carType === "" && from === "" && to === "") {
+    req.flash("error", "Please enter at least one field");
+    return res.redirect("/admin/generate-report");
+  }
+  if(licenseNumber){
+    const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
+    if (vehicle === null) {
+      req.flash("error", "Vehicle not found");
+      return res.redirect("/admin/generate-report");
+    }
+    const vehicleLogs = await Vehicle.getVehicleLogs({
+      licenseNumber: licenseNumber,
+      exitTimeEqual: null,
+    });
+    
+  }
+} catch (err) {
+   console.error(err);
+}
 }
 
 async function getUserVehicleList(req, res) {
