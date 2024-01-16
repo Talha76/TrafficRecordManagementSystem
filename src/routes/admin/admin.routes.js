@@ -27,4 +27,5 @@ router.get("/generate-report", isLoggedIn, isAdmin,isSCO,adminController.getGene
 router.post("/generate-report", isLoggedIn, isAdmin,isSCO, adminController.generateReport);
 router.get("/user-vehicle-list", isLoggedIn, isAdmin, isSCO, adminController.getUserVehicleList);
 
+router.post("/get-approval", isLoggedIn, isAdmin, adminController.postApproval);
 export default router;

@@ -366,35 +366,42 @@ const getApproval = async (req, res) => {
     defaultDurationFrom: 1,
     deletedAt: null,
   });
-  console.log(vehicles);
+  // console.log(vehicles);
   const vehicleInfo = [];
   // need to fetch the user id and names too in the vehicleInfo
-  for (const vehicle of vehicles) {
-    const user = await User.findUserByEmail(vehicle.userMail);
-    vehicleInfo.push({
-      licenseNumber: vehicle.licenseNumber,
-      vehicleName: vehicle.vehicleName,
-      approvalStatus: vehicle.approvalStatus,
-      defaultDuration: vehicle.defaultDuration,
-      userId: user.id,
-      userName: user.name,
-    });
-  }
+  if (vehicles) {
+    for (const vehicle of vehicles) {
+      const user = await User.findUserByEmail(vehicle.userMail);
+      vehicleInfo.push({
+        licenseNumber: vehicle.licenseNumber,
+        vehicleName: vehicle.vehicleName,
+        approvalStatus: vehicle.approvalStatus,
+        defaultDuration: vehicle.defaultDuration,
+        userId: user.id,
+        userName: user.name,
+      });
+    }
+  } 
+
+  // if(vehicleInfo.length === 0) {
+  //   req.flash("error", "No vehicle found");
+  //   return res.redirect("/admin/dashboard");
+  // }
 
   const appUser = req.user;
   appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
   req.flash("appUser", appUser);
-
-  console.log(vehicleInfo);
-  req.flash("vehicleInfo", vehicleInfo);
+  // req.flash("vehicleInfo", vehicleInfo);
 
   res.render("./admin/admin.approval.ejs", {
-    vehicleInfo: req.flash("vehicleInfo"),
+    vehicleInfo,
+    // vehicleInfo: vehicleInfo ? req.flash("vehicleInfo") : [],
     error: req.flash("error"),
     success: req.flash("success"),
-    appUser: req.flash("appUser")[0],
+    appUser: appUser ? req.flash("appUser")[0] : null,
   });
 };
+
 
 const approve = async (req, res) => {
   const licenseNumber = req.body.licenseNumber;
@@ -483,6 +490,102 @@ async function getUserVehicleList(req, res) {
   });
 }
 
+
+
+const postApproval = async (req, res) => {
+  const action = req.body.action;
+
+  console.log("post approval");
+  console.log(action);
+  console.log(req.body);
+  
+  let licenseNumbers = [];
+  licenseNumbers = req.body.formCheck;
+
+  if (!Array.isArray(licenseNumbers)) {
+    licenseNumbers = [licenseNumbers];
+  }
+
+  console.log(licenseNumbers);
+
+  try{
+    if(action === "approve") {
+      for(let i=0; i<licenseNumbers.length; i++) {
+        const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumbers[i]);
+        if (vehicle === null) {
+          return res.redirect("/admin/get-approval");
+        }
+        await Vehicle.updateVehicle({
+          licenseNumber: licenseNumbers[i],
+          approvalStatus: true,
+        });
+      }
+    } else {
+      for(let i=0; i<licenseNumbers.length; i++) {
+        const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumbers[i]);
+        if (vehicle === null) {
+          return res.redirect("/admin/get-approval");
+        }
+        await Vehicle.updateVehicle({
+          licenseNumber: licenseNumbers[i],
+          approvalStatus: true,
+          defaultDuration: 0,
+        });
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
+  res.redirect("/admin/get-approval");
+};
+
+
+// const postApproval = async (req, res) => {
+//   try {
+//     const vehicles = await Vehicle.getVehicleList({
+//       approvalStatus: false,
+//       defaultDurationFrom: 1,
+//       deletedAt: null,
+//     });
+
+//     if (!vehicles || vehicles.length === 0) {
+//       req.flash("error", "No vehicles found");
+//       return res.redirect("/admin/dashboard");
+//     }
+
+//     const vehicleInfo = [];
+//     // need to fetch the user id and names too in the vehicleInfo
+//     for (const vehicle of vehicles) {
+//       const user = await User.findUserByEmail(vehicle.userMail);
+//       vehicleInfo.push({
+//         licenseNumber: vehicle.licenseNumber,
+//         vehicleName: vehicle.vehicleName,
+//         approvalStatus: vehicle.approvalStatus,
+//         defaultDuration: vehicle.defaultDuration,
+//         userId: user.id,
+//         userName: user.name,
+//       });
+//     }
+
+//     const appUser = req.user;
+//     appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
+//     req.flash("appUser", appUser);
+//     req.flash("vehicleInfo", vehicleInfo);
+
+//     res.render("./admin/admin.approval.ejs", {
+//       vehicleInfo: vehicleInfo ? req.flash("vehicleInfo") : [],
+//       error: req.flash("error"),
+//       success: req.flash("success"),
+//       appUser: appUser ? req.flash("appUser")[0] : null,
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     req.flash("error", err.message);
+//     return res.redirect("/admin/dashboard");
+//   }
+// };
+
 export {
   getUserVehicleList,
   generateReport,
@@ -498,6 +601,7 @@ export {
   postVehicleLogs,
   addComment,
   getApproval,
+  postApproval,
   approve,
   reject,
 };
