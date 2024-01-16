@@ -1,4 +1,3 @@
-import Vehicle from "../models/vehicle.model.js";
 import VehicleLog from "../models/vehicle-log.model.js";
 import VehicleAllegation from "../models/vehicle-allegation.model.js";
 import {Op} from "sequelize";
@@ -15,6 +14,8 @@ import {
   VehicleLogNotFoundError,
   VehicleNotFoundError,
 } from "../utils/errors.js";
+import {sendBanEmail, sendLateWarningEmail} from "./mail.services.js";
+import Vehicle from "../models/vehicle.model.js";
 
 dotenv.config();
 
@@ -297,7 +298,7 @@ export async function addVehicleLog(opts) {
 
 /**
  * Updates a vehicle log
- * @param opts - {id, entryTime, exitTime(optional), allowedDuration(optional), comment(optional)}
+ * @param opts - {id(required), entryTime(optional), exitTime(optional), allowedDuration(optional), comment(optional)}
  * @returns {Promise<Model<any, TModelAttributes>>}
  * @throws {VehicleLogNotFoundError}
  */
@@ -481,4 +482,64 @@ export async function getVehicleAllegations(opts) {
   }
 
   return await VehicleAllegation.findAll({where: queries});
+}
+
+/**
+ * Add a vehicle exit to the database
+ * @param vehicleLog - vehicle log object
+ * @param exitTime - Date object
+ * @returns {Promise<{late: boolean, exceedMaxParkingLimit: boolean, exceedAllegationLimit: boolean}>}
+ */
+export async function addVehicleExit(vehicleLog, exitTime) {
+  if (typeof vehicleLog === "undefined") throw new NotProvidedError("vehicleLog");
+  if (typeof exitTime === "undefined") throw new NotProvidedError("exitTime");
+  if (vehicleLog === null) throw new NullValueError("vehicleLog");
+  if (exitTime === null) throw new NullValueError("exitTime");
+
+  vehicleLog.exitTime = exitTime;
+  await vehicleLog.save();
+
+  let late = false;
+  let exceedMaxParkingLimit = false;
+  let exceedAllegationLimit = false;
+
+  const vehicle = await Vehicle.findOne({
+    where: {
+      licenseNumber: vehicleLog.licenseNumber
+    }
+  });
+
+  const lateDuration = Math.floor(Math.max(0, (exitTime - vehicleLog.entryTime) / 1000 / 60 - vehicleLog.allowedDuration));
+  if (lateDuration > 0) {
+    late = true;
+    await Promise.all([
+      sendLateWarningEmail(vehicle.userMail, vehicle.licenseNumber, vehicleLog.allowedDuration),
+      VehicleAllegation.create({
+        logId: vehicleLog.id,
+        lateDuration,
+        comment: vehicleLog.comment
+      })
+    ]);
+  }
+
+  if (lateDuration > parseInt(process.env.MAX_TOLERABLE_LATEDURATION)) {
+    exceedMaxParkingLimit = true;
+    vehicle.defaultDuration = 0;
+    await Promise.all([
+      sendBanEmail(vehicle.userMail, vehicle.licenseNumber),
+      vehicle.save()
+    ]);
+  }
+
+  const allegations = await getVehicleAllegations({licenseNumber: vehicleLog.licenseNumber});
+  if (allegations.length > parseInt(process.env.MAX_TOLERABLE_ALLEGATION)) {
+    exceedAllegationLimit = true;
+    vehicle.defaultDuration = 0;
+    await Promise.all([
+      sendBanEmail(vehicle.userMail, vehicle.licenseNumber),
+      vehicle.save()
+    ]);
+  }
+
+  return {late, exceedMaxParkingLimit, exceedAllegationLimit};
 }

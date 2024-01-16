@@ -189,16 +189,17 @@
     </div>
 </nav>
 
-<% if (error.length > 0) { %>
+<% for (const err of error) { %>
     <div class="alert alert-danger" role="alert"
          style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;display: flex;justify-content: space-between;">
-        <strong><%= error; %></strong>
+        <strong><%= err; %></strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-<% } if (success.length > 0) { %>
+<% } %>
+<% for (const message of success) { %>
     <div class="alert alert-success" role="alert"
          style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;display: flex;justify-content: space-between;">
-        <strong><%= success; %></strong>
+        <strong><%= message; %></strong>
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 <% } %>

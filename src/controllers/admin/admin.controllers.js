@@ -3,7 +3,6 @@ import * as User from "../../services/user.services.js";
 import {findVehiclesStayingUpto} from "../../services/admin.services.js";
 import {BannedVehicleError} from "../../utils/errors.js";
 import {printableDateTime, zip} from "../../utils/utility.js";
-import {sendBanEmail, sendLateWarningEmail} from "../../services/mail.services.js";
 
 // YYYY-MM-DD HH:MM:SS
 const getAdminDashboard = async (req, res) => {
@@ -23,11 +22,7 @@ const getAdminDashboard = async (req, res) => {
     }
     const users = await Promise.all(userPromises);
 
-    for (const [user, vehicle, log] of zip([
-      users,
-      vehicles,
-      vehiclesStayingCurrently,
-    ])) {
+    for (const [user, vehicle, log] of zip([users, vehicles, vehiclesStayingCurrently])) {
       const {id, entryTime, licenseNumber, comment} = log;
       const timeOfEntry = printableDateTime(entryTime);
       flashVehicleLogs.push({
@@ -40,8 +35,6 @@ const getAdminDashboard = async (req, res) => {
         extendedDuration: log.allowedDuration - vehicle.defaultDuration,
       });
     }
-
-    console.log(flashVehicleLogs);
 
     if (flashVehicleLogs.length > 0) req.flash("vehicleLogs", flashVehicleLogs);
     const appUser = req.user;
@@ -61,6 +54,7 @@ const getAdminDashboard = async (req, res) => {
 const postVehicleLogs = async (req, res) => {
   try {
     const currentTime = new Date();
+    currentTime.setHours(currentTime.getHours() + 6);
     const licenseNumber = req.body.licenseNumber;
     const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
     if (vehicle === null) {
@@ -72,53 +66,21 @@ const postVehicleLogs = async (req, res) => {
       exitTimeEqual: null,
     });
     if (vehicleLogs.length > 0) {
-      currentTime.setHours(currentTime.getHours() + 6);
-      const stayDuration = Math.floor(
-        (currentTime - vehicleLogs[0].entryTime) / 60000
-      );
-      const lateDuration = stayDuration - vehicleLogs[0].allowedDuration;
-      const exitTime = currentTime;
-      const vehicleLog = await Vehicle.updateVehicleLog({
-        id: vehicleLogs[0].id,
-        exitTime,
-      });
-      if (lateDuration > 0) {
-        const allegation = await Vehicle.addVehicleAllegation({
-          logId: vehicleLogs[0].id,
-          lateDuration,
-        });
-        await sendLateWarningEmail(vehicle, vehicleLogs[0].allowedDuration);
-      }
-      if (lateDuration > parseInt(process.env.MAX_TOLERABLE_LATEDURATION)) {
-        const vehicleUpdated = await Vehicle.updateVehicle({
-          licenseNumber,
-          defaultDuration: 0,
-        });
-        await sendBanEmail(vehicle);
+      const {
+        exceedMaxParkingLimit,
+        exceedAllegationLimit
+      } = await Vehicle.addVehicleExit(vehicleLogs[0], currentTime);
 
-        if (vehicleUpdated) {
-          req.flash("vehicle", vehicleUpdated);
-          req.flash("error", `Exceeded ${Math.floor(parseInt(process.env.MAX_TOLERABLE_LATEDURATION) / 60)} hours,Vehicle Banned automatically`);
-        }
+      if (exceedMaxParkingLimit) {
+        req.flash("error", `Vehicle has been banned due to exceeding ${parseInt(process.env.MAX_TOLERABLE_LATEDURATION) / 60} hours`);
       }
-      const VehicleAllegation = await Vehicle.getVehicleAllegations({
-        licenseNumber: licenseNumber,
-      });
-      if (VehicleAllegation.length > parseInt(process.env.MAX_TOLERABLE_ALLEGATION)) {
-        const vehicleUpdated = await Vehicle.updateVehicle({
-          licenseNumber,
-          defaultDuration: 0,
-        });
-        await sendBanEmail(vehicle);
-        if (vehicleUpdated) {
-          req.flash("vehicle", vehicleUpdated);
-          req.flash("error", `Vehicle Banned due to Allegations more than ${process.env.MAX_TOLERABLE_ALLEGATION} times`);
-        }
+      if (exceedAllegationLimit) {
+        req.flash("error", `Vehicle has been banned due to violating parking time limit for ${process.env.MAX_TOLERABLE_ALLEGATION} times`);
       }
+
       req.flash("success", "Vehicle Exit Entry Added Successfully");
       return res.redirect("/admin/dashboard");
     }
-    currentTime.setHours(currentTime.getHours() + 6);
     const entryTime = currentTime;
 
     await Vehicle.addVehicleLog({licenseNumber, entryTime});
@@ -328,6 +290,7 @@ const viewUserDetails = async (req, res) => {
     console.error(err);
   }
 };
+
 const changeDuration = async (req, res) => {
   try {
     const licenseNumber = req.params.licenseNumber;
@@ -375,6 +338,7 @@ const banVehicle = async (req, res) => {
     console.error(err);
   }
 };
+
 const unbanVehicle = async (req, res) => {
   try {
     const licenseNumber = req.params.licenseNumber;
@@ -427,6 +391,7 @@ const getApproval = async (req, res) => {
   res.render("./admin/admin.approval.ejs", {
     vehicleInfo: req.flash("vehicleInfo"),
     error: req.flash("error"),
+    success: req.flash("success"),
     appUser: req.flash("appUser")[0],
   });
 };
@@ -443,6 +408,7 @@ const approve = async (req, res) => {
     approvalStatus: true,
   });
   if (vehicleUpdated) {
+    req.flash("success", "Vehicle Approved Successfully");
     res.redirect("/admin/get-approval");
   }
 };
@@ -458,6 +424,7 @@ const reject = async (req, res) => {
     defaultDuration: 0,
   });
   if (vehicleUpdated) {
+    req.flash("success", "Vehicle Rejected Successfully");
     res.redirect("/admin/get-approval");
   }
 };

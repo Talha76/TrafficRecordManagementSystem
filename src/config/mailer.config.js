@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export default nodemailer.createTransport({
+const mailer = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
   port: process.env.MAIL_PORT,
   auth: {
@@ -11,3 +11,5 @@ export default nodemailer.createTransport({
     pass: process.env.MAIL_PASS,
   }
 });
+
+export default mailer;
