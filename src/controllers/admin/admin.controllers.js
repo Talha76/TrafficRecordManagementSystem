@@ -429,7 +429,6 @@ const reject = async (req, res) => {
   }
 };
 
-
 async function getGenerateReport(req, res) {
   try {
     const appUser = req.user;
@@ -456,6 +455,7 @@ async function getUserVehicleList(req, res) {
   const vehicles = await Vehicle.getVehicleList({
     deletedAt: null,
   });
+
   const flashVehicles = [];
   for (const {
     licenseNumber,
@@ -469,6 +469,7 @@ async function getUserVehicleList(req, res) {
       banStatus: defaultDuration === 0 ? "Banned" : "Eligible",
     });
   }
+
   const appUser = req.user;
   appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
   req.flash("appUser", appUser);
@@ -481,6 +482,7 @@ async function getUserVehicleList(req, res) {
     appUser: req.flash("appUser")[0],
   });
 }
+
 export {
   getUserVehicleList,
   generateReport,
