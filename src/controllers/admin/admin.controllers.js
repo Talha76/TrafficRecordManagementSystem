@@ -441,7 +441,7 @@ async function getGenerateReport(req, res) {
     const appUser = req.user;
     appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
     req.flash("appUser", appUser);
-    res.render("./admin/reportGEneration.ejs", {
+    res.render("./admin/reportGeneration.ejs", {
       error: req.flash("error"),
       success: req.flash("success"),
       appUser: req.flash("appUser")[0],
