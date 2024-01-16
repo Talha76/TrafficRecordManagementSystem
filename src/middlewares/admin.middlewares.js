@@ -13,3 +13,11 @@ export function isStudent(req, res, next) {
   }
   return next();
 }
+
+export function isSCO(req, res, next) {
+  const user = req.user;
+  if (typeof user.designation !== "undefined" && user.designation === "sco") {
+    return next();
+  }
+  res.status(401).render("error/401.ejs", {url: "/"});
+}

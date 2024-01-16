@@ -1,6 +1,6 @@
 import * as adminController from "../../controllers/admin/admin.controllers.js";
 import {isLoggedIn} from "../../middlewares/user.middlewares.js";
-import {isAdmin} from "../../middlewares/admin.middlewares.js";
+import {isAdmin, isSCO} from "../../middlewares/admin.middlewares.js";
 import {Router} from "express";
 
 const router = Router();
@@ -23,5 +23,7 @@ router.get("/get-approval", isLoggedIn, isAdmin, adminController.getApproval);
 router.get("/approve/:licenseNumber", isLoggedIn, isAdmin, adminController.approve);
 router.post("/approve", isLoggedIn, isAdmin, adminController.approve);
 router.post("/reject", isLoggedIn, isAdmin, adminController.reject);
+router.get("/generate-report", isLoggedIn, isAdmin,isSCO,adminController.getGenerateReport);
+router.post("/generate-report", isLoggedIn, isAdmin,isSCO, adminController.generateReport);
 
 export default router;
