@@ -145,19 +145,6 @@
                             id="logout"
                             href="/logout"
                             style="
-                                ><span style="color: rgb(10, 54, 34)"
-                                    >Pending Request</span
-                                    ></a
-                                >
-                            </li>
-                            <% } %>
-                        <li class="nav-item">
-                            <a
-                                class="nav-link"
-                                data-bss-hover-animate="pulse"
-                                id="logout"
-                                href="/logout"
-                                style="
                                     padding-left: 52px;
                                     --bs-body-font-size: -14rem;
                                     font-size: 20px;
@@ -174,7 +161,7 @@
                                     class="nav-link"
                                     data-bss-hover-animate="pulse"
                                     id="logout"
-                                    href="#"
+                                    href="/logout"
                                     style="
                                             padding-left: 52px;
                                             --bs-body-font-size: -14rem;
@@ -221,29 +208,27 @@
                             margin-top: 20px;
                             margin-left: 100px;
                             background: rgb(27, 66, 123);
-                            font-weight: bold;
                         "
                         name="action"
                         value="approve"
                     >
-                        Approve Selected</button>
+                        Approve All</button>
                     
             
                     <% vehicles.push("adadawd");%>
                     <button
                         class="btn btn-primary"
                         id="rejectButton"
-                        type="button"
+                        type="submit"
                         style="
                             margin-top: 20px;
                             margin-left: 10px;
                             background: rgb(27, 66, 123);
-                            font-weight: bold;
                         "
                         name="action"
                         value="reject"
                     >
-                        Reject Selected
+                        Reject All
                     </button>
                 </div>
                 <div
@@ -338,7 +323,13 @@
                                 </th>
                             </tr>
                         </thead>
-    
+                        <% if(!vehicles || vehicles.length === 0) {%>
+                            <tr>
+                                <td colspan="6" style="text-align: center; font-size: 20px; font-weight: bold; color: var(--bs-danger-text-emphasis)">
+                                    No pending request
+                                </td>
+                            </tr>
+                        <% } else {%>
                         <tbody style="width: 80%; height: initial">
                             <% for (let i = 0; i < vehicleInfo.length; i++) { %>
                             <tr
@@ -383,14 +374,16 @@
                                     style="box-shadow: 0px 0px 5px 0px"
                                     name="userId"
                                 >
-                                    <a href="/admin/view-user-details/<%= vehicleInfo[i].userId %>"><%= vehicleInfo[i].userId %></a>
+                                    <a style="color: var(--bs-danger-text-emphasis)" 
+                                    href="/admin/view-user-details/<%= vehicleInfo[i].userId %>"><%= vehicleInfo[i].userId %></a>
                                 </td>
                                 <td
                                     id="licenseNumber"
                                     style="box-shadow: 0px 0px 5px 0px"
                                     name="licenseNumber"
                                 >
-                                    <a href="/view-vehicle-details/<%= vehicleInfo[i].licenseNumber %>"
+                                    <a style="color: var(--bs-danger-text-emphasis)"  
+                                    href="/view-vehicle-details/<%= vehicleInfo[i].licenseNumber %>"
                                         ><%= vehicleInfo[i].licenseNumber %></a
                                     >
                                 </td>
@@ -441,6 +434,7 @@
                             </tr>
                             <% } %>
                         </tbody>
+                        <% } %>
                     </table>
                 </div>
         </div>
@@ -502,7 +496,7 @@
                 for (var i = 0; i < checkboxes.length; i++) {
                     if (checkboxes[i].checked) {
                         checked = true;
-                        break;
+                        vehicles.push(checkboxes[i].value);
                     }
                 }
                 if (!checked) {

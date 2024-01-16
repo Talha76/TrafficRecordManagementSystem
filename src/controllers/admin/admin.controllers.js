@@ -369,30 +369,39 @@ const getApproval = async (req, res) => {
   // console.log(vehicles);
   const vehicleInfo = [];
   // need to fetch the user id and names too in the vehicleInfo
-  for (const vehicle of vehicles) {
-    const user = await User.findUserByEmail(vehicle.userMail);
-    vehicleInfo.push({
-      licenseNumber: vehicle.licenseNumber,
-      vehicleName: vehicle.vehicleName,
-      approvalStatus: vehicle.approvalStatus,
-      defaultDuration: vehicle.defaultDuration,
-      userId: user.id,
-      userName: user.name,
-    });
+  if (vehicles) {
+    for (const vehicle of vehicles) {
+      const user = await User.findUserByEmail(vehicle.userMail);
+      vehicleInfo.push({
+        licenseNumber: vehicle.licenseNumber,
+        vehicleName: vehicle.vehicleName,
+        approvalStatus: vehicle.approvalStatus,
+        defaultDuration: vehicle.defaultDuration,
+        userId: user.id,
+        userName: user.name,
+      });
+    }
+  } else {
+    req.flash("error", "No vehicle found");
+    return res.redirect("/admin/dashboard");
   }
 
   const appUser = req.user;
   appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
-  req.flash("appUser", appUser);
-
-  // console.log(vehicleInfo);
-  req.flash("vehicleInfo", vehicleInfo);
+  if (appUser) {
+    req.flash("appUser", appUser);
+  }
+  // // console.log(vehicleInfo);
+  // req.flash("vehicleInfo", vehicleInfo);
+  if (vehicleInfo) {
+    req.flash("vehicleInfo", vehicleInfo);
+  }
 
   res.render("./admin/admin.approval.ejs", {
-    vehicleInfo: req.flash("vehicleInfo"),
+    vehicleInfo: vehicleInfo ? req.flash("vehicleInfo") : [],
     error: req.flash("error"),
     success: req.flash("success"),
-    appUser: req.flash("appUser")[0],
+    appUser: appUser ? req.flash("appUser")[0] : null,
   });
 };
 
@@ -493,7 +502,13 @@ const postApproval = async (req, res) => {
   console.log(action);
   console.log(req.body);
   
-  let licenseNumbers = req.body.formCheck;
+  let licenseNumbers = [];
+  licenseNumbers = req.body.formCheck;
+
+  if (!Array.isArray(licenseNumbers)) {
+    licenseNumbers = [licenseNumbers];
+  }
+
   console.log(licenseNumbers);
 
   try{
@@ -501,7 +516,7 @@ const postApproval = async (req, res) => {
       for(let i=0; i<licenseNumbers.length; i++) {
         const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumbers[i]);
         if (vehicle === null) {
-          return res.redirect("/admin/dashboard");
+          return res.redirect("/admin/get-approval");
         }
         await Vehicle.updateVehicle({
           licenseNumber: licenseNumbers[i],
@@ -512,10 +527,11 @@ const postApproval = async (req, res) => {
       for(let i=0; i<licenseNumbers.length; i++) {
         const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumbers[i]);
         if (vehicle === null) {
-          return res.redirect("/admin/dashboard");
+          return res.redirect("/admin/get-approval");
         }
         await Vehicle.updateVehicle({
           licenseNumber: licenseNumbers[i],
+          approvalStatus: true,
           defaultDuration: 0,
         });
       }
@@ -526,6 +542,7 @@ const postApproval = async (req, res) => {
 
   res.redirect("/admin/get-approval");
 };
+
 export {
   getUserVehicleList,
   generateReport,
@@ -541,5 +558,7 @@ export {
   postVehicleLogs,
   addComment,
   getApproval,
-  postApproval
+  postApproval,
+  approve,
+  reject,
 };
