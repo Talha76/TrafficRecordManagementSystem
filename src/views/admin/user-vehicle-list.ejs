@@ -1,28 +1,31 @@
 <!DOCTYPE html>
-<html data-bs-theme="light" lang="en">
+<html data-bs-theme="light" lang="en" style="height: 100%; width: 100%">
 <head>
     <meta charset="utf-8"/>
     <meta
             name="viewport"
             content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
     />
-    <title>userDetails</title>
+    <title>viewLogsAdmin</title>
     <link
             rel="stylesheet"
-            href="/userDetailsAssets/bootstrap/css/bootstrap.min.css"
+            href="/adminViewLogsAssets/bootstrap/css/bootstrap.min.css"
     />
     <link
             rel="stylesheet"
-            href="/userDetailsAssets/css/bs-theme-overrides.css"
-    />
-    <link rel="stylesheet" href="/userDetailsAssets/css/animate.min.css"/>
-    <link
-            rel="stylesheet"
-            href="/userDetailsAssets/css/Lightbox-Gallery-No-Gutters-baguetteBox.min.css"
+            href="/adminViewLogsAssets/css/bs-theme-overrides.css"
     />
     <link
             rel="stylesheet"
-            href="/userDetailsAssets/css/Navbar-Right-Links-Dark-icons.css"
+            href="/adminViewLogsAssets/css/animate.min.css"
+    />
+    <link
+            rel="stylesheet"
+            href="/adminViewLogsAssets/css/Lightbox-Gallery-No-Gutters-baguetteBox.min.css"
+    />
+    <link
+            rel="stylesheet"
+            href="/adminViewLogsAssets/css/Navbar-Right-Links-Dark-icons.css"
     />
 </head>
 
@@ -31,10 +34,7 @@
 			width: 100%;
 			filter: brightness(100%);
 			text-align: center;
-			border-top-right-radius: 6px;
-			border-top-left-radius: 6px;
-			border-bottom-right-radius: 6px;
-			border-bottom-left-radius: 6px;
+			height: 100%;
 		"
 >
 <nav
@@ -112,7 +112,7 @@
                     <a
                             class="nav-link active"
                             data-bss-hover-animate="pulse"
-                            id="view_logs-1"
+                            id="view_logs"
                             href="/admin/view-vehicle-logs"
                             style="
 									padding-left: 52px;
@@ -145,25 +145,7 @@
                             ></a
                         >
                     </li>
-					<% } %>
-					<li class="nav-item">
-						<a
-								class="nav-link"
-								data-bss-hover-animate="pulse"
-								id="VehicleList"
-								href="/admin/user-vehicle-list"
-								style="
-									padding-left: 52px;
-									--bs-body-font-size: -14rem;
-									font-size: 20px;
-									text-shadow: 0px 0px 1px;
-									color: var(--bs-emphasis-color);
-								"
-						><span style="color: rgb(10, 54, 34)"
-							>Vehicles</span
-							></a
-						>
-					</li>
+                <% } %>
                 <li class="nav-item">
                     <a
                             class="nav-link"
@@ -189,146 +171,104 @@
                             id="logout"
                             href="#"
                             style="
-											padding-left: 52px;
-											--bs-body-font-size: -14rem;
-											font-size: 20px;
-											text-shadow: 0px 0px 1px;
-											color: var(--bs-emphasis-color);
-										"
+									padding-left: 52px;
+									--bs-body-font-size: -14rem;
+									font-size: 20px;
+									text-shadow: 0px 0px 1px;
+									color: var(--bs-emphasis-color);
+								"
                     ><span style="color: rgb(10, 54, 34)"
                         ><%= appUser.name; %>(<%= appUser.designation %>)</span
                         ></a
                     >
                 </li>
-
             </ul>
         </div>
     </div>
 </nav>
 
-<div
-        class="flex-column"
-        style="
-				width: 40%;
-				border-color: var(--bs-primary-border-subtle);
-				margin-left: 30%;
-				background: var(--bs-body-bg);
-				height: initial;
-				margin-top: 2%;
-				border-radius: 11px;
-				box-shadow: 0px 0px 4px;
-				opacity: 1;
-			"
->
-    <div class="input-group">
-				<span
-                        class="input-group-text"
-                        style="
-						width: 29%;
-						border-top-left-radius: 12px;
-						border-bottom-left-radius: 0px;
-					"
-                >User ID :</span
-                ><input
-                class="form-control"
-                type="text"
-                id="userId"
-                readonly=""
-                style="
-						border-radius: 0px;
-						border-bottom-left-radius: 0px;
-						border-top-right-radius: 12px;
-					"
-                name="userId"
-                value="<%= user.id %>"
-        />
-    </div>
-    <div class="input-group">
-				<span
-                        class="input-group-text"
-                        style="
-						width: 29%;
-						border-top-left-radius: 0px;
-						border-bottom-left-radius: 0px;
-					"
-                >User name :</span
-                ><input
-                class="form-control"
-                type="text"
-                id="userName"
-                readonly=""
-                style="border-radius: 0px"
-                name="userName"
-                value="<%= user.name %>"
-        />
-    </div>
-    <div
-            class="input-group"
-            style="box-shadow: 0px 0px; border-bottom-left-radius: 6px"
-    >
-				<span
-                        class="input-group-text"
-                        style="
-						width: 29%;
-						border-top-left-radius: 0px;
-						border-bottom-left-radius: 0px;
-						box-shadow: 0px 0px 0px;
-					"
-                >User Email :</span
-                ><input
-                class="form-control"
-                type="text"
-                id="userEmail"
-                readonly=""
-                style="border-radius: 0px; border-bottom-right-radius: 0px"
-                name="userEmail"
-                value="<%= user.email %>"
-        />
-    </div>
-    <div
-            class="input-group"
-            style="box-shadow: 0px 0px; border-bottom-left-radius: 6px"
-    >
-				<span
-                        class="input-group-text"
-                        style="
-						width: 29%;
-						border-top-left-radius: 0px;
-						border-bottom-left-radius: 12px;
-						box-shadow: 0px 0px 0px;
-					"
-                >Contact Number :</span
-                ><input
-                class="form-control"
-                type="text"
-                id="contactNumber"
-                readonly=""
-                style="border-radius: 0px; border-bottom-right-radius: 12px"
-                name="contactNumber"
-                value="<%= user.phoneNumber %>"
-        />
-    </div>
-</div>
+<input
+        type="search"
+        style="width: 35%; margin-top: 2%; height: 35px"
+        placeholder="License Number or Owner ID"
+/>
 <div
         class="table-responsive fw-semibold text-start"
         style="
 				margin-top: 2%;
-				width: 60%;
+				width: 90%;
 				margin-right: 10%;
-				margin-left: 20%;
+				margin-left: 5%;
 				box-shadow: 0px 0px 9px;
 				border-radius: 12px;
-				height: 350px;
+				height: 60%;
 				background: var(--bs-btn-hover-color);
 			"
 >
-    <table class="table">
-        <thead style="width: 80%; padding: 0px">
+
+    <table hidden>
+        <tbody>
+        <% for (const info of vehicles) { %>
+            <tr>
+                <td><%= info.licenseNumber %></td>
+                <td><%= info.userId %></td>
+                <td><%= info.banStatus %></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+
+    <table class="table"></table>
+</div>
+<script src="/adminViewLogsAssets/bootstrap/js/bootstrap.min.js"></script>
+<script src="/adminViewLogsAssets/js/bs-init.js"></script>
+<script src="/adminViewLogsAssets/js/Lightbox-Gallery-No-Gutters-baguetteBox.min.js"></script>
+<script src="/adminViewLogsAssets/js/Lightbox-Gallery-No-Gutters-Lightbox-Gallery.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
+<script>
+	let fuse;
+	const info = [];
+
+	document.addEventListener("DOMContentLoaded", () => {
+		const table = document.querySelector("table[hidden]");
+		for (const row of table.rows) {
+			const cell = row.cells;
+			info.push({
+				licenseNumber: cell[0].innerText,
+				userId: cell[1].innerText,
+				banStatus: cell[2].innerText,
+			});
+		}
+
+		fuse = new Fuse(info, {
+			keys: ["licenseNumber", "userId"],
+		});
+		console.log(info);
+		showResults(info);
+	});
+
+	document.querySelector("input[type=search]").addEventListener("input", e => {
+		let logs = search(e.target.value);
+		showResults(logs);
+	});
+
+	function search(text) {
+		if (text.length > 0) {
+			const results = fuse.search(text);
+			return results.map((result) => result.item);
+		}
+		return info;
+	}
+
+	function showResults(logs) {
+		const table = document.querySelector("table[class=table]");
+		table.innerHTML = `<thead style="width: 80%; padding: 0px">
         <tr style="width: 80%; height: 57.5px">
             <th
                     style="
 								box-shadow: 0px 0px 5px 0px;
 								border-style: solid;
+								width: 20%;
 							"
             >
                 License number
@@ -337,63 +277,53 @@
                     style="
 								box-shadow: 0px 0px 5px 0px;
 								border-style: solid;
+								width: 15%;
 							"
             >
-                Car Name
+                User ID
             </th>
             <th
                     style="
 								box-shadow: 0px 0px 5px 0px;
 								border-style: solid;
-							"
-            >
-                Registration Status
-            </th>
-            <th
-                    style="
-								box-shadow: 0px 0px 5px 0px;
-								border-style: solid;
+								width: 15%;
 							"
             >
                 Ban Status
-            </th>
         </tr>
         </thead>
-        <tbody style="width: 80%; height: initial">
-        <% vehicles.forEach(function(vehicle){ %>
-            <tr
-                    style="
+		<tbody style="width: 90%; height: initial">`;
+
+		for (const log of logs) {
+			table.innerHTML += `<tr
+                style="
 							margin-right: 19px;
 							margin-top: 0px;
 							margin-left: -2px;
 						"
-            >
-                <td style="box-shadow: 0px 0px 5px 0px">
-                    <a
-                            href="/admin/view-vehicle-details/<%= vehicle.licenseNumber %>"
-                            style="color: var(--bs-danger-text-emphasis)"
-                    >
-                        <%= vehicle.licenseNumber %>
-                    </a>
-                </td>
-                <td style="box-shadow: 0px 0px 5px 0px">
-                    <%= vehicle.vehicleName %>
-                </td>
-                <td style="box-shadow: 0px 0px 5px 0px">
-                    <%=
-                        vehicle.approvalStatus === false ? "Pending" : "Registered" %>
-                </td>
-                <td style="box-shadow: 0px 0px 5px 0px">
-                    <%= vehicle.defaultDuration === 0 ? "Banned" : "Eligible" %>
-                </td>
-            </tr>
-        <% }) %>
-        </tbody>
-    </table>
-</div>
-<script src="/userDetailsAssets/bootstrap/js/bootstrap.min.js"></script>
-<script src="/userDetailsAssets/js/bs-init.js"></script>
-<script src="/userDetailsAssets/js/Lightbox-Gallery-No-Gutters-baguetteBox.min.js"></script>
-<script src="/userDetailsAssets/js/Lightbox-Gallery-No-Gutters-Lightbox-Gallery.js"></script>
+        >
+            <td style="box-shadow: 0px 0px 5px 0px; width: 20%">
+                <a
+                        href="/admin/view-vehicle-details/${log.licenseNumber}"
+                        style="color: var(--bs-danger-text-emphasis)"
+                >${log.licenseNumber}</a
+                >
+            </td>
+            <td style="box-shadow: 0px 0px 5px 0px; width: 15%">
+                <a
+                        href="/admin/view-user-details/${log.userId}"
+                        style="color: var(--bs-danger-text-emphasis)"
+                >${log.userId}</a
+                >
+            </td>
+            <td style="box-shadow: 0px 0px 5px 0px; width: 15%">
+                ${log.banStatus}
+            </td>
+        </tr>`;
+		}
+
+		table.innerHTML += "</tbody>";
+	}
+</script>
 </body>
 </html>
