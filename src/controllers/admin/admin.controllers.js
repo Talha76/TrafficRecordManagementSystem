@@ -231,8 +231,9 @@ const viewVehicleDetails = async (req, res) => {
     const appUser = req.user;
     appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
     req.flash("appUser", appUser);
-
+    if (flashVehicleLogs.length > 0){
     req.flash("vehicleLogs", flashVehicleLogs);
+    }
     req.flash("vehicle", vehicle);
     req.flash("user", user);
     res.render("./admin/carDetails.ejs", {
@@ -381,7 +382,7 @@ const getApproval = async (req, res) => {
         userName: user.name,
       });
     }
-  } 
+  }
 
   // if(vehicleInfo.length === 0) {
   //   req.flash("error", "No vehicle found");
@@ -498,7 +499,7 @@ const postApproval = async (req, res) => {
   console.log("post approval");
   console.log(action);
   console.log(req.body);
-  
+
   let licenseNumbers = [];
   licenseNumbers = req.body.formCheck;
 
