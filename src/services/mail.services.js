@@ -34,7 +34,7 @@ export async function sendBanEmail(userMail, licenseNumber) {
   const html = `<p>With a very heavy heart, we are informing you that your vehicle ${licenseNumber} has been banned from entering IUT Campus.</p>
   <p>For further information, please contact the authority.</p>`;
   const text = `With a very heavy heart, we are informing you that your vehicle ${licenseNumber} has been banned from entering IUT Campus. For further information, please contact the authority.`;
-  const subject = "Warning: Exceeded Allowed Parking Time Limit inside IUT Campus";
+  const subject = "Vehicle Banned from Entering IUT Campus";
 
   await mailer.sendMail({
     from: "noreply@iut-dhaka.edu",
