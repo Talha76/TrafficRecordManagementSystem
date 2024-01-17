@@ -4,6 +4,7 @@ import {findVehiclesStayingUpto} from "../../services/admin.services.js";
 import {BannedVehicleError} from "../../utils/errors.js";
 import {printableDateTime, queryTypes, zip} from "../../utils/utility.js";
 import generateReport from "../../services/report-generation.services.js";
+import {sendBanEmail} from "../../services/mail.services.js";
 
 // YYYY-MM-DD HH:MM:SS
 const getAdminDashboard = async (req, res) => {
@@ -332,6 +333,7 @@ const banVehicle = async (req, res) => {
       defaultDuration: 0,
     });
     if (vehicleUpdated) {
+      await sendBanEmail(vehicle.userMail, vehicle.licenseNumber);
       req.flash("vehicle", vehicleUpdated);
       req.flash("success", "Vehicle Banned Successfully");
       res.redirect(`/admin/view-vehicle-details/${licenseNumber}`);
@@ -449,12 +451,13 @@ async function getGenerateReport(req, res) {
 
 async function postGenerateReport(req, res) {
   const {licenseNumber, userId, carType, from, to} = req.body;
+  console.trace(req.body);
   try {
     const options = {};
-    if (licenseNumber.length > 0) {
+    if (licenseNumber !== undefined && licenseNumber.length > 0) {
       options.licenseNumber = licenseNumber;
     }
-    if (userId.length > 0) {
+    if (userId !== undefined && userId.length > 0) {
       options.userId = parseInt(userId);
     }
     if (carType !== undefined) {
