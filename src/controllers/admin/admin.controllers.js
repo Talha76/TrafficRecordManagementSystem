@@ -472,9 +472,9 @@ async function postGenerateReport(req, res) {
     if (to.length > 0) {
       options.to = new Date(to);
     }
+
     await generateReport(options);
 
-    req.flash("success", "Report Generated Successfully");
     res.download("./output.pdf");
   } catch (err) {
     console.error(err);

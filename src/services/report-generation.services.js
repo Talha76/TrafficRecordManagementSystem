@@ -31,7 +31,7 @@ function initHeadings(headings) {
  * @param props - Properties of the data object{Array<String>}
  * @param data - Data to be displayed{Array<Object>}
  */
-function generate(headings, props, data) {
+async function generate(headings, props, data) {
   let latex = initHeadings(headings);
 
   let i = 0;
@@ -56,7 +56,7 @@ function generate(headings, props, data) {
     latex += "\\end{tabular}\n";
   }
 
-  latexToPdf(latex);
+  await latexToPdf(latex);
 }
 
 /**
@@ -181,7 +181,7 @@ export default async function generateReport(opts) {
     }
   }
 
-  generate(headings, props, data);
+  await generate(headings, props, data);
 }
 
 function attachEntryTime(query, entryFrom, entryTo) {
