@@ -13,7 +13,6 @@ const getUserDashboard = async (req, res) => {
       }
     );
     user.designation = "User";
-    console.log(user.dataValues, user.designation);
 
     req.flash("user", user);
     if (vehicles.length > 0) {

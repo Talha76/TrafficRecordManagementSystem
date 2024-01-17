@@ -89,7 +89,6 @@ export default async function generateReport(opts) {
 
   if (opts.queryType === undefined) {
     let logs = await VehicleLog.findAll({where: queries});
-    console.trace(queries, logs);
 
     const userPromises = [];
     for (const log of logs) {
@@ -182,7 +181,6 @@ export default async function generateReport(opts) {
     }
   }
 
-  console.trace(data);
   generate(headings, props, data);
 }
 
