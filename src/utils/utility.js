@@ -19,3 +19,9 @@ export function printableDateTime(dateTime) {
     second: "2-digit"
   });
 }
+
+export const queryTypes = Object.freeze({
+  CURRENTLY_IN_IUT: 1,
+  LATE_ONLY: 2,
+  BANNED_ONLY: 3
+});
