@@ -183,6 +183,21 @@
 				</div>
 			</div>
 		</nav>
+		<% for (const err of error) { %>
+			<div class="alert alert-danger" role="alert"
+				 style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;display: flex;justify-content: space-between;">
+				<strong><%= err; %></strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		<% } %>
+		<% for (const message of success) { %>
+			<div class="alert alert-success" role="alert"
+				 style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;display: flex;justify-content: space-between;">
+				<strong><%= message; %></strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		<% } %>
+
 		<form action="/admin/generate-report" method="POST"  style="height: 350.688px">
 			<div
 				class="flex-column justify-content-between align-items-center"
@@ -254,7 +269,7 @@
 							value="currentCars"
 							style="border-color: var(--bs-emphasis-color)"
 						/><label class="form-check-label" for="formCheck-3"
-							>Current Cars Only</label
+							>Currently in Campus</label
 						>
 					</div>
 					<div class="form-check" style="margin-right: 2%">

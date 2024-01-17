@@ -3,6 +3,8 @@ import * as User from "../../services/user.services.js";
 import {findVehiclesStayingUpto} from "../../services/admin.services.js";
 import {BannedVehicleError} from "../../utils/errors.js";
 import {printableDateTime, zip} from "../../utils/utility.js";
+import generateReport from "../../services/report-generation.services.js";
+import { queryTypes } from "../../utils/utility.js";
 
 // YYYY-MM-DD HH:MM:SS
 const getAdminDashboard = async (req, res) => {
@@ -455,9 +457,42 @@ async function getGenerateReport(req, res) {
   }
 }
 
-async function generateReport(req, res) {
-  res.json(req.body);
+async function postGenerateReport(req, res) {
+
+  const { licenseNumber,userId,carType,from,to } = req.body;
+  console.trace(licenseNumber,userId,carType,from,to);
+  try{
+    const options = {};
+    if (licenseNumber.length > 0) {
+      options.licenseNumber = licenseNumber;
+    }
+    if (userId.length > 0) {
+      options.userId = parseInt(userId);
+    }
+    if (carType.length > 0) {
+      if (carType === "currentCars") {
+        options.queryType = queryTypes.CURRENTLY_IN_IUT;
+      } else if(carType === "lateExit") {
+        options.queryType = queryTypes.LATE_ONLY;
+      } else if(carType === "bannedCars") {
+        options.queryType = queryTypes.BANNED_ONLY;
+      }
+    }
+    if (from.length > 0) {
+      options.from = new Date(from);
+    }
+    if (to.length > 0) {
+      options.to = new Date(to);
+    }
+    await generateReport(options);
+
+    req.flash("success", "Report Generated Successfully");
+    res.download("./output.pdf");
+}catch (err) {
+   console.error(err);
 }
+}
+
 
 async function getUserVehicleList(req, res) {
   const vehicles = await Vehicle.getVehicleList({
@@ -541,55 +576,9 @@ const postApproval = async (req, res) => {
   res.redirect("/admin/get-approval");
 };
 
-
-// const postApproval = async (req, res) => {
-//   try {
-//     const vehicles = await Vehicle.getVehicleList({
-//       approvalStatus: false,
-//       defaultDurationFrom: 1,
-//       deletedAt: null,
-//     });
-
-//     if (!vehicles || vehicles.length === 0) {
-//       req.flash("error", "No vehicles found");
-//       return res.redirect("/admin/dashboard");
-//     }
-
-//     const vehicleInfo = [];
-//     // need to fetch the user id and names too in the vehicleInfo
-//     for (const vehicle of vehicles) {
-//       const user = await User.findUserByEmail(vehicle.userMail);
-//       vehicleInfo.push({
-//         licenseNumber: vehicle.licenseNumber,
-//         vehicleName: vehicle.vehicleName,
-//         approvalStatus: vehicle.approvalStatus,
-//         defaultDuration: vehicle.defaultDuration,
-//         userId: user.id,
-//         userName: user.name,
-//       });
-//     }
-
-//     const appUser = req.user;
-//     appUser.designation = appUser.designation === "sco" ? "SCO" : "PT";
-//     req.flash("appUser", appUser);
-//     req.flash("vehicleInfo", vehicleInfo);
-
-//     res.render("./admin/admin.approval.ejs", {
-//       vehicleInfo: vehicleInfo ? req.flash("vehicleInfo") : [],
-//       error: req.flash("error"),
-//       success: req.flash("success"),
-//       appUser: appUser ? req.flash("appUser")[0] : null,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     req.flash("error", err.message);
-//     return res.redirect("/admin/dashboard");
-//   }
-// };
-
 export {
   getUserVehicleList,
-  generateReport,
+  postGenerateReport,
   getGenerateReport,
   extendDuration,
   banVehicle,
