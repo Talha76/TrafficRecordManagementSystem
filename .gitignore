@@ -144,3 +144,4 @@ tmp.js
 *.out
 *.synctex.gz
 *.pdf
+*final.tex
