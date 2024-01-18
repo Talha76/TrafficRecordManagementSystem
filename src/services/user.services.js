@@ -1,5 +1,12 @@
 import User from "../models/user.model.js";
-import {CustomError, NotProvidedError, NullValueError, UserNotFoundError} from "../utils/errors.js";
+import {
+  CustomError,
+  NotProvidedError,
+  NullValueError,
+  UserNotFoundError,
+  VehicleNotFoundError
+} from "../utils/errors.js";
+import Vehicle from "../models/vehicle.model.js";
 
 export async function findUserById(id) {
   if (id === undefined) throw new NotProvidedError("id");
@@ -21,6 +28,19 @@ export async function findUserByEmail(email) {
     return user;
   }
   return null;
+}
+
+export async function findUserByVehicle(licenseNumber) {
+  if (licenseNumber === undefined) throw new NotProvidedError("licenseNumber");
+  if (licenseNumber === null) throw new NullValueError("licenseNumber");
+
+  const vehicle = await Vehicle.findOne({where: {licenseNumber: licenseNumber}});
+  if (!vehicle) throw new VehicleNotFoundError();
+  const user = await User.findOne({where: {email: vehicle.userMail}});
+  if (user) {
+    return user;
+  }
+  throw new UserNotFoundError();
 }
 
 /**
