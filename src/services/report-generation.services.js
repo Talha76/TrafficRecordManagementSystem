@@ -1,5 +1,5 @@
 import latexToPdf from "../utils/latex.js";
-import {NullValueError} from "../utils/errors.js";
+import {NullValueError, UserNotFoundError} from "../utils/errors.js";
 import {Op} from "sequelize";
 import {printableDateTime, queryTypes, zip} from "../utils/utility.js";
 import VehicleLog from "../models/vehicle-log.model.js";
@@ -68,24 +68,10 @@ export default async function generateReport(opts) {
 
   const headings = ["User ID", "License Number", "Entry Time", "Exit Time", "Late Duration"],
     props = ["userId", "licenseNumber", "entryTime", "exitTime", "lateDuration"];
-  const data = [];
+  let data = [];
   let queries = {};
 
   attachEntryTime(queries, opts.entryFrom, opts.entryTo);
-
-  if (opts.userId !== undefined) {
-    if (opts.userId === null) throw new NullValueError("userId");
-    const user = await User.findByPk(opts.userId);
-    const vehicles = await Vehicle.findAll({where: {userMail: user.email}});
-    queries.licenseNumber = {
-      [Op.in]: vehicles.map(vehicle => vehicle.licenseNumber)
-    };
-  }
-
-  if (opts.licenseNumber !== undefined) {
-    if (opts.licenseNumber === null) throw new NullValueError("licenseNumber");
-    queries.licenseNumber = opts.licenseNumber;
-  }
 
   if (opts.queryType === undefined) {
     let logs = await VehicleLog.findAll({where: queries});
@@ -179,6 +165,20 @@ export default async function generateReport(opts) {
         lateDuration: Math.floor(Math.max(0, (time - log.entryTime) / 60000 - log.allowedDuration))
       });
     }
+  }
+
+  if (opts.userId !== undefined) {
+    if (opts.userId === null) throw new NullValueError("userId");
+    const user = await User.findByPk(opts.userId);
+    if (user === null) throw new UserNotFoundError();
+    let vehicles = await Vehicle.findAll({where: {userMail: user.email}});
+    vehicles = vehicles.map(vehicle => vehicle.licenseNumber);
+    data = data.filter(row => vehicles.includes(row.licenseNumber));
+  }
+
+  if (opts.licenseNumber !== undefined) {
+    if (opts.licenseNumber === null) throw new NullValueError("licenseNumber");
+    data = data.filter(row => row.licenseNumber === opts.licenseNumber);
   }
 
   await generate(headings, props, data);
