@@ -319,7 +319,10 @@
 		fuse = new Fuse(vehicles, {
 			keys: ["userName", "userId", "licenseNumber"],
 		});
-		showResults(vehicles);
+
+		const text = document.querySelector("input[type=search]");
+
+		showResults(search(text));
 	});
 
 	document.querySelector("input[type=search]").addEventListener("input", (e) => {

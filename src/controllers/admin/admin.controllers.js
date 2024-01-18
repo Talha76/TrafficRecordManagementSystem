@@ -496,6 +496,9 @@ async function postGenerateReport(req, res) {
     res.download("./output.pdf");
   } catch (err) {
     console.error(err);
+
+    req.flash("error", err.message);
+    res.redirect("/admin/generate-report");
   }
 }
 

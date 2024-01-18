@@ -401,18 +401,20 @@
 			findAllMatches: true,
 			keys: ["userId", "licenseNumber"],
 		});
-		showResults(vehicleLogs);
+
+		const text = document.querySelector("input[type=search]").value;
+
+		showResults(search(text));
 	});
 
+	function search(text) {
+		if (text.length === 0) return vehicleLogs;
+		const results = fuse.search(text);
+		return results.map(result => result.item);
+	}
+
 	document.querySelector("input[type=search]").addEventListener("input", (event) => {
-		const search = event.target.value;
-		if (search.length > 0) {
-			let results = fuse.search(search);
-			results = results.map(result => result.item);
-			showResults(results);
-		} else {
-			showResults(vehicleLogs);
-		}
+		showResults(search(event.target.value));
 	});
 
 	function showResults(logs) {
