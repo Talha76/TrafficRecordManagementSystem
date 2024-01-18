@@ -21,10 +21,10 @@ router.get("/unban/:licenseNumber", isLoggedIn, isAdmin, adminController.unbanVe
 
 router.get("/get-approval", isLoggedIn, isAdmin, adminController.getApproval);
 router.get("/approve/:licenseNumber", isLoggedIn, isAdmin, adminController.approve);
-router.post("/approve", isLoggedIn, isAdmin, adminController.approve);
-router.post("/reject", isLoggedIn, isAdmin, adminController.reject);
-router.get("/generate-report", isLoggedIn, isAdmin,isSCO,adminController.getGenerateReport);
-router.post("/generate-report", isLoggedIn, isAdmin,isSCO, adminController.postGenerateReport);
+router.get("/approve/:licenseNumber", isLoggedIn, isAdmin, adminController.approve);
+router.get("/reject/:licenseNumber", isLoggedIn, isAdmin, adminController.reject);
+router.get("/generate-report", isLoggedIn, isAdmin, isSCO, adminController.getGenerateReport);
+router.post("/generate-report", isLoggedIn, isAdmin, isSCO, adminController.postGenerateReport);
 router.get("/user-vehicle-list", isLoggedIn, isAdmin, isSCO, adminController.getUserVehicleList);
 
 router.post("/get-approval", isLoggedIn, isAdmin, adminController.postApproval);

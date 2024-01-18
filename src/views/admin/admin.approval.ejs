@@ -195,6 +195,22 @@
         </div>
     </div>
 </nav>
+
+<% for (const err of error) { %>
+    <div class="alert alert-danger" role="alert"
+         style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;display: flex;justify-content: space-between;">
+        <strong><%= err; %></strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% } %>
+<% for (const message of success) { %>
+    <div class="alert alert-success" role="alert"
+         style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;display: flex;justify-content: space-between;">
+        <strong><%= message; %></strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% } %>
+
 <div style="display: block; margin: 0px; margin-top: 30px">
     <div style="display: flex">
         <input
@@ -460,37 +476,9 @@
 		                            display: inline-flex;
 		                        "
 		            >
-		                <form method="POST" action="/admin/approve">
-		                    <input
-		                            class="form-control"
-		                            type="hidden"
-		                            id="licenseNumber"
-		                            value="${vehicle.licenseNumber}"
-		                            name="licenseNumber"
-		                    />
-		                    <button
-		                            class="btn btn-primary"
-		                            type="submit"
-		                    >
-		                        Approve
-		                    </button>
-		                </form>
-		                <form method="POST" action="/admin/reject">
-		                    <input
-		                            class="form-control"
-		                            type="hidden"
-		                            id="licenseNumber"
-		                            value="${vehicle.licenseNumber}"
-		                            name="licenseNumber"
-		                    />
-		                    <button
-		                            class="btn btn-primary"
-		                            type="submit"
-		                            style="margin-left: 20px"
-		                    >
-		                        Reject
-		                    </button>
-		                </form>
+
+                    <a style="margin-right: 5px" class="btn btn-primary" href="/admin/approve/${vehicle.licenseNumber}">Approve</a>
+                    <a class="btn btn-primary" href="/admin/reject/${vehicle.licenseNumber}">Reject</a>
 		            </td>
 		        </tr>`;
 			i++;
@@ -498,6 +486,8 @@
 
 		content += "</tbody>";
 		table.innerHTML = content;
+		console.log(content);
+		console.log("innerHTML", table.innerHTML);
 	}
 
 	function checkAllStatus(element) {

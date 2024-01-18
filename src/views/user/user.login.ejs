@@ -28,7 +28,7 @@
 			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 			overflow: hidden;
 			width: 300px;
-			height: 275px;
+			height: auto;
 		}
 
 		.login-header {
@@ -43,12 +43,14 @@
 			font-size: 1.5em;
 		}
 
-		.user-login-content{
+		.user-login-content {
 			padding: 20px 20px;
 			margin-top: 15px;
 		}
-		.admin-login-content{
+
+		.admin-login-content {
 			padding: 10px 20px;
+			margin-bottom: 10px;
 		}
 
 		.google-login-btn {
@@ -78,6 +80,7 @@
 			border-radius: 4px;
 			margin: 15px;
 			text-align: center;
+			width: 75%;
 		}
     </style>
 </head>
@@ -88,7 +91,7 @@
     </div>
 
     <% for (const err of error) { %>
-        <div class="alert alert-danger" role="alert"
+        <div class="alert alert-danger error-message" role="alert"
              style="margin-top: 2%;margin-left: 25%;margin-right: 25%;width: 50%;display: flex;justify-content: space-between;">
             <strong><%= err; %></strong>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>

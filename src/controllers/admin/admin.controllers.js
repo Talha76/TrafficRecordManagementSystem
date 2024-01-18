@@ -400,34 +400,49 @@ const getApproval = async (req, res) => {
 
 
 const approve = async (req, res) => {
-  const licenseNumber = req.body.licenseNumber;
-  const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-  if (vehicle === null) {
-    return res.redirect("/admin/dashboard");
-  }
-  const vehicleUpdated = await Vehicle.updateVehicle({
-    licenseNumber: licenseNumber,
-    approvalStatus: true,
-  });
-  if (vehicleUpdated) {
-    req.flash("success", "Vehicle Approved Successfully");
-    res.redirect("/admin/get-approval");
+  try {
+    const licenseNumber = req.params.licenseNumber;
+    console.trace(licenseNumber);
+    const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
+    if (vehicle === null) {
+      return res.redirect("/admin/dashboard");
+    }
+    const vehicleUpdated = await Vehicle.updateVehicle({
+      licenseNumber: licenseNumber,
+      approvalStatus: true,
+    });
+    if (vehicleUpdated) {
+      req.flash("success", "Vehicle Approved Successfully");
+      res.redirect("/admin/get-approval");
+    }
+  } catch (err) {
+    console.error(err);
+
+    req.flash("error", err.message);
+    return res.redirect("/admin/get-approval");
   }
 };
 
 const reject = async (req, res) => {
-  const licenseNumber = req.body.licenseNumber;
-  const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
-  if (vehicle === null) {
-    return res.redirect("/admin/dashboard");
-  }
-  const vehicleUpdated = await Vehicle.updateVehicle({
-    licenseNumber: licenseNumber,
-    defaultDuration: 0,
-  });
-  if (vehicleUpdated) {
-    req.flash("success", "Vehicle Rejected Successfully");
-    res.redirect("/admin/get-approval");
+  try {
+    const licenseNumber = req.params.licenseNumber;
+    const vehicle = await Vehicle.findVehicleByLicenseNumber(licenseNumber);
+    if (vehicle === null) {
+      return res.redirect("/admin/dashboard");
+    }
+    const vehicleUpdated = await Vehicle.updateVehicle({
+      licenseNumber: licenseNumber,
+      defaultDuration: 0,
+    });
+    if (vehicleUpdated) {
+      req.flash("success", "Vehicle Rejected Successfully");
+      res.redirect("/admin/get-approval");
+    }
+  } catch (err) {
+    console.error(err);
+
+    req.flash("error", err.message);
+    return res.redirect("/admin/get-approval");
   }
 };
 
