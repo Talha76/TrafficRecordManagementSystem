@@ -1,0 +1,21 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module"
+  },
+  "rules": {
+    "quotes": [
+      "error",
+      "double"
+    ],
+    "semi": [
+      "warn",
+      "always"
+    ],
+    "linebreak-style": [
+      "warn",
+      "unix"
+    ],
+    "eqeqeq": "error"
+  }
+}
